@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 const Transport = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [data, setData] = useState([
     { name: "Dilan", address: "123", phone: "9876543210" },
     { name: "Dilan", address: "123", phone: "9876543210" },

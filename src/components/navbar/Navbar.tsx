@@ -1,4 +1,3 @@
-import { Button } from "primereact/button";
 import React from "react";
 import "./Navbar.scss";
 import { Avatar } from "primereact/avatar";

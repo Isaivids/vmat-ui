@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Amt from "../amt/Amt";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
@@ -9,6 +8,7 @@ import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
 const Ack = () => {
   const initialData: any = dummyData;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [data, setData] = useState(initialData);
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const modeOfPayments = [
