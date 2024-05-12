@@ -1,0 +1,74 @@
+@import url("../node_modules/primereact/resources/themes/saga-blue/theme.css");
+@import url("../node_modules/primereact/resources/primereact.min.css");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+@import url('../node_modules/primeflex/primeflex.css');
+body{
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Montserrat";
+}
+a{
+  text-decoration: none;
+  color: inherit;
+}
+$primary : #202932;
+$secondary : #DBA008;
+
+.primary{
+  background-color: $primary;
+}
+
+.p-datatable .p-datatable-thead > tr > th{
+  background-color: $primary;
+  color: #fff;
+  border-radius: 5px 5px 0 0;
+}
+
+.p-datatable table>tbody>tr>td,
+.p-datatable table>thead>tr>th {
+  border-color: $primary;
+}
+
+.p-datatable table>tbody>tr>td {
+  padding: 0.5rem !important;
+  background-color: #fff;
+}
+
+.active-link{
+  color: $secondary;
+  border-left: 4px solid $secondary;
+  transition: all 0.3s ease-in-out;
+}
+
+.non-active-link{
+  border-left: 4px solid $primary;
+  transition: all 0.3s ease-in-out;
+}
+
+.non-active-link:hover{
+  color: $secondary;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
