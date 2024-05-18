@@ -4,15 +4,8 @@ import { InputText } from 'primereact/inputtext';
 import React, { useState } from 'react'
 import dummyData from '../../assets/dummydata.json'
 import { Button } from 'primereact/button';
-import { Calendar } from 'primereact/calendar';
-import { Dropdown } from 'primereact/dropdown';
-const Payment = () => {
+const AdvVmat = () => {
     const initialData: any = dummyData;
-    const modeOfPayments = [
-      { name: "Cash", code: "CASH" },
-      { name: "Internet", code: "INT" },
-      { name: "UPI", code: "UPI" },
-    ];
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [data, setData] = useState(initialData);
     const [selectedRowId, setSelectedRowId]: any = useState(null);
@@ -41,29 +34,6 @@ const Payment = () => {
         </div>
       );
     };
-
-    const renderDatePicker = (rowData: any, field: any) => {
-      return (
-        <Calendar
-          value={rowData[field.field]}
-          style={{ width: "100px" }}
-          disabled={rowData.id !== selectedRowId}
-        />
-      );
-    };
-  
-    const renderDropdown = (rowData: any) => {
-      return (
-        <Dropdown
-          // value={selectedCity}
-          // onChange={(e) => setSelectedCity(e.value)}
-          options={modeOfPayments}
-          optionLabel="name"
-          placeholder="Select a Payment"
-          disabled={rowData.id !== selectedRowId}
-        />
-      );
-    };
   
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
@@ -72,28 +42,21 @@ const Payment = () => {
       <Column field="date" header="Date"></Column>
       <Column field="truckname" header="Truck Name"></Column>
       <Column field="truckno" header="Truck No"></Column>
-      <Column field="transfreight" header="Trans Freight"></Column>
-      <Column field="transadvance" header="Trans Advance"></Column>
-      <Column field="loadunloadchar" header="Lad Char/ UnloadChar" body={renderInput}></Column>
-      <Column field="transpaidadv" header="Transprter Paid Adv Amt"></Column>
+      <Column field="advamount" header="Adv. Amt"></Column>
+      <Column field="penlaburwages" header="Pen. Labour Wages" body={renderInput}></Column>
+      <Column field="extlaburwages" header="Ext. Labour Wages" body={renderInput}></Column>
+      <Column field="others" header="Others" body={renderInput}></Column>
+      <Column field="vmatcommission" header="VMAT Commision"></Column>
+      <Column field="total" header="Total"></Column>
+      <Column field="remarks" header="Remarks" body={renderInput}></Column>
       <Column
-          field="paymentrecvdate"
-          header="payment Recv Date"
-          body={renderDatePicker}
-        ></Column>
-        <Column
-          field="modeofpayment"
-          header="Mode Of Payment"
-          body={renderDropdown}
-        ></Column>
-        <Column
-          header="Actions"
-          body={renderButton}
-          style={{ width: "200px", right: "0", position: "sticky" }}
-        ></Column>
+        header="Actions"
+        body={renderButton}
+        style={{ width: "200px", right: "0", position: "sticky" }}
+      ></Column>
     </DataTable>
   </div>
   )
 }
 
-export default Payment
+export default AdvVmat

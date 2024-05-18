@@ -1,12 +1,12 @@
-import { Column } from 'primereact/column';
-import { DataTable } from 'primereact/datatable';
-import { InputText } from 'primereact/inputtext';
-import React, { useState } from 'react'
-import dummyData from '../../assets/dummydata.json'
 import { Button } from 'primereact/button';
 import { Calendar } from 'primereact/calendar';
+import { Column } from 'primereact/column';
+import { DataTable } from 'primereact/datatable';
 import { Dropdown } from 'primereact/dropdown';
-const Payment = () => {
+import { InputText } from 'primereact/inputtext';
+import React, { useState } from 'react'
+import dummyData from '../../assets/dummydata.json';
+const AdvTwopay = () => {
     const initialData: any = dummyData;
     const modeOfPayments = [
       { name: "Cash", code: "CASH" },
@@ -25,7 +25,7 @@ const Payment = () => {
         />
       );
     };
-      
+  
     const renderButton = (rowData: any) => {
       return (
         <div className="flex gap-2">
@@ -41,7 +41,7 @@ const Payment = () => {
         </div>
       );
     };
-
+  
     const renderDatePicker = (rowData: any, field: any) => {
       return (
         <Calendar
@@ -65,35 +65,36 @@ const Payment = () => {
       );
     };
   
-  return (
-    <div className="p-2" style={{ overflowX: "auto" }}>
-    <DataTable value={data} showGridlines scrollable scrollHeight="80vh">
-      <Column field="sno" header="S.No"></Column>
-      <Column field="date" header="Date"></Column>
-      <Column field="truckname" header="Truck Name"></Column>
-      <Column field="truckno" header="Truck No"></Column>
-      <Column field="transfreight" header="Trans Freight"></Column>
-      <Column field="transadvance" header="Trans Advance"></Column>
-      <Column field="loadunloadchar" header="Lad Char/ UnloadChar" body={renderInput}></Column>
-      <Column field="transpaidadv" header="Transprter Paid Adv Amt"></Column>
-      <Column
-          field="paymentrecvdate"
-          header="payment Recv Date"
-          body={renderDatePicker}
-        ></Column>
-        <Column
-          field="modeofpayment"
-          header="Mode Of Payment"
-          body={renderDropdown}
-        ></Column>
-        <Column
-          header="Actions"
-          body={renderButton}
-          style={{ width: "200px", right: "0", position: "sticky" }}
-        ></Column>
-    </DataTable>
-  </div>
-  )
+    return (
+      <div className="p-2" style={{ overflowX: "auto" }}>
+        <DataTable value={data} showGridlines scrollable scrollHeight="80vh">
+          <Column field="sno" header="S.No"></Column>
+          <Column field="date" header="Date"></Column>
+          <Column field="truckname" header="Truck Name"></Column>
+          <Column field="truckno" header="Truck No"></Column>
+          <Column field="transname" header="Trans Name"></Column>
+          <Column field="transfreight" header="Trans Freight"></Column>
+          <Column field="transadv" header="Trans Adv"></Column>
+          <Column field="lunexwages" header="L/UN Ex Wages" body={renderInput}></Column>
+          <Column field="total" header="Total"></Column>
+          <Column
+            field="paymentrecvdate"
+            header="payment Recv Date"
+            body={renderDatePicker}
+          ></Column>
+          <Column
+            field="modeofpayment"
+            header="Mode Of Payment"
+            body={renderDropdown}
+          ></Column>
+          <Column
+            header="Actions"
+            body={renderButton}
+            style={{ width: "200px", right: "0", position: "sticky" }}
+          ></Column>
+        </DataTable>
+      </div>
+    );
 }
 
-export default Payment
+export default AdvTwopay
