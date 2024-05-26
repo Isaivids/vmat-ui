@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
@@ -8,9 +8,13 @@ import { addAts, getAts, updateats } from "../../store/slice/atsSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Dropdown } from "primereact/dropdown";
+import { validateFields } from "./validations";
+import { Toast } from "primereact/toast";
 
 const Amt = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const toast = useRef<Toast>(null);
+
   const yesorno = [
     { name: "YES", code: "Yes" },
     { name: "NO", code: "No" },
@@ -148,7 +152,7 @@ const Amt = () => {
   };
 
   const createNewdata = async (data: any) => {
-    const payload = await getNewdataPayload(data);
+    const payload = getNewdataPayload(data);
     try {
       const response = await dispatch(addAts(payload));
       if (response.payload.data && !response.payload.error) {
@@ -159,13 +163,36 @@ const Amt = () => {
           data[index]._id = response.payload.data._id;
         }
         setSelectedRowId(null);
+        toast.current?.show({
+          severity: 'success',
+          summary: 'Data Added',
+          detail: 'Details added successfully',
+          life: 3000
+        });
       }
-    } catch (error) {
-      console.log(error);
+    } catch (error:any) {
+      toast.current?.show({
+        severity: 'error',
+        summary: 'API Error',
+        detail: error.error,
+        life: 3000
+      });
     }
   };
 
   const handleSave = async (id: any) => {
+    const rowData = data.find((row: any) => row._id === id);
+    const { isValid, missingFields } = validateFields(rowData);
+  
+    if (!isValid) {
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Validation Error',
+        detail: `${missingFields.join(", ")} is required`,
+        life: 3000
+      });
+      return;
+    }
     if (newRowAdded) {
       createNewdata(data.find((row: any) => row._id === id));
       setNewRowAdded(false);
@@ -184,8 +211,21 @@ const Amt = () => {
             data[index]._id = response.payload.data._id;
           }
           setSelectedRowId(null);
+          toast.current?.show({
+            severity: 'success',
+            summary: 'Data Update',
+            detail: 'Details updated successfully',
+            life: 3000
+          });
         }
-      } catch (error) {}
+      } catch (error:any) {
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Update Failure',
+          detail: 'Unable to update now.',
+          life: 3000
+        });
+      }
     }
     setSelectedRowId(null);
     setOriginalData({});
@@ -299,6 +339,7 @@ const Amt = () => {
   }, [fetchData]);
   return (
     <>
+      <Toast ref={toast} />
       <div className="p-2" style={{ overflowX: "auto" }}>
         <Button
           label="New"
@@ -346,7 +387,7 @@ const Amt = () => {
           <Column field="truckf" header="Truck F" body={renderInput}></Column>
           <Column field="transf" header="Trans F" body={renderInput}></Column>
           <Column field="vmatf" header="VMAT F" body={renderInput}></Column>
-          <Column field="truckad" header="Truck Ad" body={renderInput}></Column>
+          <Column field="truckadv" header="Truck Ad" body={renderInput}></Column>
           <Column
             field="transadv"
             header="Trans Ad"

@@ -1,6 +1,4 @@
 import React from "react";
-import Navbar from "./components/navbar/Navbar";
-import Sidebar from "./components/sidebar/Sidebar";
 import { Route, Routes } from "react-router-dom";
 import Amt from "./pages/amt/Amt";
 import Ack from "./pages/ack/Ack";
@@ -9,6 +7,9 @@ import Payment from "./pages/payment/Payment";
 import Transport from "./pages/transport/Transport";
 import SpinnerWithLogo from "./components/spinner/SpinnerWithLogo";
 import { useSelector } from "react-redux";
+import Login from "./pages/login/Login";
+import WithOutNavBar from "./components/WithOutNavBar";
+import WithNavBar from "./components/WithNavBar";
 const App = () => {
   const atsState = useSelector((state: any) => state.ats);
   const ackState = useSelector((state: any) => state.ack);
@@ -25,21 +26,20 @@ const App = () => {
         transState.loading ||
         bytrans.loading ||
         bytwopay.loading ||
-        byvmat.loading
-        ) && <SpinnerWithLogo />}
-      <Navbar />
-      <div className="flex">
-        <Sidebar />
+        byvmat.loading) && <SpinnerWithLogo />}
         <Routes>
-          <Route path="/" element={<Amt />} />
-          <Route path="/amt" element={<Amt />} />
+        <Route element={<WithOutNavBar />}>
+          <Route path="/" element={<Login />} />
+        </Route>
+        <Route element={<WithNavBar />}>
+        <Route path="/amt" element={<Amt />} />
           <Route path="/ack" element={<Ack />} />
           <Route path="/advance" element={<Advance />} />
           <Route path="/payment" element={<Payment />} />
           <Route path="/transport" element={<Transport />} />
+        </Route>
         </Routes>
       </div>
-    </div>
   );
 };
 
