@@ -1,0 +1,29 @@
+@import url("../../index.scss");
+
+.wrap {
+  width: 100vw;
+  height: 100vh;
+  z-index: 99;
+  background-color: #0000006c;
+  position: absolute;
+}
+.spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 8px solid #202932;
+  border-top: 8px solid #dba008;
+  animation: spin 1s linear infinite;
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+}
