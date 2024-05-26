@@ -3,7 +3,6 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
-import dummyData from "../../assets/dummydata.json";
 import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
 import { useDispatch } from "react-redux";
@@ -11,8 +10,7 @@ import { AppDispatch } from "../../store/store";
 import { getAck, updateAck } from "../../store/slice/ackSlice";
 const Ack = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const initialData: any = dummyData;
-  const [data, setData] = useState(initialData);
+  const [data, setData]:any = useState([]);
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
   const modeOfPayments = [
@@ -49,7 +47,7 @@ const Ack = () => {
 
   const handleDropdownChange = (e: any, id: any, field: any) => {
     const { value } = e;
-    const newData = data.map((row: any) => {
+    const newData:any = data.map((row: any) => {
       if (row._id === id) {
         return { ...row, [field]: value.code };
       }
