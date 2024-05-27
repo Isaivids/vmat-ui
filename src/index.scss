@@ -31,6 +31,7 @@ $secondary : #DBA008;
   display: flex;
   align-items: center;
   justify-content: center;
+  text-align: center;
 }
 
 .p-datatable table>tbody>tr>td,
@@ -80,4 +81,9 @@ $secondary : #DBA008;
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+.p-disabled, .p-component:disabled {
+  opacity: 1 !important;
+  // color: #878787;
+  // border: 1px transparent !important;
 }
