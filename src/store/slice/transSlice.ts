@@ -12,8 +12,8 @@ const initialState = {
     error: false,
 }
 
-export const getTransCrossing = createAsyncThunk('gettransadvance', async () => {
-    const response:any = await apiCall.get(`/gettransadvance`);
+export const getTransCrossing = createAsyncThunk('gettransadvance', async (payload:any) => {
+    const response:any = await apiCall.get(`/gettransadvance?limit=${payload.limit}&offset=${payload.offset}&search=${payload.search}`);
     if (response.error) {
         throw new Error("Error message");
     }

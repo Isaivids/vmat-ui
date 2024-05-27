@@ -6,10 +6,12 @@ import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
 import { getTransCrossing, updateTransAdvance } from "../../store/slice/transSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
+import { Paginator } from "primereact/paginator";
 const Payment = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const searchQuery = useSelector((state: any) => state.search.query);
   const modeOfPayments = [
     { name: "Cash", code: "CASH" },
     { name: "Internet", code: "INT" },
@@ -18,7 +20,17 @@ const Payment = () => {
   const [data, setData]: any = useState([]);
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
-
+  //pagination
+  const [first, setFirst] = useState(0);
+  const [rows, setRows] = useState(10);
+  const [totalPage, setTotalPage] = useState(0);
+  const [page, setPage] = useState(0);
+  const onPageChange = (event: any) => {
+    setPage(event.page);
+    setFirst(event.first);
+    setRows(event.rows);
+  };
+  // ----------end of pagination
   const onInputChange = (e: any, id: any, field: any) => {
     const { value } = e.target;
     const newData: any = data.map((row: any) => {
@@ -159,14 +171,15 @@ const Payment = () => {
 
   const fetchData = useCallback(async () => {
     try {
-      const trcukData = await dispatch(getTransCrossing());
-      if (trcukData.payload.data.length && !trcukData.payload.error) {
+      const trcukData = await dispatch(getTransCrossing({ limit: rows, offset: page, search: searchQuery }));
+      if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
         setData(trcukData.payload.data);
+        setTotalPage(trcukData.payload.pagination.totalPages);
       }
     } catch (error) {
       console.log(error);
     }
-  }, [dispatch]);
+  }, [dispatch, page, rows, searchQuery]);
 
   useEffect(() => {
     const fetchDataAndLog = async () => {
@@ -217,6 +230,12 @@ const Payment = () => {
           style={{ width: "200px", right: "0", position: "sticky" }}
         ></Column>
       </DataTable>
+      <Paginator
+          first={first}
+          rows={rows}
+          totalRecords={totalPage}
+          onPageChange={onPageChange}
+        />
     </div>
   );
 };
