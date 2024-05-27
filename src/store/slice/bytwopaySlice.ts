@@ -12,8 +12,8 @@ const initialState = {
     error: false,
 }
 
-export const getbytwopay = createAsyncThunk('getbytwopay', async () => {
-    const response:any = await apiCall.get(`/getbytwopay`);
+export const getbytwopay = createAsyncThunk('getbytwopay', async (payload:any) => {
+    const response:any = await apiCall.get(`/getbytwopay?limit=${payload.limit}&offset=${payload.offset}&search=${payload.search}`);
     if (response.error) {
         throw new Error("Error message");
     }

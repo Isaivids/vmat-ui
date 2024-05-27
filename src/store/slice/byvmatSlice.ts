@@ -12,8 +12,8 @@ const initialState = {
     error: false,
 }
 
-export const getByVmat = createAsyncThunk('getbyvmat', async () => {
-    const response:any = await apiCall.get(`/getbyvmat`);
+export const getByVmat = createAsyncThunk('getbyvmat', async (payload:any) => {
+    const response:any = await apiCall.get(`/getbyvmat?limit=${payload.limit}&offset=${payload.offset}&search=${payload.search}`);
     if (response.error) {
         throw new Error("Error message");
     }

@@ -4,15 +4,27 @@ import { InputText } from "primereact/inputtext";
 import React, { useCallback, useEffect, useState } from "react";
 import { Button } from "primereact/button";
 import { getByVmat, updateByVmat } from "../../store/slice/byvmatSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
+import { Paginator } from "primereact/paginator";
 
 const AdvVmat = () => {
+  const searchQuery = useSelector((state: any) => state.search.query);
   const dispatch = useDispatch<AppDispatch>();
   const [data, setData]: any = useState([]);
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
-
+  //pagination
+  const [first, setFirst] = useState(0);
+  const [rows, setRows] = useState(10);
+  const [totalPage, setTotalPage] = useState(0);
+  const [page, setPage] = useState(0);
+  const onPageChange = (event: any) => {
+    setPage(event.page);
+    setFirst(event.first);
+    setRows(event.rows);
+  };
+  // ----------end of pagination
   const onInputChange = (e: any, id: any, field: any) => {
     const { value } = e.target;
     const newData: any = data.map((row: any) => {
@@ -52,12 +64,13 @@ const AdvVmat = () => {
     }
     try {
       const response = await dispatch(updateByVmat(payload));
-      if (response.payload.data && !response.payload.error) {
+      if (Array.isArray(response.payload.data) && !response.payload.error) {
         const index = data.findIndex((item:any) => item._id === rowData._id);
         if (index !== -1) {
           data[index]._id = response.payload.data._id;
         }
         setSelectedRowId(null);
+        setTotalPage(response.payload.pagination.totalPages);
       }
     } catch (error) {
       console.log(error)
@@ -108,14 +121,15 @@ const AdvVmat = () => {
 
   const fetchData = useCallback(async () => {
     try {
-      const trcukData = await dispatch(getByVmat());
+      const trcukData = await dispatch(getByVmat({ limit: rows, offset: page, search: searchQuery }));
       if (trcukData.payload.data.length && !trcukData.payload.error) {
         setData(trcukData.payload.data);
+        setTotalPage(trcukData.payload.pagination.totalPages);
       }
     } catch (error) {
       console.log(error);
     }
-  }, [dispatch]);
+  }, [dispatch, page, rows, searchQuery]);
 
   useEffect(() => {
     const fetchDataAndLog = async () => {
@@ -160,6 +174,12 @@ const AdvVmat = () => {
           style={{ width: "200px", right: "0", position: "sticky" }}
         ></Column>
       </DataTable>
+      <Paginator
+          first={first}
+          rows={rows}
+          totalRecords={totalPage}
+          onPageChange={onPageChange}
+        />
     </div>
   );
 };

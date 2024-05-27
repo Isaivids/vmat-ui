@@ -5,11 +5,13 @@ import { DataTable } from 'primereact/datatable';
 import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import React, { useCallback, useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '../../store/store';
 import { getbytwopay, updateByTwoPay } from '../../store/slice/bytwopaySlice';
+import { Paginator } from 'primereact/paginator';
 
 const AdvTwopay = () => {
+  const searchQuery = useSelector((state: any) => state.search.query);
   const dispatch = useDispatch<AppDispatch>();
   const modeOfPayments = [
     { name: "Cash", code: "CASH" },
@@ -19,7 +21,17 @@ const AdvTwopay = () => {
   const [data, setData]: any = useState([]);
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
-
+  //pagination
+  const [first, setFirst] = useState(0);
+  const [rows, setRows] = useState(10);
+  const [totalPage, setTotalPage] = useState(0);
+  const [page, setPage] = useState(0);
+  const onPageChange = (event: any) => {
+    setPage(event.page);
+    setFirst(event.first);
+    setRows(event.rows);
+  };
+  // ----------end of pagination
   const onInputChange = (e: any, id: any, field: any) => {
     const { value } = e.target;
     const newData: any = data.map((row: any) => {
@@ -160,14 +172,15 @@ const AdvTwopay = () => {
 
   const fetchData = useCallback(async () => {
     try {
-      const trcukData = await dispatch(getbytwopay());
-      if (trcukData.payload.data.length && !trcukData.payload.error) {
+      const trcukData = await dispatch(getbytwopay({ limit: rows, offset: page, search: searchQuery }));
+      if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
         setData(trcukData.payload.data);
+        setTotalPage(trcukData.payload.pagination.totalPages);
       }
     } catch (error) {
       console.log(error);
     }
-  }, [dispatch]);
+  }, [dispatch, page, rows, searchQuery]);
 
   useEffect(() => {
     const fetchDataAndLog = async () => {
@@ -204,6 +217,12 @@ const AdvTwopay = () => {
             style={{ width: "200px", right: "0", position: "sticky" }}
           ></Column>
         </DataTable>
+        <Paginator
+          first={first}
+          rows={rows}
+          totalRecords={totalPage}
+          onPageChange={onPageChange}
+        />
       </div>
     );
 }
