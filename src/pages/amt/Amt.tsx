@@ -5,13 +5,11 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
 import { addAts, getAts, updateats } from "../../store/slice/atsSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { validateFields } from "./validations";
 import { Toast } from "primereact/toast";
 import { Paginator } from "primereact/paginator";
-import { IconField } from "primereact/iconfield";
-import { InputIcon } from "primereact/inputicon";
 
 const Amt = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -20,12 +18,11 @@ const Amt = () => {
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [originalData, setOriginalData] = useState({});
   const [newRowAdded, setNewRowAdded] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [delayedSearchTerm, setDelayedSearchTerm] = useState("");
+  const searchQuery = useSelector((state: any) => state.search.query);
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
-  const [totalPage, setTotalPage] = useState(10);
+  const [totalPage, setTotalPage] = useState(0);
   const [page, setPage] = useState(0);
   const onPageChange = (event: any) => {
     setPage(event.page);
@@ -295,14 +292,10 @@ const Amt = () => {
     );
   };
 
-  const handleSearcTermChange = (e: any) => {
-    setSearchTerm(e.target.value);
-  };
-
   const fetchData = useCallback(async () => {
     try {
       const atsData = await dispatch(
-        getAts({ limit: rows, offset: page, search: delayedSearchTerm })
+        getAts({ limit: rows, offset: page, search: searchQuery })
       );
       if (Array.isArray(atsData.payload.data) && !atsData.payload.error) {
         const formattedData = atsData.payload.data.map((item: any) => ({
@@ -317,7 +310,7 @@ const Amt = () => {
     } catch (error) {
       console.log(error);
     }
-  }, [dispatch, page, rows, delayedSearchTerm]);
+  }, [dispatch, page, rows, searchQuery]);
 
   useEffect(() => {
     const fetchDataAndLog = async () => {
@@ -330,26 +323,14 @@ const Amt = () => {
     <>
       <Toast ref={toast} />
       <div className="p-2" style={{ overflowX: "auto" }}>
-        <div className="flex justify-content-between align-items-center mb-2">
-          <Button label="New" severity="success" onClick={addNewRow} />
-          <IconField iconPosition="left">
-            <InputIcon className="pi pi-search"> </InputIcon>
-            <InputText
-              type="text"
-              placeholder="Search..."
-              value={searchTerm}
-              onChange={handleSearcTermChange}
-              className="form-control"
-              style={{ width: "200px" }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  setDelayedSearchTerm(searchTerm)
-                }
-              }}
-            />
-          </IconField>
-        </div>
-        <DataTable value={data} showGridlines scrollable scrollHeight="80vh" emptyMessage="No records found">
+        <Button label="New" severity="success" onClick={addNewRow} className="mb-2"/>
+        <DataTable
+          value={data}
+          showGridlines
+          scrollable
+          scrollHeight="80vh"
+          emptyMessage="No records found"
+        >
           <Column
             field="sno"
             style={{ minWidth: "100px" }}

@@ -1,8 +1,11 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
+import { clearSearchQuery } from "../../store/slice/searchSlice";
 const logout = require("../../assets/logout.svg").default;
 
 const Sidebar = () => {
+  const dispatch = useDispatch();
   const menu = [
     {
       name: "AMT & Truck Details",
@@ -42,6 +45,7 @@ const Sidebar = () => {
               <NavLink
                 to={x.to}
                 key={index}
+                onClick={() => dispatch(clearSearchQuery())}
                 className={({ isActive }) => isActive ? 'active-link flex gap-2 align-items-center' : 'non-active-link flex gap-2 align-items-center'}
               >
                 <img src={x.image} alt="VMAT" />

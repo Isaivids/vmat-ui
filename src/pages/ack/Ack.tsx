@@ -5,19 +5,33 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { getAck, updateAck } from "../../store/slice/ackSlice";
+import { Paginator } from "primereact/paginator";
 const Ack = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const [data, setData]:any = useState([]);
+  const [data, setData]: any = useState([]);
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
+  const searchQuery = useSelector((state: any) => state.search.query);
+
   const modeOfPayments = [
     { name: "Cash", code: "CASH" },
     { name: "Internet", code: "INT" },
     { name: "UPI", code: "UPI" },
   ];
+  //pagination
+  const [first, setFirst] = useState(0);
+  const [rows, setRows] = useState(10);
+  const [totalPage, setTotalPage] = useState(0);
+  const [page, setPage] = useState(0);
+  const onPageChange = (event: any) => {
+    setPage(event.page);
+    setFirst(event.first);
+    setRows(event.rows);
+  };
+  // ----------end of pagination
 
   const onInputChange = (e: any, id: any, field: any) => {
     const { value } = e.target;
@@ -26,8 +40,8 @@ const Ack = () => {
         const updatedRow = { ...row, [field]: value };
         const expense = Number(updatedRow.expense);
         const lateday = Number(updatedRow.ats.lateday);
-        const halting = Number(updatedRow.ats.halting)
-        updatedRow.finaltotaltotruckowner = expense + (lateday * halting);
+        const halting = Number(updatedRow.ats.halting);
+        updatedRow.finaltotaltotruckowner = expense + lateday * halting;
         return updatedRow;
       }
       return row;
@@ -48,7 +62,7 @@ const Ack = () => {
 
   const handleDropdownChange = (e: any, id: any, field: any) => {
     const { value } = e;
-    const newData:any = data.map((row: any) => {
+    const newData: any = data.map((row: any) => {
       if (row._id === id) {
         return { ...row, [field]: value.code };
       }
@@ -82,7 +96,7 @@ const Ack = () => {
     try {
       const response = await dispatch(updateAck(payload));
       if (response.payload.data && !response.payload.error) {
-        const index = data.findIndex((item:any) => item._id === rowData._id);
+        const index = data.findIndex((item: any) => item._id === rowData._id);
         if (index !== -1) {
           data[index]._id = response.payload.data._id;
         }
@@ -134,7 +148,7 @@ const Ack = () => {
         placeholder="Select a Payment"
         disabled={rowData._id !== selectedRowId}
         onChange={(e) => handleDropdownChange(e, rowData._id, field.field)}
-        style={{width : '150px'}}
+        style={{ width: "150px" }}
       />
     );
   };
@@ -168,14 +182,15 @@ const Ack = () => {
 
   const fetchData = useCallback(async () => {
     try {
-      const ackdata = await dispatch(getAck());
-      if (ackdata.payload.data.length && !ackdata.payload.error) {
+      const ackdata = await dispatch(getAck({ limit: rows, offset: page, search: searchQuery }));
+      if (Array.isArray(ackdata.payload.data) && !ackdata.payload.error) {
         setData(ackdata.payload.data);
+        setTotalPage(ackdata.payload.pagination.totalPages);
       }
     } catch (error) {
       console.log(error);
     }
-  }, [dispatch]);
+  }, [dispatch, page, rows, searchQuery]);
 
   useEffect(() => {
     const fetchDataAndLog = async () => {
@@ -187,14 +202,26 @@ const Ack = () => {
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <DataTable value={data} showGridlines scrollable scrollHeight="80vh">
-        <Column field="ats.sno" header="S.No" style={{minWidth : '100px'}}></Column>
-        <Column field="ats.date" header="Date" style={{minWidth : '100px'}}></Column>
+        <Column
+          field="ats.sno"
+          header="S.No"
+          style={{ minWidth: "100px" }}
+        ></Column>
+        <Column
+          field="ats.date"
+          header="Date"
+          style={{ minWidth: "100px" }}
+        ></Column>
         <Column
           field="acknowledgementReceivedDate"
           header="Ack.Rec Date"
           body={renderDatePicker}
         ></Column>
-        <Column field="ats.truckname" header="Truck Name" style={{minWidth : '150px'}}></Column>
+        <Column
+          field="ats.truckname"
+          header="Truck Name"
+          style={{ minWidth: "150px" }}
+        ></Column>
         <Column field="ats.trucknumber" header="Truck No"></Column>
         <Column field="ats.transname" header="Trans Name"></Column>
         <Column field="ats.truckbln" header="Truck Bln"></Column>
@@ -235,6 +262,12 @@ const Ack = () => {
           style={{ width: "200px", right: "0", position: "sticky" }}
         ></Column>
       </DataTable>
+      <Paginator
+          first={first}
+          rows={rows}
+          totalRecords={totalPage}
+          onPageChange={onPageChange}
+        />
     </div>
   );
 };

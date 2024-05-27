@@ -6,6 +6,7 @@ import transcrossingSLice from "./slice/transSlice";
 import bytransSlice from "./slice/bytransSlice";
 import byvmatSlice from "./slice/byvmatSlice";
 import byTwoPaySlice from './slice/bytwopaySlice'
+import searchSlice from "./slice/searchSlice";
 export const Store = configureStore({
     reducer: { 
         ats: atsSlice, 
@@ -14,7 +15,8 @@ export const Store = configureStore({
         trans: transcrossingSLice,
         bytrans : bytransSlice,
         byvmat : byvmatSlice,
-        bytwopay : byTwoPaySlice
+        bytwopay : byTwoPaySlice,
+        search : searchSlice
     }
 })
 
