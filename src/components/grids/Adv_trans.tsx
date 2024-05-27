@@ -5,16 +5,32 @@ import { DataTable } from "primereact/datatable";
 import { InputText } from "primereact/inputtext";
 import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
-import { getbytransporter, updateByTransporter } from "../../store/slice/bytransSlice";
+import {
+  getbytransporter,
+  updateByTransporter,
+} from "../../store/slice/bytransSlice";
+import { Paginator } from "primereact/paginator";
 
 const AdvTrans = () => {
+  const searchQuery = useSelector((state: any) => state.search.query);
   const modeOfPayments = [
     { name: "Cash", code: "CASH" },
     { name: "Internet", code: "INT" },
     { name: "UPI", code: "UPI" },
   ];
+  //pagination
+  const [first, setFirst] = useState(0);
+  const [rows, setRows] = useState(10);
+  const [totalPage, setTotalPage] = useState(0);
+  const [page, setPage] = useState(0);
+  const onPageChange = (event: any) => {
+    setPage(event.page);
+    setFirst(event.first);
+    setRows(event.rows);
+  };
+  // ----------end of pagination
   const dispatch = useDispatch<AppDispatch>();
   const [data, setData]: any = useState([]);
   const [selectedRowId, setSelectedRowId]: any = useState(null);
@@ -25,7 +41,7 @@ const AdvTrans = () => {
     const newData: any = data.map((row: any) => {
       if (row._id === id) {
         const updatedRow = { ...row, [field]: value };
-        if(['wages','others'].includes(field)){
+        if (["wages", "others"].includes(field)) {
           const wages = Number(updatedRow.wages);
           const others = Number(updatedRow.others);
           updatedRow.transadvtotruck = Number(wages + others);
@@ -67,12 +83,12 @@ const AdvTrans = () => {
       remarks: rowData.remarks,
       modeofpayment: rowData.modeofpayment,
       paymentreceiveddate: getFormattedDate(rowData.paymentreceiveddate),
-      _id : rowData._id
-    }
+      _id: rowData._id,
+    };
     try {
       const response = await dispatch(updateByTransporter(payload));
       if (response.payload.data && !response.payload.error) {
-        const index = data.findIndex((item:any) => item._id === rowData._id);
+        const index = data.findIndex((item: any) => item._id === rowData._id);
         if (index !== -1) {
           data[index]._id = response.payload.data._id;
         }
@@ -172,14 +188,15 @@ const AdvTrans = () => {
 
   const fetchData = useCallback(async () => {
     try {
-      const trcukData = await dispatch(getbytransporter());
-      if (trcukData.payload.data.length && !trcukData.payload.error) {
+      const trcukData = await dispatch(getbytransporter({ limit: rows, offset: page, search: searchQuery }));
+      if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
         setData(trcukData.payload.data);
+        setTotalPage(trcukData.payload.pagination.totalPages);
       }
     } catch (error) {
       console.log(error);
     }
-  }, [dispatch]);
+  }, [dispatch, page, rows, searchQuery]);
 
   useEffect(() => {
     const fetchDataAndLog = async () => {
@@ -188,17 +205,28 @@ const AdvTrans = () => {
     fetchDataAndLog();
   }, [fetchData]);
 
-
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <DataTable value={data} showGridlines scrollable scrollHeight="80vh">
-        <Column field="ats.sno" style={{ minWidth: "150px" }} header="S.No"></Column>
-        <Column field="ats.date" style={{ minWidth: "150px" }} header="Date"></Column>
+        <Column
+          field="ats.sno"
+          style={{ minWidth: "150px" }}
+          header="S.No"
+        ></Column>
+        <Column
+          field="ats.date"
+          style={{ minWidth: "150px" }}
+          header="Date"
+        ></Column>
         <Column field="ats.truckname" header="Truck Name"></Column>
         <Column field="ats.transname" header="Trans Name"></Column>
         <Column field="ats.transf" header="Trans Freight"></Column>
         <Column field="ats.transadv" header="Trans Adv"></Column>
-        <Column field="transadvtotruck" style={{ minWidth: "150px" }} header="Trans Adv to Truck"></Column>
+        <Column
+          field="transadvtotruck"
+          style={{ minWidth: "150px" }}
+          header="Trans Adv to Truck"
+        ></Column>
         <Column field="wages" header="Wages" body={renderInput}></Column>
         <Column field="others" header="Others" body={renderInput}></Column>
         <Column field="remarks" header="Remarks" body={renderInput}></Column>
@@ -218,6 +246,12 @@ const AdvTrans = () => {
           style={{ width: "200px", right: "0", position: "sticky" }}
         ></Column>
       </DataTable>
+      <Paginator
+          first={first}
+          rows={rows}
+          totalRecords={totalPage}
+          onPageChange={onPageChange}
+        />
     </div>
   );
 };
