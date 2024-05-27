@@ -17,7 +17,11 @@ const AdvVmat = () => {
     const { value } = e.target;
     const newData: any = data.map((row: any) => {
       if (row._id === id) {
-        return { ...row, [field]: value };
+        const updatedRow = { ...row, [field]: value };
+        if(!['remarks'].includes(field)){
+          updatedRow.total = Number(updatedRow.ats.truckad) + Number(updatedRow.pendinglabourwages) + Number(updatedRow.extlabourwages) + Number(updatedRow.others) + Number(updatedRow.vmatcommision);
+        }
+        return updatedRow;
       }
       return row;
     });
@@ -135,7 +139,7 @@ const AdvVmat = () => {
         ></Column>
         <Column field="ats.truckname" header="Truck Name"></Column>
         <Column field="ats.trucknumber" header="Truck No"></Column>
-        <Column field="advanceamount" header="Adv. Amt"></Column>
+        <Column field="ats.truckad" header="Adv. Amt"></Column>
         <Column
           field="pendinglabourwages"
           header="Pen. Labour Wages"

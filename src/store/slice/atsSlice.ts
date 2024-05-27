@@ -12,8 +12,8 @@ const initialState = {
     error: false,
 }
 
-export const getAts = createAsyncThunk('getats', async () => {
-    const response:any = await apiCall.get(`/getats`);
+export const getAts = createAsyncThunk('getats', async (filters:any) => {
+    const response:any = await apiCall.get(`/getats?limit=${filters.limit}&offset=${filters.offset}&search=${filters.search}`);
     if (response.error) {
         throw new Error("Error message");
     }

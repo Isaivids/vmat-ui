@@ -26,7 +26,8 @@ const Ack = () => {
         const updatedRow = { ...row, [field]: value };
         const expense = Number(updatedRow.expense);
         const lateday = Number(updatedRow.ats.lateday);
-        updatedRow.finaltotaltotruckowner = expense + lateday;
+        const halting = Number(updatedRow.ats.halting)
+        updatedRow.finaltotaltotruckowner = expense + (lateday * halting);
         return updatedRow;
       }
       return row;
@@ -133,7 +134,7 @@ const Ack = () => {
         placeholder="Select a Payment"
         disabled={rowData._id !== selectedRowId}
         onChange={(e) => handleDropdownChange(e, rowData._id, field.field)}
-        style={{width : '200px'}}
+        style={{width : '150px'}}
       />
     );
   };
@@ -186,8 +187,8 @@ const Ack = () => {
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <DataTable value={data} showGridlines scrollable scrollHeight="80vh">
-        <Column field="ats.sno" header="S.No" style={{minWidth : '150px'}}></Column>
-        <Column field="ats.date" header="Date" style={{minWidth : '150px'}}></Column>
+        <Column field="ats.sno" header="S.No" style={{minWidth : '100px'}}></Column>
+        <Column field="ats.date" header="Date" style={{minWidth : '100px'}}></Column>
         <Column
           field="acknowledgementReceivedDate"
           header="Ack.Rec Date"

@@ -7,23 +7,32 @@ import { Calendar } from "primereact/calendar";
 import { addAts, getAts, updateats } from "../../store/slice/atsSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../store/store";
-import { Dropdown } from "primereact/dropdown";
 import { validateFields } from "./validations";
 import { Toast } from "primereact/toast";
+import { Paginator } from "primereact/paginator";
+import { IconField } from "primereact/iconfield";
+import { InputIcon } from "primereact/inputicon";
 
 const Amt = () => {
   const dispatch = useDispatch<AppDispatch>();
   const toast = useRef<Toast>(null);
-
-  const yesorno = [
-    { name: "YES", code: "Yes" },
-    { name: "NO", code: "No" },
-  ];
   const [data, setData]: any = useState([]);
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [originalData, setOriginalData] = useState({});
   const [newRowAdded, setNewRowAdded] = useState(false);
-
+  const [searchTerm, setSearchTerm] = useState("");
+  const [delayedSearchTerm, setDelayedSearchTerm] = useState("");
+  //pagination
+  const [first, setFirst] = useState(0);
+  const [rows, setRows] = useState(10);
+  const [totalPage, setTotalPage] = useState(10);
+  const [page, setPage] = useState(0);
+  const onPageChange = (event: any) => {
+    setPage(event.page);
+    setFirst(event.first);
+    setRows(event.rows);
+  };
+  // ----------end of pagination
   const onInputChange = (e: any, id: any, field: any) => {
     const { value } = e.target;
     const newData = data.map((row: any) => {
@@ -46,17 +55,6 @@ const Amt = () => {
     setData(newData);
   };
 
-  const onDropdownChange = (e: any, id: any, field: any) => {
-    const { value } = e;
-    const newData = data.map((row: any) => {
-      if (row._id === id) {
-        return { ...row, [field]: value.code };
-      }
-      return row;
-    });
-    setData(newData);
-  };
-
   const renderInput = (rowData: any, field: any) => {
     const isNumberField = [
       "truckf",
@@ -68,6 +66,7 @@ const Amt = () => {
       "transbln",
       "twopay",
       "truckloadwt",
+      "halting",
     ].includes(field.field);
     return (
       <InputText
@@ -164,18 +163,18 @@ const Amt = () => {
         }
         setSelectedRowId(null);
         toast.current?.show({
-          severity: 'success',
-          summary: 'Data Added',
-          detail: 'Details added successfully',
-          life: 3000
+          severity: "success",
+          summary: "Data Added",
+          detail: "Details added successfully",
+          life: 3000,
         });
       }
-    } catch (error:any) {
+    } catch (error: any) {
       toast.current?.show({
-        severity: 'error',
-        summary: 'API Error',
+        severity: "error",
+        summary: "API Error",
         detail: error.error,
-        life: 3000
+        life: 3000,
       });
     }
   };
@@ -183,13 +182,13 @@ const Amt = () => {
   const handleSave = async (id: any) => {
     const rowData = data.find((row: any) => row._id === id);
     const { isValid, missingFields } = validateFields(rowData);
-  
+
     if (!isValid) {
       toast.current?.show({
-        severity: 'error',
-        summary: 'Validation Error',
+        severity: "error",
+        summary: "Validation Error",
         detail: `${missingFields.join(", ")} is required`,
-        life: 3000
+        life: 3000,
       });
       return;
     }
@@ -212,18 +211,18 @@ const Amt = () => {
           }
           setSelectedRowId(null);
           toast.current?.show({
-            severity: 'success',
-            summary: 'Data Update',
-            detail: 'Details updated successfully',
-            life: 3000
+            severity: "success",
+            summary: "Data Update",
+            detail: "Details updated successfully",
+            life: 3000,
           });
         }
-      } catch (error:any) {
+      } catch (error: any) {
         toast.current?.show({
-          severity: 'error',
-          summary: 'Update Failure',
-          detail: 'Unable to update now.',
-          life: 3000
+          severity: "error",
+          summary: "Update Failure",
+          detail: "Unable to update now.",
+          life: 3000,
         });
       }
     }
@@ -291,33 +290,21 @@ const Amt = () => {
         value={rowData[field.field]}
         onChange={(e) => onDateChange(e, rowData._id, field.field)}
         disabled={rowData._id !== selectedRowId}
-        style={{ width: "100px" }}
+        style={{ width: "150px" }}
       />
     );
   };
 
-  const renderDropdown = (rowData: any, field: any) => {
-    const selectedValue = yesorno.find(
-      (option) => option.code === rowData.halting
-    );
-
-    return (
-      <Dropdown
-        value={selectedValue}
-        options={yesorno}
-        optionLabel="name"
-        onChange={(e) => onDropdownChange(e, rowData._id, field.field)}
-        placeholder="Select a Yes/No"
-        disabled={rowData._id !== selectedRowId}
-        style={{ width: "100px" }}
-      />
-    );
+  const handleSearcTermChange = (e: any) => {
+    setSearchTerm(e.target.value);
   };
 
   const fetchData = useCallback(async () => {
     try {
-      const atsData = await dispatch(getAts());
-      if (atsData.payload.data.length && !atsData.payload.error) {
+      const atsData = await dispatch(
+        getAts({ limit: rows, offset: page, search: delayedSearchTerm })
+      );
+      if (Array.isArray(atsData.payload.data) && !atsData.payload.error) {
         const formattedData = atsData.payload.data.map((item: any) => ({
           ...item,
           date: new Date(item.date),
@@ -325,11 +312,12 @@ const Amt = () => {
           unloaddate: item.unloaddate ? new Date(item.unloaddate) : null,
         }));
         setData(formattedData);
+        setTotalPage(atsData.payload.pagination.totalPages);
       }
     } catch (error) {
       console.log(error);
     }
-  }, [dispatch]);
+  }, [dispatch, page, rows, delayedSearchTerm]);
 
   useEffect(() => {
     const fetchDataAndLog = async () => {
@@ -337,19 +325,42 @@ const Amt = () => {
     };
     fetchDataAndLog();
   }, [fetchData]);
+
   return (
     <>
       <Toast ref={toast} />
       <div className="p-2" style={{ overflowX: "auto" }}>
-        <Button
-          label="New"
-          className="mb-2"
-          severity="success"
-          onClick={addNewRow}
-        />
-        <DataTable value={data} showGridlines scrollable scrollHeight="80vh">
-          <Column field="sno" style={{ minWidth: "100px" }} header="S.No"></Column>
-          <Column field="date" style={{ minWidth: "100px" }} header="Date" body={renderDatePicker}></Column>
+        <div className="flex justify-content-between align-items-center mb-2">
+          <Button label="New" severity="success" onClick={addNewRow} />
+          <IconField iconPosition="left">
+            <InputIcon className="pi pi-search"> </InputIcon>
+            <InputText
+              type="text"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={handleSearcTermChange}
+              className="form-control"
+              style={{ width: "200px" }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  setDelayedSearchTerm(searchTerm)
+                }
+              }}
+            />
+          </IconField>
+        </div>
+        <DataTable value={data} showGridlines scrollable scrollHeight="80vh" emptyMessage="No records found">
+          <Column
+            field="sno"
+            style={{ minWidth: "100px" }}
+            header="S.No"
+          ></Column>
+          <Column
+            field="date"
+            style={{ minWidth: "100px" }}
+            header="Date"
+            body={renderDatePicker}
+          ></Column>
           <Column
             field="truckname"
             header="Truck Name"
@@ -377,17 +388,18 @@ const Amt = () => {
             field="unloaddate"
             header="Unload Date"
             body={renderDatePicker}
+            style={{ minWidth: "150px" }}
           ></Column>
           <Column field="lateday" header="Late Day" body={renderInput}></Column>
-          <Column
-            field="halting"
-            header="Halting"
-            body={renderDropdown}
-          ></Column>
+          <Column field="halting" header="Halting" body={renderInput}></Column>
           <Column field="truckf" header="Truck F" body={renderInput}></Column>
           <Column field="transf" header="Trans F" body={renderInput}></Column>
           <Column field="vmatf" header="VMAT F" body={renderInput}></Column>
-          <Column field="truckadv" header="Truck Ad" body={renderInput}></Column>
+          <Column
+            field="truckadv"
+            header="Truck Ad"
+            body={renderInput}
+          ></Column>
           <Column
             field="transadv"
             header="Trans Ad"
@@ -400,7 +412,7 @@ const Amt = () => {
           ></Column>
           <Column
             field="transbln"
-            header="Trans Bin"
+            header="Trans Bln"
             body={renderInput}
           ></Column>
           <Column field="twopay" header="2-Pay" body={renderInput}></Column>
@@ -415,6 +427,12 @@ const Amt = () => {
             style={{ width: "200px", right: "0", position: "sticky" }}
           ></Column>
         </DataTable>
+        <Paginator
+          first={first}
+          rows={rows}
+          totalRecords={totalPage}
+          onPageChange={onPageChange}
+        />
       </div>
     </>
   );
