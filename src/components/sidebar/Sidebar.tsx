@@ -13,14 +13,14 @@ const Sidebar = () => {
       image: require("../../assets/ico1.svg").default,
     },
     {
-      name: "Acknowledgement / POD",
-      to: "/ack",
-      image: require("../../assets/ico2.svg").default,
-    },
-    {
       name: "Truck Advance",
       to: "/advance",
       image: require("../../assets/ico3.svg").default,
+    },
+    {
+      name: "Acknowledgement / POD",
+      to: "/ack",
+      image: require("../../assets/ico2.svg").default,
     },
     {
       name: "Trans Crossing Payment",

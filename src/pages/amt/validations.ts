@@ -15,7 +15,6 @@ export const validateFields = (data: any) => {
         "truckf",
         "transf",
         "vmatf",
-        "truckadv",
         "transadv",
         "truckbln",
         "transbln",

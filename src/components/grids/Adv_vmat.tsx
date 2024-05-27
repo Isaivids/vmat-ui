@@ -45,7 +45,7 @@ const AdvVmat = () => {
     return (
       <InputText
         disabled={rowData._id !== selectedRowId}
-        value={rowData[field.field] || ""}
+        value={rowData[field.field]}
         onChange={(e) => onInputChange(e, rowData._id, field.field)}
         keyfilter={isStringField ? "alphanum" : "num"}
       />

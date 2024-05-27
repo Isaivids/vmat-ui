@@ -68,7 +68,7 @@ const Amt = () => {
     return (
       <InputText
         disabled={rowData._id !== selectedRowId}
-        value={rowData[field.field] || ""}
+        value={rowData[field.field]}
         onChange={(e) => onInputChange(e, rowData._id, field.field)}
         keyfilter={isNumberField ? "num" : "alphanum"}
         style={{ width: "150px" }}
@@ -137,7 +137,6 @@ const Amt = () => {
       truckf: Number(inputObject.truckf),
       transf: Number(inputObject.transf),
       vmatf: Number(inputObject.vmatf),
-      truckadv: Number(inputObject.truckad),
       transadv: Number(inputObject.transadv),
       truckbln: Number(inputObject.truckbln),
       transbln: Number(inputObject.transbln),
@@ -269,7 +268,6 @@ const Amt = () => {
       truckf: "",
       transf: "",
       vmatf: "",
-      truckadv: "",
       transadv: "",
       truckbln: "",
       transbln: "",
@@ -323,7 +321,12 @@ const Amt = () => {
     <>
       <Toast ref={toast} />
       <div className="p-2" style={{ overflowX: "auto" }}>
-        <Button label="New" severity="success" onClick={addNewRow} className="mb-2"/>
+        <Button
+          label="New"
+          severity="success"
+          onClick={addNewRow}
+          className="mb-2"
+        />
         <DataTable
           value={data}
           showGridlines
@@ -349,17 +352,16 @@ const Amt = () => {
           ></Column>
           <Column
             field="trucknumber"
-            header="Truck No"
+            header="Truck Number"
             body={renderInput}
           ></Column>
           <Column
             field="transname"
-            header="Trans Name"
+            header="Transport Name"
             body={renderInput}
           ></Column>
           <Column field="from" header="From" body={renderInput}></Column>
           <Column field="to" header="To" body={renderInput}></Column>
-          <Column field="truckad" header="Truck Ad" body={renderInput}></Column>
           <Column
             field="repdate"
             header="Rep. Date"
@@ -373,27 +375,39 @@ const Amt = () => {
           ></Column>
           <Column field="lateday" header="Late Day" body={renderInput}></Column>
           <Column field="halting" header="Halting" body={renderInput}></Column>
-          <Column field="truckf" header="Truck F" body={renderInput}></Column>
-          <Column field="transf" header="Trans F" body={renderInput}></Column>
-          <Column field="vmatf" header="VMAT F" body={renderInput}></Column>
           <Column
-            field="truckadv"
-            header="Truck Ad"
+            field="truckf"
+            header="Truck Freight"
+            body={renderInput}
+          ></Column>
+          <Column
+            field="vmatf"
+            header="VMAT Freight"
+            body={renderInput}
+          ></Column>
+          <Column
+            field="transf"
+            header="Trans Freight"
             body={renderInput}
           ></Column>
           <Column
             field="transadv"
-            header="Trans Ad"
+            header="Trans Advance"
+            body={renderInput}
+          ></Column>
+          <Column
+            field="truckad"
+            header="Truck Advance"
             body={renderInput}
           ></Column>
           <Column
             field="truckbln"
-            header="Truck Bin"
+            header="Truck Balance"
             body={renderInput}
           ></Column>
           <Column
             field="transbln"
-            header="Trans Bln"
+            header="Trans Balance"
             body={renderInput}
           ></Column>
           <Column field="twopay" header="2-Pay" body={renderInput}></Column>
