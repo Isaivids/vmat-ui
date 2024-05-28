@@ -11,6 +11,7 @@ import { validateFields } from "./validations";
 import { Toast } from "primereact/toast";
 import { Paginator } from "primereact/paginator";
 import { Dropdown } from "primereact/dropdown";
+import { messages } from "../../api/constants";
 
 const Amt = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -167,16 +168,16 @@ const Amt = () => {
         setSelectedRowId(null);
         toast.current?.show({
           severity: "success",
-          summary: "Data Added",
-          detail: "Details added successfully",
+          summary: messages.success,
+          detail: messages.updateoraddsuccess,
           life: 3000,
         });
       }
     } catch (error: any) {
       toast.current?.show({
         severity: "error",
-        summary: "API Error",
-        detail: error.error,
+        summary: messages.error,
+        detail: messages.updateoraddfailure,
         life: 3000,
       });
     }
@@ -189,7 +190,7 @@ const Amt = () => {
     if (!isValid) {
       toast.current?.show({
         severity: "error",
-        summary: "Validation Error",
+        summary: messages.validationerror,
         detail: `${missingFields.join(", ")} is required`,
         life: 3000,
       });
@@ -215,16 +216,16 @@ const Amt = () => {
           setSelectedRowId(null);
           toast.current?.show({
             severity: "success",
-            summary: "Data Update",
-            detail: "Details updated successfully",
+            summary: messages.success,
+            detail: messages.updateoraddsuccess,
             life: 3000,
           });
         }
       } catch (error: any) {
         toast.current?.show({
           severity: "error",
-          summary: "Update Failure",
-          detail: "Unable to update now.",
+          summary: messages.error,
+          detail: messages.updateoraddfailure,
           life: 3000,
         });
       }
@@ -341,7 +342,12 @@ const Amt = () => {
         setTotalPage(atsData.payload.pagination.totalPages);
       }
     } catch (error) {
-      console.log(error);
+      toast.current?.show({
+        severity: "error",
+        summary: messages.error,
+        detail: messages.loadfailure,
+        life: 3000,
+      });
     }
   }, [dispatch, page, rows, searchQuery]);
 

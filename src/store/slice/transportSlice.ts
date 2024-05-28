@@ -13,8 +13,8 @@ const initialState: State = {
     error: false,
 };
 
-export const gettruckdetail = createAsyncThunk('gettruckdetail', async () => {
-    const response:any = await apiCall.get(`/gettruckdetail`);
+export const gettruckdetail = createAsyncThunk('gettruckdetail', async (payload:any) => {
+    const response:any = await apiCall.get(`/gettruckdetail?limit=${payload.limit}&offset=${payload.offset}&search=${payload.search}`);
     if (response.error) {
         throw new Error("Error message");
     }
