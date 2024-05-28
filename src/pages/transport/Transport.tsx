@@ -71,7 +71,7 @@ const Transport = () => {
 
   const renderButton = (rowData: any) => {
     return (
-      <div className="flex gap-2">
+      <div className="flex gap-2 justify-content-center">
         {!selectedRowId && (
           <Button
             label="Edit"

@@ -114,7 +114,7 @@ const AdvTrans = () => {
 
   const renderButton = (rowData: any) => {
     return (
-      <div className="flex gap-2">
+      <div className="flex gap-2 justify-content-center">
         {!selectedRowId && (
           <Button
             label="Edit"
@@ -221,7 +221,7 @@ const AdvTrans = () => {
         <Column field="ats.truckname" header="Truck Name"></Column>
         <Column field="ats.transname" header="Trans Name"></Column>
         <Column field="ats.transf" header="Trans Freight"></Column>
-        <Column field="ats.transadv" header="Trans Adv"></Column>
+        <Column field="advanceamount" header="Advance"></Column>
         <Column
           field="transadvtotruck"
           style={{ minWidth: "150px" }}

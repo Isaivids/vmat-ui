@@ -10,6 +10,7 @@ import { AppDispatch } from "../../store/store";
 import { validateFields } from "./validations";
 import { Toast } from "primereact/toast";
 import { Paginator } from "primereact/paginator";
+import { Dropdown } from "primereact/dropdown";
 
 const Amt = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -19,6 +20,11 @@ const Amt = () => {
   const [originalData, setOriginalData] = useState({});
   const [newRowAdded, setNewRowAdded] = useState(false);
   const searchQuery = useSelector((state: any) => state.search.query);
+  const modeOfAdvance = [
+    { name: "By VMAT", code: 1 },
+    { name: "By Transport", code: 2 },
+    { name: "By TwoPay", code: 3 },
+  ];
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
@@ -57,8 +63,8 @@ const Amt = () => {
       "truckf",
       "transf",
       "vmatf",
-      "truckad",
       "transadv",
+      "truckadv",
       "truckbln",
       "transbln",
       "twopay",
@@ -78,7 +84,7 @@ const Amt = () => {
 
   const renderButton = (rowData: any) => {
     return (
-      <div className="flex gap-2">
+      <div className="flex gap-2 justify-content-center">
         {!selectedRowId && (
           <Button
             label="Edit"
@@ -129,7 +135,7 @@ const Amt = () => {
       transname: inputObject.transname,
       from: inputObject.from,
       to: inputObject.to,
-      truckad: Number(inputObject.truckad),
+      truckadv: Number(inputObject.truckadv),
       repdate: getFormatteddate(inputObject.repdate),
       unloaddate: getFormatteddate(inputObject.unloaddate),
       lateday: inputObject.lateday,
@@ -137,6 +143,7 @@ const Amt = () => {
       truckf: Number(inputObject.truckf),
       transf: Number(inputObject.transf),
       vmatf: Number(inputObject.vmatf),
+      modeofadvance : Number(inputObject.modeofadvance),
       transadv: Number(inputObject.transadv),
       truckbln: Number(inputObject.truckbln),
       transbln: Number(inputObject.transbln),
@@ -231,7 +238,6 @@ const Amt = () => {
       setData(data.filter((row: any) => row._id !== id));
       setNewRowAdded(false);
     } else {
-      // Restore the original data for existing row
       const restoredData = data.map((row: any) =>
         row._id === id ? originalData : row
       );
@@ -252,7 +258,7 @@ const Amt = () => {
       }, 0) + 1;
 
     const newRow = {
-      _id: `new-${nextSno}`, // Temporary ID for the new row
+      _id: `new-${nextSno}`, 
       sno: nextSno.toString() + `/` + month + `-` + year,
       date: currentDate,
       truckname: "",
@@ -260,19 +266,20 @@ const Amt = () => {
       transname: "",
       from: "",
       to: "",
-      truckad: "",
+      truckadv: 0,
       repdate: null,
       unloaddate: null,
-      lateday: "",
-      halting: "",
-      truckf: "",
-      transf: "",
-      vmatf: "",
-      transadv: "",
-      truckbln: "",
-      transbln: "",
-      twopay: "",
-      truckloadwt: "",
+      lateday: 0,
+      halting: 0,
+      truckf: 0,
+      transf: 0,
+      vmatf: 0,
+      modeofadvance: 0,
+      transadv: 0,
+      truckbln: 0,
+      transbln: 0,
+      twopay: 0,
+      truckloadwt: 0,
     };
     setData([...data, newRow]);
     setSelectedRowId(newRow._id);
@@ -284,6 +291,34 @@ const Amt = () => {
       <Calendar
         value={rowData[field.field]}
         onChange={(e) => onDateChange(e, rowData._id, field.field)}
+        disabled={rowData._id !== selectedRowId}
+        style={{ width: "150px" }}
+      />
+    );
+  };
+
+  const onDropdownChange = (e: any, id: any, field: any) => {
+    const { value } = e;
+    const newData = data.map((row: any) => {
+      if (row._id === id) {
+        return { ...row, [field]: value.code };
+      }
+      return row;
+    });
+    setData(newData);
+  };
+
+  const renderDropdown = (rowData: any, field: any) => {
+    const selectedValue = modeOfAdvance.find(
+      (option) => option.code === rowData.modeofadvance
+    );
+    return (
+      <Dropdown
+        value={selectedValue}
+        onChange={(e) => onDropdownChange(e, rowData._id, field.field)}
+        options={modeOfAdvance}
+        optionLabel="name"
+        placeholder="Select a Advance"
         disabled={rowData._id !== selectedRowId}
         style={{ width: "150px" }}
       />
@@ -396,7 +431,12 @@ const Amt = () => {
             body={renderInput}
           ></Column>
           <Column
-            field="truckad"
+            field="modeofadvance"
+            header="Mode Of Advance"
+            body={renderDropdown}
+          ></Column>
+          <Column
+            field="truckadv"
             header="Truck Advance"
             body={renderInput}
           ></Column>

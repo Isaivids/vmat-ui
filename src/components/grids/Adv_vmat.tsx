@@ -93,7 +93,7 @@ const AdvVmat = () => {
 
   const renderButton = (rowData: any) => {
     return (
-      <div className="flex gap-2">
+      <div className="flex gap-2 justify-content-center">
         {!selectedRowId && (
           <Button
             label="Edit"
@@ -153,7 +153,7 @@ const AdvVmat = () => {
         ></Column>
         <Column field="ats.truckname" header="Truck Name"></Column>
         <Column field="ats.trucknumber" header="Truck No"></Column>
-        <Column field="ats.truckad" header="Adv. Amt"></Column>
+        <Column field="advanceamount" header="Advance"></Column>
         <Column
           field="pendinglabourwages"
           header="Pen. Labour Wages"
