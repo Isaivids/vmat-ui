@@ -1,11 +1,13 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { clearSearchQuery } from "../../store/slice/searchSlice";
+import { clearUser } from "../../store/slice/userSlice";
 const logout = require("../../assets/logout.svg").default;
 
 const Sidebar = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const menu = [
     {
       name: "AMT & Truck Details",
@@ -33,6 +35,13 @@ const Sidebar = () => {
       image: require("../../assets/ico5.svg").default,
     },
   ];
+
+  const logoutProfile = () =>{
+    sessionStorage.removeItem('idToken');
+    dispatch(clearUser());
+    navigate('/');
+  }
+
   return (
     <div
       style={{ height: "calc(100vh - 60px)" }}
@@ -54,10 +63,10 @@ const Sidebar = () => {
             );
           })}
       </div>
-      <NavLink className="flex align-items-center gap-2 pb-5 p-2" to={'/'}>
+      <div className="flex align-items-center gap-2 pb-5 p-2 cursor-pointer	" onClick={logoutProfile}>
         <img src={logout} alt="VMAT" />
         <span>Logout</span>
-      </NavLink>
+      </div>
     </div>
   );
 };

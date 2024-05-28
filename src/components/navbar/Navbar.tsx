@@ -1,35 +1,50 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import "./Navbar.scss";
 import { Avatar } from "primereact/avatar";
-import { useNavigate } from "react-router-dom";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
 import { useDispatch, useSelector } from "react-redux";
 import { setSearchQuery } from "../../store/slice/searchSlice";
+import { AppDispatch } from "../../store/store";
+import { getUserInfo } from "../../store/slice/userSlice";
 const logo = require("../../assets/logo.svg").default;
+
 const Navbar = () => {
   const searchQuery = useSelector((state: any) => state.search.query);
-  const navigate = useNavigate();
-  const [search, setSearch] = useState('')
-  const avatarClick = () => {
-    navigate("/");
+  const userDetails = useSelector((state: any) => state.user);
+  const [details, setDetails]: any = useState({});
+  const dispatch = useDispatch<AppDispatch>();
+  const [search, setSearch] = useState("");
+
+  const getUserInfoDetails = useCallback(async () => {
+    const result: any = await dispatch(getUserInfo());
+    try {
+      if (!result.payload.error) {
+        setDetails(result.payload.data);
+      }
+    } catch (error) {}
+  }, [dispatch]);
+
+  const handleSearchChange = (event: any) => {
+    setSearch(event.target.value);
   };
 
-  const dispatch = useDispatch();
-
-  const handleSearchChange = (event:any) => {
-    setSearch(event.target.value)
-  };
-
-  const handleSearch = () =>{
+  const handleSearch = () => {
     dispatch(setSearchQuery(search));
-  }
+  };
 
   useEffect(() => {
-    setSearch(searchQuery)
-  }, [searchQuery])
-  
+    setSearch(searchQuery);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    if (Object.keys(userDetails.body).length !== 0) {
+      setDetails(userDetails.body.data);
+    } else {
+      getUserInfoDetails();
+    }
+  }, [getUserInfoDetails, userDetails.body]);
 
   return (
     <div className="navbar flex primary w-full align-items-center justify-content-between px-3">
@@ -55,7 +70,8 @@ const Navbar = () => {
         </IconField>
       </div>
       <div className="flex align-items-center gap-2">
-        <Avatar label="A" size="normal" shape="circle" onClick={avatarClick} />
+        <span className="text-scy font-semibold	uppercase">{details?.username}</span>
+        <Avatar label={details?.username?.substring(0,1)} size="normal" shape="circle"/>
       </div>
     </div>
   );
