@@ -19,6 +19,7 @@ const App = () => {
   const bytwopay = useSelector((state: any) => state.bytwopay);
   const bytrans = useSelector((state: any) => state.bytrans);
   const byvmat = useSelector((state: any) => state.byvmat);
+  const user = useSelector((state: any) => state.user);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -39,7 +40,8 @@ const App = () => {
             transState.loading ||
             bytrans.loading ||
             bytwopay.loading ||
-            byvmat.loading) && <SpinnerWithLogo />}
+            byvmat.loading ||
+            user.loading) && <SpinnerWithLogo />}
           <Routes>
             <Route element={<WithOutNavBar />}>
               <Route path="/" element={<Login />} />
