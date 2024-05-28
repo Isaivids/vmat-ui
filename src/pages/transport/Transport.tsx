@@ -105,9 +105,12 @@ const Transport = () => {
     if (backupData) {
       setData(backupData);
       setBackupData(null);
+    } else {
+      setData(data.filter((row: any) => row._id !== selectedRowId));
     }
     setSelectedRowId(null);
   };
+  
 
   const handleEdit = (rowData: any) => {
     setSelectedRowId(rowData._id);
