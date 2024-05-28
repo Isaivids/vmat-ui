@@ -62,7 +62,7 @@ const Transport = () => {
     };
     try {
       const response = await dispatch(updateTruckDetail(payload));
-      if (response.payload.data && !response.payload.error) {
+      if (!response.payload.error) {
         const index = data.findIndex((item: any) => item._id === rowData._id);
         if (index !== -1) {
           data[index]._id = response.payload.data._id;
