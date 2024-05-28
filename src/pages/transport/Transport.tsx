@@ -12,6 +12,7 @@ import { InputText } from "primereact/inputtext";
 import { Paginator } from "primereact/paginator";
 import { Toast } from "primereact/toast";
 import { messages } from "../../api/constants";
+import { validateFields } from "./validation";
 
 const Transport = () => {
   const searchQuery = useSelector((state: any) => state.search.query);
@@ -53,6 +54,16 @@ const Transport = () => {
   };
 
   const handleSave = async (rowData: any) => {
+    const { isValid, missingFields } = validateFields(rowData);
+    if (!isValid) {
+      toast.current?.show({
+        severity: "error",
+        summary: messages.validationerror,
+        detail: `${missingFields.join(", ")} is required`,
+        life: 3000,
+      });
+      return;
+    }
     const payload = {
       truckname: rowData.truckname,
       transportname: rowData.transportname,
@@ -60,13 +71,18 @@ const Transport = () => {
       phonenumber: rowData.phonenumber,
       _id: rowData._id,
     };
+  
     try {
       const response = await dispatch(updateTruckDetail(payload));
+  
       if (!response.payload.error) {
         const index = data.findIndex((item: any) => item._id === rowData._id);
         if (index !== -1) {
-          data[index]._id = response.payload.data._id;
+          data[index] = response.payload.data;
+        } else {
+          data.push(response.payload.data);
         }
+  
         setSelectedRowId(null);
         toast.current?.show({
           severity: "success",
@@ -84,6 +100,8 @@ const Transport = () => {
       });
     }
   };
+  
+  
 
   const handleCancel = () => {
     if (backupData) {
@@ -106,7 +124,7 @@ const Transport = () => {
       address: "",
       phonenumber: "",
     };
-    setData([...data, newRow]);
+    setData([newRow,...data]);
     setSelectedRowId(newRow._id);
   };
 

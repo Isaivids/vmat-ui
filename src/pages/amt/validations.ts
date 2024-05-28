@@ -23,7 +23,7 @@ export const validateFields = (data: any) => {
         "truckloadwt",
     ];
 
-    const missingFields = requiredFields.filter(field => [null,undefined].includes(data[field]));
+    const missingFields = requiredFields.filter(field => [null,undefined,''].includes(data[field]));
 
     return {
         isValid: missingFields.length === 0,
