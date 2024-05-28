@@ -4,14 +4,18 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '../../store/store';
 import { getbytwopay, updateByTwoPay } from '../../store/slice/bytwopaySlice';
 import { Paginator } from 'primereact/paginator';
+import { Toast } from 'primereact/toast';
+import { messages } from '../../api/constants';
+import { validateFields } from './validation3';
 
 const AdvTwopay = () => {
   const searchQuery = useSelector((state: any) => state.search.query);
+  const toast = useRef<Toast>(null);
   const dispatch = useDispatch<AppDispatch>();
   const modeOfPayments = [
     { name: "Cash", code: "CASH" },
@@ -83,6 +87,16 @@ const AdvTwopay = () => {
   };
 
   const handleSave = async (rowData: any) => {
+    const { isValid, missingFields } = validateFields(rowData);
+    if (!isValid) {
+      toast.current?.show({
+        severity: "error",
+        summary: messages.validationerror,
+        detail: `${missingFields.join(", ")} is required`,
+        life: 3000,
+      });
+      return;
+    }
     const date = new Date(rowData.paymentreceiveddate);
     const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().split("T")[0];
     
@@ -95,15 +109,26 @@ const AdvTwopay = () => {
     };
     try {
       const response = await dispatch(updateByTwoPay(payload));
-      if (response.payload.data && !response.payload.error) {
+      if (!response.payload.error) {
         const index = data.findIndex((item:any) => item._id === rowData._id);
         if (index !== -1) {
           data[index]._id = response.payload.data._id;
         }
         setSelectedRowId(null);
+        toast.current?.show({
+          severity: "success",
+          summary: messages.success,
+          detail: messages.updateoraddsuccess,
+          life: 3000,
+        });
       }
     } catch (error) {
-      console.log(error);
+      toast.current?.show({
+        severity: "error",
+        summary: messages.error,
+        detail: messages.updateoraddfailure,
+        life: 3000,
+      });
     }
   };
 
@@ -178,7 +203,12 @@ const AdvTwopay = () => {
         setTotalPage(trcukData.payload.pagination.totalPages);
       }
     } catch (error) {
-      console.log(error);
+      toast.current?.show({
+        severity: "error",
+        summary: messages.error,
+        detail: messages.loadfailure,
+        life: 3000,
+      });
     }
   }, [dispatch, page, rows, searchQuery]);
 
@@ -191,6 +221,7 @@ const AdvTwopay = () => {
   
     return (
       <div className="p-2" style={{ overflowX: "auto" }}>
+        <Toast ref={toast} />
         <DataTable value={data} showGridlines scrollable scrollHeight="80vh">
           <Column field="ats.sno" header="S.No" style={{ minWidth: "100px" }}></Column>
           <Column field="ats.date" header="Date" style={{ minWidth: "100px" }}></Column>

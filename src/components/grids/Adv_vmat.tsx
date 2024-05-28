@@ -1,15 +1,19 @@
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { InputText } from "primereact/inputtext";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "primereact/button";
 import { getByVmat, updateByVmat } from "../../store/slice/byvmatSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Paginator } from "primereact/paginator";
+import { validateFields } from "./validation1";
+import { messages } from "../../api/constants";
+import { Toast } from "primereact/toast";
 
 const AdvVmat = () => {
   const searchQuery = useSelector((state: any) => state.search.query);
+  const toast = useRef<Toast>(null);
   const dispatch = useDispatch<AppDispatch>();
   const [data, setData]: any = useState([]);
   const [selectedRowId, setSelectedRowId]: any = useState(null);
@@ -53,6 +57,16 @@ const AdvVmat = () => {
   };
 
   const handleSave = async (rowData: any) => {
+    const { isValid, missingFields } = validateFields(rowData);
+    if (!isValid) {
+      toast.current?.show({
+        severity: "error",
+        summary: messages.validationerror,
+        detail: `${missingFields.join(", ")} is required`,
+        life: 3000,
+      });
+      return;
+    }
     const payload = {
       pendinglabourwages: Number(rowData.pendinglabourwages),
       extlabourwages: Number(rowData.extlabourwages),
@@ -64,16 +78,26 @@ const AdvVmat = () => {
     }
     try {
       const response = await dispatch(updateByVmat(payload));
-      if (Array.isArray(response.payload.data) && !response.payload.error) {
+      if (!response.payload.error) {
         const index = data.findIndex((item:any) => item._id === rowData._id);
         if (index !== -1) {
           data[index]._id = response.payload.data._id;
         }
         setSelectedRowId(null);
-        setTotalPage(response.payload.pagination.totalPages);
+        toast.current?.show({
+          severity: "success",
+          summary: messages.success,
+          detail: messages.updateoraddsuccess,
+          life: 3000,
+        });
       }
     } catch (error) {
-      console.log(error)
+      toast.current?.show({
+        severity: "error",
+        summary: messages.error,
+        detail: messages.updateoraddfailure,
+        life: 3000,
+      });
     }
   };
   
@@ -127,7 +151,12 @@ const AdvVmat = () => {
         setTotalPage(trcukData.payload.pagination.totalPages);
       }
     } catch (error) {
-      console.log(error);
+      toast.current?.show({
+        severity: "error",
+        summary: messages.error,
+        detail: messages.loadfailure,
+        life: 3000,
+      });
     }
   }, [dispatch, page, rows, searchQuery]);
 
@@ -140,6 +169,7 @@ const AdvVmat = () => {
 
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
+      <Toast ref={toast} />
       <DataTable value={data} showGridlines scrollable scrollHeight="80vh">
         <Column
           field="ats.sno"

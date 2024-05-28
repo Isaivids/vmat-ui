@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
@@ -12,9 +12,13 @@ import {
   updateByTransporter,
 } from "../../store/slice/bytransSlice";
 import { Paginator } from "primereact/paginator";
+import { validateFields } from "./validation2";
+import { Toast } from "primereact/toast";
+import { messages } from "../../api/constants";
 
 const AdvTrans = () => {
   const searchQuery = useSelector((state: any) => state.search.query);
+  const toast = useRef<Toast>(null);
   const modeOfPayments = [
     { name: "Cash", code: "CASH" },
     { name: "Internet", code: "INT" },
@@ -76,6 +80,16 @@ const AdvTrans = () => {
   };
 
   const handleSave = async (rowData: any) => {
+    const { isValid, missingFields } = validateFields(rowData);
+    if (!isValid) {
+      toast.current?.show({
+        severity: "error",
+        summary: messages.validationerror,
+        detail: `${missingFields.join(", ")} is required`,
+        life: 3000,
+      });
+      return;
+    }
     const payload = {
       wages: Number(rowData.wages),
       others: Number(rowData.others),
@@ -87,15 +101,26 @@ const AdvTrans = () => {
     };
     try {
       const response = await dispatch(updateByTransporter(payload));
-      if (response.payload.data && !response.payload.error) {
+      if (!response.payload.error) {
         const index = data.findIndex((item: any) => item._id === rowData._id);
         if (index !== -1) {
           data[index]._id = response.payload.data._id;
         }
         setSelectedRowId(null);
+        toast.current?.show({
+          severity: "success",
+          summary: messages.success,
+          detail: messages.updateoraddsuccess,
+          life: 3000,
+        });
       }
     } catch (error) {
-      console.log(error);
+      toast.current?.show({
+        severity: "error",
+        summary: messages.error,
+        detail: messages.updateoraddfailure,
+        life: 3000,
+      });
     }
   };
 
@@ -194,7 +219,12 @@ const AdvTrans = () => {
         setTotalPage(trcukData.payload.pagination.totalPages);
       }
     } catch (error) {
-      console.log(error);
+      toast.current?.show({
+        severity: "error",
+        summary: messages.error,
+        detail: messages.loadfailure,
+        life: 3000,
+      });
     }
   }, [dispatch, page, rows, searchQuery]);
 
@@ -207,6 +237,7 @@ const AdvTrans = () => {
 
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
+      <Toast ref={toast} />
       <DataTable value={data} showGridlines scrollable scrollHeight="80vh">
         <Column
           field="ats.sno"

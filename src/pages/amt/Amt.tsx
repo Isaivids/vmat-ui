@@ -282,7 +282,7 @@ const Amt = () => {
       twopay: 0,
       truckloadwt: 0,
     };
-    setData([...data, newRow]);
+    setData([newRow,...data]);
     setSelectedRowId(newRow._id);
     setNewRowAdded(true);
   };

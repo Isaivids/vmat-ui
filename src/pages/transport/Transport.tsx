@@ -18,7 +18,7 @@ const Transport = () => {
   const searchQuery = useSelector((state: any) => state.search.query);
   const toast = useRef<Toast>(null);
   const [data, setData]: any = useState([]);
-  const dispatch:any = useDispatch<AppDispatch>();
+  const dispatch: any = useDispatch<AppDispatch>();
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
   //pagination
@@ -71,10 +71,10 @@ const Transport = () => {
       phonenumber: rowData.phonenumber,
       _id: rowData._id,
     };
-  
+
     try {
       const response = await dispatch(updateTruckDetail(payload));
-  
+
       if (!response.payload.error) {
         const index = data.findIndex((item: any) => item._id === rowData._id);
         if (index !== -1) {
@@ -82,7 +82,7 @@ const Transport = () => {
         } else {
           data.push(response.payload.data);
         }
-  
+
         setSelectedRowId(null);
         toast.current?.show({
           severity: "success",
@@ -100,8 +100,6 @@ const Transport = () => {
       });
     }
   };
-  
-  
 
   const handleCancel = () => {
     if (backupData) {
@@ -124,7 +122,7 @@ const Transport = () => {
       address: "",
       phonenumber: "",
     };
-    setData([newRow,...data]);
+    setData([newRow, ...data]);
     setSelectedRowId(newRow._id);
   };
 
@@ -154,7 +152,9 @@ const Transport = () => {
 
   const fetchData = useCallback(async () => {
     try {
-      const trcukData = await dispatch(gettruckdetail({ limit: rows, offset: page, search: searchQuery }));
+      const trcukData = await dispatch(
+        gettruckdetail({ limit: rows, offset: page, search: searchQuery })
+      );
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
         setData(trcukData.payload.data);
         setTotalPage(trcukData.payload.pagination.totalPages);
@@ -186,8 +186,16 @@ const Transport = () => {
         onClick={handleAddNewRow}
       />
       <DataTable value={data} showGridlines>
-        <Column field="transportname" header="Transport Name" body={renderInput}></Column>
-        <Column field="truckname" header="Truck Name" body={renderInput}></Column>
+        <Column
+          field="transportname"
+          header="Transport Name"
+          body={renderInput}
+        ></Column>
+        <Column
+          field="truckname"
+          header="Truck Name"
+          body={renderInput}
+        ></Column>
         <Column field="address" header="Address" body={renderInput}></Column>
         <Column
           field="phonenumber"
@@ -201,11 +209,11 @@ const Transport = () => {
         ></Column>
       </DataTable>
       <Paginator
-          first={first}
-          rows={rows}
-          totalRecords={totalPage}
-          onPageChange={onPageChange}
-        />
+        first={first}
+        rows={rows}
+        totalRecords={totalPage}
+        onPageChange={onPageChange}
+      />
     </div>
   );
 };
