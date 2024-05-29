@@ -3,7 +3,7 @@ export const validateFields = (data: any) => {
         "pendinglabourwages",
         "extlabourwages",
         "others",
-        "remarks"
+        "othersreason",
     ];
 
     const missingFields = requiredFields.filter(field => [null,undefined,''].includes(data[field]));
