@@ -4,6 +4,8 @@ export const validateFields = (data: any) => {
         "phonenumber",
         "truckname",
         "transportname",
+        "accountnumber",
+        "pannumber",
     ];
 
     const missingFields = requiredFields.filter(field => [null,undefined,''].includes(data[field]));

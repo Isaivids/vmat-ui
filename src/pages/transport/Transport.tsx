@@ -69,6 +69,8 @@ const Transport = () => {
       transportname: rowData.transportname,
       address: rowData.address,
       phonenumber: rowData.phonenumber,
+      accountnumber: rowData.accountnumber,
+      pannumber: rowData.pannumber,
       _id: rowData._id,
     };
 
@@ -110,7 +112,6 @@ const Transport = () => {
     }
     setSelectedRowId(null);
   };
-  
 
   const handleEdit = (rowData: any) => {
     setSelectedRowId(rowData._id);
@@ -124,6 +125,8 @@ const Transport = () => {
       truckname: "",
       address: "",
       phonenumber: "",
+      accountnumber: "",
+      pannumber: "",
     };
     setData([newRow, ...data]);
     setSelectedRowId(newRow._id);
@@ -180,7 +183,7 @@ const Transport = () => {
   }, [fetchData]);
 
   return (
-    <div className="p-2 w-screen">
+    <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
       <Button
         label="Add New Row"
@@ -188,7 +191,7 @@ const Transport = () => {
         className="mb-2"
         onClick={handleAddNewRow}
       />
-      <DataTable value={data} showGridlines>
+      <DataTable value={data} scrollable scrollHeight="80vh" showGridlines>
         <Column
           field="transportname"
           header="Transport Name"
@@ -205,6 +208,8 @@ const Transport = () => {
           header="Phone Number"
           body={renderInput}
         ></Column>
+        <Column field="accountnumber" header="Account Number" body={renderInput}></Column>
+        <Column field="pannumber" header="PAN Number" body={renderInput}></Column>
         <Column
           header="Actions"
           body={renderButton}

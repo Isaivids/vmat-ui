@@ -16,6 +16,7 @@ export const validateFields = (data: any) => {
         "vmatf",
         "transadv",
         "vmatadv",
+        "transaddvtype",
         "modeofadvance",
         "truckadv",
         "truckbln",
