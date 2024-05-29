@@ -45,7 +45,7 @@ const AdvVmat = () => {
   };
 
   const renderInput = (rowData: any, field: any) => {
-    const isStringField = ['remarks'].includes(field.field);
+    const isStringField = ['remarks','othersreason'].includes(field.field);
     return (
       <InputText
         disabled={rowData._id !== selectedRowId}
@@ -71,6 +71,7 @@ const AdvVmat = () => {
       pendinglabourwages: Number(rowData.pendinglabourwages),
       extlabourwages: Number(rowData.extlabourwages),
       others: Number(rowData.others),
+      othersreason : rowData.othersreason,
       advanceamount: Number(rowData.advanceamount),
       total: Number(rowData.total),
       remarks: rowData.remarks,
@@ -195,6 +196,7 @@ const AdvVmat = () => {
           body={renderInput}
         ></Column>
         <Column field="others" header="Others" body={renderInput}></Column>
+        <Column field="othersreason" header="Reason" body={renderInput}></Column>
         <Column field="vmatcommision" header="VMAT Commision"></Column>
         <Column field="total" header="Total"></Column>
         <Column field="remarks" header="Remarks" body={renderInput}></Column>
