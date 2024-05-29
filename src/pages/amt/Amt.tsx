@@ -26,6 +26,10 @@ const Amt = () => {
     { name: "By Transport", code: 2 },
     { name: "By TwoPay", code: 3 },
   ];
+  const transportAdvanceTypes = [
+    { name: "To VMAT", code: 1 },
+    { name: "To Truck", code: 2 },
+  ];
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
@@ -141,6 +145,7 @@ const Amt = () => {
       from: inputObject.from,
       to: inputObject.to,
       truckadv: Number(inputObject.truckadv),
+      transaddvtype: Number(inputObject.transaddvtype),
       repdate: getFormatteddate(inputObject.repdate),
       unloaddate: getFormatteddate(inputObject.unloaddate),
       lateday: inputObject.lateday,
@@ -273,6 +278,7 @@ const Amt = () => {
       from: "",
       to: "",
       truckadv: 0,
+      transaddvtype: 0,
       repdate: null,
       unloaddate: null,
       lateday: 0,
@@ -315,17 +321,24 @@ const Amt = () => {
     setData(newData);
   };
 
-  const renderDropdown = (rowData: any, field: any) => {
-    const selectedValue = modeOfAdvance.find(
-      (option) => option.code === rowData.modeofadvance
-    );
+  const renderDropdown = (rowData: any, field: any,type:string) => {
+    let selectedValue:any;
+    if(type === 'modeofadvance'){
+      selectedValue = modeOfAdvance.find(
+        (option) => option.code === rowData.modeofadvance
+      );
+    }else if(type === 'transaddvtype'){
+      selectedValue = transportAdvanceTypes.find(
+        (option) => option.code === rowData.transaddvtype
+      );
+    }
     return (
       <Dropdown
         value={selectedValue}
         onChange={(e) => onDropdownChange(e, rowData._id, field.field)}
-        options={modeOfAdvance}
+        options={type==='modeofadvance' ? modeOfAdvance : transportAdvanceTypes}
         optionLabel="name"
-        placeholder="Select a Advance"
+        placeholder="Select Advance"
         disabled={rowData._id !== selectedRowId}
         style={{ width: "150px" }}
       />
@@ -438,6 +451,11 @@ const Amt = () => {
             body={renderInput}
           ></Column>
           <Column
+            field="transaddvtype"
+            header="Transport Advance type"
+            body={(rowData,field) => renderDropdown(rowData,field,'transaddvtype')}
+          ></Column>
+          <Column
             field="transadv"
             header="Transport Advance"
             body={renderInput}
@@ -450,7 +468,7 @@ const Amt = () => {
           <Column
             field="modeofadvance"
             header="Mode Of Advance"
-            body={renderDropdown}
+            body={(rowData,field) => renderDropdown(rowData,field,'modeofadvance')}
           ></Column>
           <Column
             field="truckadv"
