@@ -17,6 +17,7 @@ const Login = () => {
     username: "",
     password: "",
   });
+  const [type, setType] = useState("password")
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const toast = useRef<Toast>(null);
@@ -25,6 +26,14 @@ const Login = () => {
     const { id, value } = e.target;
     setCredentials((prevCredentials) => ({ ...prevCredentials, [id]: value }));
   };
+
+  const typeChange = () =>{
+    if(type === 'password'){
+      setType("text")
+    }else{
+      setType("password")
+    }
+  }
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -78,11 +87,11 @@ const Login = () => {
               Password
             </label>
             <IconField className="mt-2">
-              <InputIcon className="pi pi-lock" />
+              <InputIcon className={type === 'text' ? "pi pi-eye-slash cursor-pointer" : "pi pi-eye cursor-pointer"} onClick={typeChange}/>
               <InputText
                 id="password"
                 className="w-full"
-                type="password"
+                type={type}
                 value={credentials.password}
                 onChange={handleInputChange}
               />
