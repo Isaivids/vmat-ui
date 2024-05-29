@@ -444,7 +444,7 @@ const Amt = () => {
           ></Column>
           <Column
             field="vmatadv"
-            header="VMAT Advance"
+            header="Advance from Transporter to VMAT"
             body={renderInput}
           ></Column>
           <Column
