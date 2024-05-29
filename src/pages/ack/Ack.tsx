@@ -156,7 +156,7 @@ const Ack = () => {
     return (
       <Calendar
         value={new Date(rowData[field.field]) || null}
-        style={{ width: "100px" }}
+        style={{ width: "150px" }}
         disabled={rowData._id !== selectedRowId}
         onChange={(e: any) => handleDateChange(e.value, field.field)}
       />
@@ -281,7 +281,7 @@ const Ack = () => {
         ></Column>
         <Column
           field="paymentReceivedDate"
-          header="Payment Received Date"
+          header="Payment transfer to truck owner"
           body={renderDatePicker}
         ></Column>
         <Column
