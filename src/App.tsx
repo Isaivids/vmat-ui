@@ -11,15 +11,17 @@ import Login from "./pages/login/Login";
 import WithOutNavBar from "./components/WithOutNavBar";
 import WithNavBar from "./components/WithNavBar";
 import Loader from "./components/loader/Loader";
+import ProtectedRoute from "./components/ProtectedRoute"; // Import the ProtectedRoute component
+
 const App = () => {
-  const atsState = useSelector((state: any) => state.ats);
-  const ackState = useSelector((state: any) => state.ack);
-  const truckState = useSelector((state: any) => state.truck);
-  const transState = useSelector((state: any) => state.trans);
-  const bytwopay = useSelector((state: any) => state.bytwopay);
-  const bytrans = useSelector((state: any) => state.bytrans);
-  const byvmat = useSelector((state: any) => state.byvmat);
-  const user = useSelector((state: any) => state.user);
+  const atsState = useSelector((state:any) => state.ats);
+  const ackState = useSelector((state:any) => state.ack);
+  const truckState = useSelector((state:any) => state.truck);
+  const transState = useSelector((state:any) => state.trans);
+  const bytwopay = useSelector((state:any) => state.bytwopay);
+  const bytrans = useSelector((state:any) => state.bytrans);
+  const byvmat = useSelector((state:any) => state.byvmat);
+  const user = useSelector((state:any) => state.user);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -47,11 +49,11 @@ const App = () => {
               <Route path="/" element={<Login />} />
             </Route>
             <Route element={<WithNavBar />}>
-              <Route path="/amt" element={<Amt />} />
-              <Route path="/ack" element={<Ack />} />
-              <Route path="/advance" element={<Advance />} />
-              <Route path="/payment" element={<Payment />} />
-              <Route path="/transport" element={<Transport />} />
+              <Route path="/amt" element={<ProtectedRoute element={<Amt />} />} />
+              <Route path="/ack" element={<ProtectedRoute element={<Ack />} />} />
+              <Route path="/advance" element={<ProtectedRoute element={<Advance />} />} />
+              <Route path="/payment" element={<ProtectedRoute element={<Payment />} />} />
+              <Route path="/transport" element={<ProtectedRoute element={<Transport />} />} />
             </Route>
           </Routes>
         </>

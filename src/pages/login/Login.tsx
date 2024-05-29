@@ -39,7 +39,6 @@ const Login = () => {
     e.preventDefault();
     try {
       const result: any = await dispatch(login(credentials));
-      console.log(result)
       if (result.error) {
         toast.current?.show({
           severity: "error",

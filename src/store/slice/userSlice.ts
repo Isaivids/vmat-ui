@@ -22,7 +22,6 @@ export const login = createAsyncThunk('login', async (payload: any) => {
 
 export const getUserInfo = createAsyncThunk('/getUserInfo', async () => {
     const response:any = await apiCall.get(`/getUserInfo`);
-    console.log(response)
     if (response.data.error) {
         throw new Error(response.data.message);
     }
@@ -52,7 +51,6 @@ const userSlice = createSlice({
             return { ...state, loading: true }
         })
         builder.addCase(getUserInfo.fulfilled, (state, { payload }) => {
-            console.log(payload)
             return { ...state, loading: false, error: false, body: payload }
         })
         builder.addCase(getUserInfo.rejected, (state, { error }) => {
