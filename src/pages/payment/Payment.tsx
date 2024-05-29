@@ -233,21 +233,21 @@ const Payment = () => {
           style={{ minWidth: "100px" }}
         ></Column>
         <Column field="ats.transname" header="Truck Name"></Column>
-        <Column field="ats.trucknumber" header="Truck No"></Column>
-        <Column field="ats.transf" header="Trans Freight"></Column>
-        <Column field="ats.transadv" header="Trans Advance"></Column>
+        <Column field="ats.trucknumber" header="Truck Number"></Column>
+        <Column field="ats.transf" header="Transport Freight"></Column>
+        <Column field="ats.transadv" header="Transport Advance"></Column>
         <Column
           field="loadunloadchar"
-          header="Lad Char/ UnloadChar"
+          header="Loading / Unloading Charges"
           body={renderInput}
         ></Column>
         <Column
           field="tyrasporterpaidamt"
-          header="Transprter Paid Adv Amt"
+          header="Transporter Paid Advance Amount"
         ></Column>
         <Column
           field="paymentreceiveddate"
-          header="payment Recv Date"
+          header="Payment Received Date"
           body={renderDatePicker}
         ></Column>
         <Column

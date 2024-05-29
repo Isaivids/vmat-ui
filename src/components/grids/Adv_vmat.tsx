@@ -182,16 +182,16 @@ const AdvVmat = () => {
           style={{ minWidth: "150px" }}
         ></Column>
         <Column field="ats.truckname" header="Truck Name"></Column>
-        <Column field="ats.trucknumber" header="Truck No"></Column>
+        <Column field="ats.trucknumber" header="Truck Number"></Column>
         <Column field="advanceamount" header="Advance"></Column>
         <Column
           field="pendinglabourwages"
-          header="Pen. Labour Wages"
+          header="Pending Labour Wages"
           body={renderInput}
         ></Column>
         <Column
           field="extlabourwages"
-          header="Ext. Labour Wages"
+          header="Extra Labour Wages"
           body={renderInput}
         ></Column>
         <Column field="others" header="Others" body={renderInput}></Column>

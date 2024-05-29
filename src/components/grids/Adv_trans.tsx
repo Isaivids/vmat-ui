@@ -177,7 +177,7 @@ const AdvTrans = () => {
       <Calendar
         value={new Date(rowData[field.field]) || null}
         onChange={(e) => onDateChange(e, rowData._id, field.field)}
-        style={{ width: "100px" }}
+        style={{ width: "150px" }}
         disabled={rowData._id !== selectedRowId}
       />
     );
@@ -250,20 +250,20 @@ const AdvTrans = () => {
           header="Date"
         ></Column>
         <Column field="ats.truckname" header="Truck Name"></Column>
-        <Column field="ats.transname" header="Trans Name"></Column>
-        <Column field="ats.transf" header="Trans Freight"></Column>
+        <Column field="ats.transname" header="Transport Name"></Column>
+        <Column field="ats.transf" header="Transport Freight"></Column>
         <Column field="advanceamount" header="Advance"></Column>
         <Column
           field="transadvtotruck"
           style={{ minWidth: "150px" }}
-          header="Trans Adv to Truck"
+          header="Transport Advance to Truck"
         ></Column>
         <Column field="wages" header="Wages" body={renderInput}></Column>
         <Column field="others" header="Others" body={renderInput}></Column>
         <Column field="remarks" header="Remarks" body={renderInput}></Column>
         <Column
           field="paymentreceiveddate"
-          header="payment Recv Date"
+          header="Payment Received Date"
           body={renderDatePicker}
         ></Column>
         <Column

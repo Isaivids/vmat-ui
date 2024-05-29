@@ -172,7 +172,7 @@ const AdvTwopay = () => {
       <Calendar
         value={new Date(rowData[field.field]) || null}
         onChange={(e) => onDateChange(e, rowData._id, field.field)}
-        style={{ width: "100px" }}
+        style={{ width: "150px" }}
         disabled={rowData._id !== selectedRowId}
       />
     );
@@ -226,15 +226,15 @@ const AdvTwopay = () => {
           <Column field="ats.sno" header="S.No" style={{ minWidth: "100px" }}></Column>
           <Column field="ats.date" header="Date" style={{ minWidth: "100px" }}></Column>
           <Column field="ats.truckname" header="Truck Name" style={{ minWidth: "100px" }}></Column>
-          <Column field="ats.trucknumber" header="Truck No"></Column>
-          <Column field="ats.transname" header="Trans Name"></Column>
-          <Column field="ats.transf" header="Trans Freight"></Column>
+          <Column field="ats.trucknumber" header="Truck Number"></Column>
+          <Column field="ats.transname" header="Transport Name"></Column>
+          <Column field="ats.transf" header="Transport Freight"></Column>
           <Column field="advanceamount" header="Advance"></Column>
-          <Column field="luxwages" header="L/UN Ex Wages" body={renderInput}></Column>
+          <Column field="luxwages" header="Loading/Unloading Extra Wages" body={renderInput}></Column>
           <Column field="total" header="Total"></Column>
           <Column
             field="paymentreceiveddate"
-            header="payment Recv Date"
+            header="Payment Received Date"
             body={renderDatePicker}
           ></Column>
           <Column

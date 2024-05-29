@@ -25,7 +25,7 @@ const Sidebar = () => {
       image: require("../../assets/ico2.svg").default,
     },
     {
-      name: "Trans Crossing Payment",
+      name: "Transport Crossing Payment",
       to: "/payment",
       image: require("../../assets/ico4.svg").default,
     },

@@ -253,33 +253,33 @@ const Ack = () => {
           header="Truck Name"
           style={{ minWidth: "150px" }}
         ></Column>
-        <Column field="ats.trucknumber" header="Truck No"></Column>
-        <Column field="ats.transname" header="Trans Name"></Column>
-        <Column field="ats.truckbln" header="Truck Bln"></Column>
+        <Column field="ats.trucknumber" header="Truck Number"></Column>
+        <Column field="ats.transname" header="Transport Name"></Column>
+        <Column field="ats.truckbln" header="Truck Balance"></Column>
         <Column field="expense" header="Expense" body={renderInput}></Column>
-        <Column field="ats.lateday" header="Late Delv"></Column>
+        <Column field="ats.lateday" header="Late Delivery"></Column>
         <Column field="ats.halting" header="Halting"></Column>
         <Column field="vmatcrossing" header="VMAT Crossing"></Column>
         <Column field="vmatcommision" header="VMAT Commission"></Column>
         <Column field="transcrossing" header="Trans Crossing"></Column>
         <Column
           field="ats.twopay"
-          header="2Pay Trans Bln."
+          header="2Pay Transport Balance."
           style={{ minWidth: "200px" }}
         ></Column>
         <Column
           field="pendingamountfromtruckowner"
-          header="Pending Amt From Truck Own"
+          header="Pending Amount From Truck Owner"
           style={{ minWidth: "200px" }}
         ></Column>
         <Column
           field="finaltotaltotruckowner"
-          header="Final Total to Truck Own"
+          header="Final Total to Truck Owner"
           style={{ minWidth: "200px" }}
         ></Column>
         <Column
           field="paymentReceivedDate"
-          header="payment Recv Date"
+          header="Payment Received Date"
           body={renderDatePicker}
         ></Column>
         <Column

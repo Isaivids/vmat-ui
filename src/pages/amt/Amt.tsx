@@ -405,7 +405,7 @@ const Amt = () => {
           <Column field="to" header="To" body={renderInput}></Column>
           <Column
             field="repdate"
-            header="Rep. Date"
+            header="Reporting Date"
             body={renderDatePicker}
           ></Column>
           <Column
@@ -428,12 +428,17 @@ const Amt = () => {
           ></Column>
           <Column
             field="transf"
-            header="Trans Freight"
+            header="Transport Freight"
             body={renderInput}
           ></Column>
           <Column
             field="transadv"
-            header="Trans Advance"
+            header="Transport Advance"
+            body={renderInput}
+          ></Column>
+          <Column
+            field="vmatadv"
+            header="VMAT Advance"
             body={renderInput}
           ></Column>
           <Column
@@ -453,13 +458,13 @@ const Amt = () => {
           ></Column>
           <Column
             field="transbln"
-            header="Trans Balance"
+            header="Transport Balance"
             body={renderInput}
           ></Column>
           <Column field="twopay" header="2-Pay" body={renderInput}></Column>
           <Column
             field="truckloadwt"
-            header="Truck Load Wt"
+            header="Truck Load Weight"
             body={renderInput}
           ></Column>
           <Column
