@@ -45,7 +45,12 @@ const Ack = () => {
         const expense = Number(updatedRow.expense);
         const lateday = Number(updatedRow.ats.lateday);
         const halting = Number(updatedRow.ats.halting);
-        const addThree = updatedRow.transcrossing + updatedRow.vmatcrossing + updatedRow.vmatcommision
+        let addThree = 0
+        if([1,2].includes(updatedRow.modeofadvance)){
+          addThree = updatedRow.transcrossing + updatedRow.vmatcrossing + updatedRow.vmatcommision
+        }else{
+          addThree = updatedRow.transcrossing;
+        }
         updatedRow.pendingamountfromtruckowner = addThree + expense + (lateday * halting)
         updatedRow.finaltotaltotruckowner = updatedRow.ats.truckbln - addThree;
         return updatedRow;
