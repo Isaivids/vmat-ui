@@ -45,7 +45,9 @@ const Ack = () => {
         const expense = Number(updatedRow.expense);
         const lateday = Number(updatedRow.ats.lateday);
         const halting = Number(updatedRow.ats.halting);
-        updatedRow.finaltotaltotruckowner = expense + lateday * halting;
+        const addThree = updatedRow.transcrossing + updatedRow.vmatcrossing + updatedRow.vmatcommision
+        updatedRow.pendingamountfromtruckowner = addThree + expense + (lateday * halting)
+        updatedRow.finaltotaltotruckowner = updatedRow.ats.truckbln - addThree;
         return updatedRow;
       }
       return row;
