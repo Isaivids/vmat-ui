@@ -51,12 +51,13 @@ const Payment = () => {
   };
 
   const renderInput = (rowData: any, field: any) => {
+    const isStringField = ["remarks"].includes(field.field);
     return (
       <InputText
         disabled={rowData._id !== selectedRowId}
         value={rowData[field.field]}
         onChange={(e) => onInputChange(e, rowData._id, field.field)}
-        keyfilter={"num"}
+        keyfilter={isStringField ? "alphanum" : "num"}
       />
     );
   };
@@ -104,6 +105,7 @@ const Payment = () => {
       tyrasporterpaidamt: Number(rowData.tyrasporterpaidamt),
       modeofpayment: rowData.modeofpayment,
       paymentreceiveddate: localDate,
+      remarks : rowData.remarks,
       _id: rowData._id,
     };
     try {
@@ -244,6 +246,12 @@ const Payment = () => {
         <Column
           field="tyrasporterpaidamt"
           header="Transporter Paid Advance Amount"
+          style={{minWidth : '200px'}}
+        ></Column>
+        <Column
+          field="remarks"
+          header="Remarks"
+          body={renderInput}
         ></Column>
         <Column
           field="paymentreceiveddate"
