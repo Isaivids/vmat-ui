@@ -263,7 +263,7 @@ const Ack = () => {
         <Column field="ats.halting" header="Halting"></Column>
         <Column field="vmatcrossing" header="VMAT Crossing"></Column>
         <Column field="vmatcommision" header="VMAT Commission"></Column>
-        <Column field="transcrossing" header="Trans Crossing"></Column>
+        <Column field="transcrossing" header="Transport Crossing"></Column>
         <Column
           field="ats.twopay"
           header="2Pay Transport Balance."
