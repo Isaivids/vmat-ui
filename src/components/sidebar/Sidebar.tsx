@@ -34,6 +34,17 @@ const Sidebar = () => {
       to: "/transport",
       image: require("../../assets/ico5.svg").default,
     },
+    {
+      // name : 'Commission Crossing Pending from Truck Owner',
+      name : 'Commission Crossing Pending',
+      to: "/ccpto",
+      image: require("../../assets/ico4.svg").default,
+    },
+    {
+      name : "Transport Crossing Payment",
+      to: "/tcp",
+      image: require("../../assets/ico5.svg").default,
+    }
   ];
 
   const logoutProfile = () =>{

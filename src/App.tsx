@@ -12,6 +12,8 @@ import WithOutNavBar from "./components/WithOutNavBar";
 import WithNavBar from "./components/WithNavBar";
 import Loader from "./components/loader/Loader";
 import ProtectedRoute from "./components/ProtectedRoute"; // Import the ProtectedRoute component
+import Ccpto from "./pages/ccpto/Ccpto";
+import Tcp from "./pages/tcp/Tcp";
 
 const App = () => {
   const atsState = useSelector((state:any) => state.ats);
@@ -54,6 +56,8 @@ const App = () => {
               <Route path="/advance" element={<ProtectedRoute element={<Advance />} />} />
               <Route path="/payment" element={<ProtectedRoute element={<Payment />} />} />
               <Route path="/transport" element={<ProtectedRoute element={<Transport />} />} />
+              <Route path="/ccpto" element={<ProtectedRoute element={<Ccpto />} />} />
+              <Route path="/tcp" element={<ProtectedRoute element={<Tcp />} />} />
             </Route>
           </Routes>
         </>
