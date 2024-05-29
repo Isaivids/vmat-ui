@@ -74,7 +74,7 @@ const Amt = () => {
     ].includes(field.field);
     const isMt = ['truckloadwt'].includes(field.field)
     return (
-      <div className="flex align-items-center">
+      <div className="flex align-items-center rel">
       <InputText
         disabled={rowData._id !== selectedRowId}
         value={rowData[field.field]}
@@ -82,7 +82,7 @@ const Amt = () => {
         keyfilter={isNumberField ? "num" : "alphanum"}
         style={{ width: "150px" }}
       />
-      {isMt && <span className="text-bold">mt</span>}
+      {isMt && <span className="font-semibold abs">mt</span>}
       </div>
     );
   };
