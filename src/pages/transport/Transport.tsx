@@ -8,7 +8,7 @@ import {
 } from "../../store/slice/transportSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
-import { InputText } from "primereact/inputtext";
+import { InputTextarea } from "primereact/inputtextarea";
 import { Paginator } from "primereact/paginator";
 import { Toast } from "primereact/toast";
 import { messages } from "../../api/constants";
@@ -45,10 +45,13 @@ const Transport = () => {
 
   const renderInput = (rowData: any, field: any) => {
     return (
-      <InputText
+      <InputTextarea
         disabled={rowData._id !== selectedRowId}
         value={rowData[field.field]}
         onChange={(e) => onInputChange(e, rowData._id, field.field)}
+        rows={1} 
+        cols={30}
+        autoResize
       />
     );
   };
