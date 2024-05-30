@@ -8,6 +8,7 @@ import byvmatSlice from "./slice/byvmatSlice";
 import byTwoPaySlice from './slice/bytwopaySlice'
 import searchSlice from "./slice/searchSlice";
 import userSlice from "./slice/userSlice";
+import ccptoSlice from "./slice/ccptoSlice";
 export const Store = configureStore({
     reducer: { 
         ats: atsSlice, 
@@ -18,7 +19,8 @@ export const Store = configureStore({
         byvmat : byvmatSlice,
         bytwopay : byTwoPaySlice,
         search : searchSlice,
-        user : userSlice
+        user : userSlice,
+        ccpto : ccptoSlice
     }
 })
 

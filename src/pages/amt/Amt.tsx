@@ -76,17 +76,17 @@ const Amt = () => {
       "truckloadwt",
       "halting",
     ].includes(field.field);
-    const isMt = ['truckloadwt'].includes(field.field)
+    const isMt = ["truckloadwt"].includes(field.field);
     return (
       <div className="flex align-items-center rel">
-      <InputText
-        disabled={rowData._id !== selectedRowId}
-        value={rowData[field.field]}
-        onChange={(e) => onInputChange(e, rowData._id, field.field)}
-        keyfilter={isNumberField ? "num" : "alphanum"}
-        style={{ width: "150px" }}
-      />
-      {isMt && <span className="font-semibold abs">mt</span>}
+        <InputText
+          disabled={rowData._id !== selectedRowId}
+          value={rowData[field.field]}
+          onChange={(e) => onInputChange(e, rowData._id, field.field)}
+          keyfilter={isNumberField ? "num" : "alphanum"}
+          style={{ width: "150px" }}
+        />
+        {isMt && <span className="font-semibold abs">mt</span>}
       </div>
     );
   };
@@ -154,7 +154,7 @@ const Amt = () => {
       transf: Number(inputObject.transf),
       vmatf: Number(inputObject.vmatf),
       vmatadv: Number(inputObject.vmatadv),
-      modeofadvance : Number(inputObject.modeofadvance),
+      modeofadvance: Number(inputObject.modeofadvance),
       transadv: Number(inputObject.transadv),
       truckbln: Number(inputObject.truckbln),
       transbln: Number(inputObject.transbln),
@@ -168,21 +168,19 @@ const Amt = () => {
     const payload = getNewdataPayload(data);
     try {
       const response = await dispatch(addAts(payload));
-      if (response.payload.data && !response.payload.error) {
-        const index = data.findIndex(
-          (item: any) => item._id === response.payload.data._id
-        );
-        if (index !== -1) {
-          data[index]._id = response.payload.data._id;
-        }
-        setSelectedRowId(null);
-        toast.current?.show({
-          severity: "success",
-          summary: messages.success,
-          detail: messages.updateoraddsuccess,
-          life: 3000,
-        });
+      const index = data.findIndex(
+        (item: any) => item._id === response.payload.data._id
+      );
+      if (index !== -1) {
+        data[index]._id = response.payload.data._id;
       }
+      setSelectedRowId(null);
+      toast.current?.show({
+        severity: "success",
+        summary: messages.success,
+        detail: messages.updateoraddsuccess,
+        life: 3000,
+      });
     } catch (error: any) {
       toast.current?.show({
         severity: "error",
@@ -269,7 +267,7 @@ const Amt = () => {
       }, 0) + 1;
 
     const newRow = {
-      _id: `new-${nextSno}`, 
+      _id: new Date().getDate().toString(),
       sno: nextSno.toString() + `/` + month + `-` + year,
       date: currentDate,
       truckname: "",
@@ -286,7 +284,7 @@ const Amt = () => {
       truckf: 0,
       transf: 0,
       vmatf: 0,
-      vmatadv : 0,
+      vmatadv: 0,
       modeofadvance: 0,
       transadv: 0,
       truckbln: 0,
@@ -294,7 +292,7 @@ const Amt = () => {
       twopay: 0,
       truckloadwt: 0,
     };
-    setData([newRow,...data]);
+    setData([newRow, ...data]);
     setSelectedRowId(newRow._id);
     setNewRowAdded(true);
   };
@@ -321,13 +319,13 @@ const Amt = () => {
     setData(newData);
   };
 
-  const renderDropdown = (rowData: any, field: any,type:string) => {
-    let selectedValue:any;
-    if(type === 'modeofadvance'){
+  const renderDropdown = (rowData: any, field: any, type: string) => {
+    let selectedValue: any;
+    if (type === "modeofadvance") {
       selectedValue = modeOfAdvance.find(
         (option) => option.code === rowData.modeofadvance
       );
-    }else if(type === 'transaddvtype'){
+    } else if (type === "transaddvtype") {
       selectedValue = transportAdvanceTypes.find(
         (option) => option.code === rowData.transaddvtype
       );
@@ -336,7 +334,9 @@ const Amt = () => {
       <Dropdown
         value={selectedValue}
         onChange={(e) => onDropdownChange(e, rowData._id, field.field)}
-        options={type==='modeofadvance' ? modeOfAdvance : transportAdvanceTypes}
+        options={
+          type === "modeofadvance" ? modeOfAdvance : transportAdvanceTypes
+        }
         optionLabel="name"
         placeholder="Select Advance"
         disabled={rowData._id !== selectedRowId}
@@ -348,7 +348,7 @@ const Amt = () => {
   const fetchData = useCallback(async () => {
     try {
       const atsData = await dispatch(
-        getAts({ limit: rows, offset: page, search: searchQuery })
+        getAts({ limit: rows, offset: page * rows , search: searchQuery })
       );
       if (Array.isArray(atsData.payload.data) && !atsData.payload.error) {
         const formattedData = atsData.payload.data.map((item: any) => ({
@@ -358,7 +358,7 @@ const Amt = () => {
           unloaddate: item.unloaddate ? new Date(item.unloaddate) : null,
         }));
         setData(formattedData);
-        setTotalPage(atsData.payload.pagination.totalPages);
+        setTotalPage(atsData.payload.pagination.totalDocuments);
       }
     } catch (error) {
       toast.current?.show({
@@ -391,7 +391,7 @@ const Amt = () => {
           value={data}
           showGridlines
           scrollable
-          scrollHeight="80vh"
+          scrollHeight="70vh"
           emptyMessage="No records found"
         >
           <Column
@@ -453,7 +453,9 @@ const Amt = () => {
           <Column
             field="transaddvtype"
             header="Transport Advance type"
-            body={(rowData,field) => renderDropdown(rowData,field,'transaddvtype')}
+            body={(rowData, field) =>
+              renderDropdown(rowData, field, "transaddvtype")
+            }
           ></Column>
           <Column
             field="transadv"
@@ -468,7 +470,9 @@ const Amt = () => {
           <Column
             field="modeofadvance"
             header="Mode Of Advance"
-            body={(rowData,field) => renderDropdown(rowData,field,'modeofadvance')}
+            body={(rowData, field) =>
+              renderDropdown(rowData, field, "modeofadvance")
+            }
           ></Column>
           <Column
             field="truckadv"

@@ -162,11 +162,11 @@ const Transport = () => {
   const fetchData = useCallback(async () => {
     try {
       const trcukData = await dispatch(
-        gettruckdetail({ limit: rows, offset: page, search: searchQuery })
+        gettruckdetail({ limit: rows, offset: page * rows, search: searchQuery })
       );
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
         setData(trcukData.payload.data);
-        setTotalPage(trcukData.payload.pagination.totalPages);
+        setTotalPage(trcukData.payload.pagination.totalDocuments);
       }
     } catch (error) {
       toast.current?.show({

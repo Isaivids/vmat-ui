@@ -14,7 +14,7 @@ const initialState = {
 
 export const getAts = createAsyncThunk('getats', async (filters:any) => {
     const response:any = await apiCall.get(`/getats?limit=${filters.limit}&offset=${filters.offset}&search=${filters.search}`);
-    if (response.error) {
+    if (response.data.error) {
         throw new Error("Error message");
     }
     return response.data;
@@ -22,7 +22,7 @@ export const getAts = createAsyncThunk('getats', async (filters:any) => {
 
 export const addAts = createAsyncThunk('addats', async (payload:any) => {
     const response:any = await apiCall.post(`/addats`,payload);
-    if (response.error) {
+    if (response.data.error) {
         throw new Error("Error message");
     }
     return response.data;
@@ -30,7 +30,7 @@ export const addAts = createAsyncThunk('addats', async (payload:any) => {
 
 export const updateats = createAsyncThunk('updateats', async (payload:any) => {
     const response:any = await apiCall.put(`/updateats`,payload);
-    if (response.error) {
+    if (response.data.error) {
         throw new Error("Error message");
     }
     return response.data;
@@ -54,7 +54,7 @@ const atsSlice = createSlice({
             return { ...state, loading: true }
         })
         builder.addCase(addAts.fulfilled, (state, { payload }) => {
-            return { ...state, error: false, loading: false }
+            return { ...state,body : payload, error: false, loading: false }
         })
         builder.addCase(addAts.rejected, (state) => {
             return { ...state, loading: false, error: true }

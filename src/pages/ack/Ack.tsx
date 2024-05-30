@@ -214,10 +214,10 @@ const Ack = () => {
 
   const fetchData = useCallback(async () => {
     try {
-      const ackdata = await dispatch(getAck({ limit: rows, offset: page, search: searchQuery }));
+      const ackdata = await dispatch(getAck({ limit: rows, offset: page * rows, search: searchQuery }));
       if (Array.isArray(ackdata.payload.data) && !ackdata.payload.error) {
         setData(ackdata.payload.data);
-        setTotalPage(ackdata.payload.pagination.totalPages);
+        setTotalPage(ackdata.payload.pagination.totalDocuments);
       }
     } catch (error) {
       toast.current?.show({

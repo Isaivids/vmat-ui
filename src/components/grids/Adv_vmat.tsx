@@ -146,10 +146,10 @@ const AdvVmat = () => {
 
   const fetchData = useCallback(async () => {
     try {
-      const trcukData = await dispatch(getByVmat({ limit: rows, offset: page, search: searchQuery }));
+      const trcukData = await dispatch(getByVmat({ limit: rows, offset: page * rows, search: searchQuery }));
       if (trcukData.payload.data.length && !trcukData.payload.error) {
         setData(trcukData.payload.data);
-        setTotalPage(trcukData.payload.pagination.totalPages);
+        setTotalPage(trcukData.payload.pagination.totalDocuments);
       }
     } catch (error) {
       toast.current?.show({
