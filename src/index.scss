@@ -105,3 +105,15 @@ $secondary : #DBA008;
     border-radius: 0 3px 3px 0;
   }
 }
+
+.red{
+  background-color: rgb(255, 173, 173) !important;
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+  background-color: inherit !important;
+}
+
+.p-datatable .p-datatable-tbody > tr {
+  background-color: #fff ;
+}

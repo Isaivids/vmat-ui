@@ -200,10 +200,17 @@ const Ccpto = () => {
     fetchDataAndLog();
   }, [fetchData]);
 
+  const rowClassName = (rowData:any) => {
+    if([null,'',undefined].includes(rowData.paymentReceivedDate) || [null,'',undefined].includes(rowData.modeofpayment)){
+      return 'red'
+    }
+    return '';
+  };
+
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
-      <DataTable value={data} showGridlines scrollable scrollHeight="80vh">
+      <DataTable value={data} showGridlines scrollable scrollHeight="80vh" rowClassName={rowClassName}>
         <Column field="ats.sno" header="S.No"></Column>
         <Column field="ats.date" header="Date"></Column>
         <Column field="ats.transname" header="Transport Name"></Column>
