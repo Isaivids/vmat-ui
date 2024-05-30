@@ -11,7 +11,7 @@ import Login from "./pages/login/Login";
 import WithOutNavBar from "./components/WithOutNavBar";
 import WithNavBar from "./components/WithNavBar";
 import Loader from "./components/loader/Loader";
-import ProtectedRoute from "./components/ProtectedRoute"; // Import the ProtectedRoute component
+import ProtectedRoute from "./components/ProtectedRoute";
 import Ccpto from "./pages/ccpto/Ccpto";
 import Tcp from "./pages/tcp/Tcp";
 
@@ -25,6 +25,7 @@ const App = () => {
   const byvmat = useSelector((state:any) => state.byvmat);
   const user = useSelector((state:any) => state.user);
   const ccpto = useSelector((state:any) => state.ccpto);
+  const tcp = useSelector((state:any) => state.tcp);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -46,7 +47,7 @@ const App = () => {
             bytrans.loading ||
             bytwopay.loading ||
             byvmat.loading ||
-            user.loading || ccpto.loading) && <SpinnerWithLogo />}
+            user.loading || ccpto.loading || tcp.loading) && <SpinnerWithLogo />}
           <Routes>
             <Route element={<WithOutNavBar />}>
               <Route path="/" element={<Login />} />

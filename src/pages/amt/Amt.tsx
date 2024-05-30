@@ -168,6 +168,7 @@ const Amt = () => {
     const payload = getNewdataPayload(data);
     try {
       const response = await dispatch(addAts(payload));
+      console.log(response)
       const index = data.findIndex(
         (item: any) => item._id === response.payload.data._id
       );
@@ -182,12 +183,12 @@ const Amt = () => {
         life: 3000,
       });
     } catch (error: any) {
-      toast.current?.show({
-        severity: "error",
-        summary: messages.error,
-        detail: messages.updateoraddfailure,
-        life: 3000,
-      });
+      // toast.current?.show({
+      //   severity: "error",
+      //   summary: messages.error,
+      //   detail: messages.updateoraddfailure,
+      //   life: 3000,
+      // });
     }
   };
 

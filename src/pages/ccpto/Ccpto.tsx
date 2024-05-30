@@ -107,7 +107,6 @@ const Ccpto = () => {
       });
       return;
     }
-    console.log(rowData)
     const payload = {
       paymentReceivedDate: getFormattedDate(rowData.paymentReceivedDate),
       modeofpayment: rowData.modeofpayment,
