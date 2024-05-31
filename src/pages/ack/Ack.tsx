@@ -12,6 +12,7 @@ import { Paginator } from "primereact/paginator";
 import { validateFields } from "./validation";
 import { Toast } from "primereact/toast";
 import { messages } from "../../api/constants";
+import { Checkbox } from "primereact/checkbox";
 const Ack = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [data, setData]: any = useState([]);
@@ -36,29 +37,75 @@ const Ack = () => {
     setRows(event.rows);
   };
   // ----------end of pagination
-
-  const onInputChange = (e: any, id: any, field: any) => {
-    const { value } = e.target;
-    const newData: any = data.map((row: any) => {
-      if (row._id === id) {
-        const updatedRow = { ...row, [field]: value };
-        const expense = Number(updatedRow.expense);
-        const lateday = Number(updatedRow.ats.lateday);
-        const halting = Number(updatedRow.ats.halting);
-        let addThree = 0
-        if([1,2].includes(updatedRow.modeofadvance)){
-          addThree = updatedRow.transcrossing + updatedRow.vmatcrossing + updatedRow.vmatcommision
-        }else{
-          addThree = updatedRow.transcrossing;
-        }
-        updatedRow.pendingamountfromtruckowner = addThree + expense + (lateday * halting)
-        updatedRow.finaltotaltotruckowner = updatedRow.ats.truckbln - addThree;
-        return updatedRow;
+  // Checkbox state
+  const handleCheckboxChange = (rowData: any, field: string) => {
+    const updatedData = data.map((row: any) => {
+      if (row._id === rowData._id) {
+        // return { ...row, [field]: !row[field] };
+        const updatedRow = { ...row, [field]: !row[field] };
+        return calculateUpdatedRow(updatedRow);
       }
       return row;
     });
-    setData(newData);
+    setData(updatedData);
   };
+
+  const renderCheckbox = (rowData: any, field: string,parent:any) => {
+    return (
+      <div className="flex gap-3 align-items-center">
+        <Checkbox
+          checked={rowData[field]}
+          disabled={rowData._id !== selectedRowId}
+          onChange={() => handleCheckboxChange(rowData, field)}
+        />
+        <span>{rowData[parent]}</span>
+      </div>
+    );
+  };
+
+  const calculateUpdatedRow = (updatedRow:any) =>{
+    const expense = Number(updatedRow.expense);
+    const lateday = Number(updatedRow.ats.lateday);
+    const halting = Number(updatedRow.ats.halting);
+    let addThree = 0;
+    
+    if ([1, 2].includes(updatedRow.modeofadvance)) {
+      if (updatedRow.hidevc) {
+        addThree += updatedRow.vmatcrossing;
+      }
+      if (updatedRow.hidevcm) {
+        addThree += updatedRow.vmatcommision;
+      }
+      if (updatedRow.hidetc) {
+        addThree += updatedRow.transcrossing;
+      }
+    } else {
+      if (updatedRow.hidetc) {
+        addThree += updatedRow.transcrossing;
+      }
+      if (updatedRow.hidevc) {
+        addThree += updatedRow.vmatcrossing;
+      }
+      if (updatedRow.hidevcm) {
+        addThree += updatedRow.vmatcommision;
+      }
+    }
+    updatedRow.pendingamountfromtruckowner = addThree + expense + (lateday * halting);
+    updatedRow.finaltotaltotruckowner = updatedRow.ats.truckbln - addThree;
+    return updatedRow
+  }
+
+  const onInputChange = (e: any, id: any, field: any) => {
+  const { value } = e.target;
+  const newData: any = data.map((row: any) => {
+    if (row._id === id) {
+      const updatedRow = { ...row, [field]: value };
+      return calculateUpdatedRow(updatedRow);
+    }
+    return row;
+  });
+  setData(newData);
+};
 
   const handleDateChange = (value: Date, field: string) => {
     setData((prevData: any) =>
@@ -108,6 +155,9 @@ const Ack = () => {
       acknowledgementReceivedDate: getFormattedDate(
         rowData.acknowledgementReceivedDate
       ),
+      hidevc : rowData.hidevc,
+      hidevcm : rowData.hidevcm,
+      hidetc : rowData.hidetc,
       expense: Number(rowData.expense),
       finaltotaltotruckowner: Number(rowData.finaltotaltotruckowner),
       paymentReceivedDate: getFormattedDate(rowData.paymentReceivedDate),
@@ -266,9 +316,9 @@ const Ack = () => {
         <Column field="expense" header="Expense" body={renderInput}></Column>
         <Column field="ats.lateday" header="Late Delivery"></Column>
         <Column field="ats.halting" header="Halting"></Column>
-        <Column field="vmatcrossing" header="VMAT Crossing"></Column>
-        <Column field="vmatcommision" header="VMAT Commission"></Column>
-        <Column field="transcrossing" header="Transport Crossing"></Column>
+        <Column field="vmatcrossing" body={(rowData) => renderCheckbox(rowData,'hidevc' ,'vmatcrossing')} header="VMAT Crossing"></Column>
+        <Column field="vmatcommision" body={(rowData) => renderCheckbox(rowData,'hidevcm', 'vmatcommision')} header="VMAT Commission"></Column>
+        <Column field="transcrossing" body={(rowData) => renderCheckbox(rowData,'hidetc', 'transcrossing')} header="Transport Crossing"></Column>
         <Column
           field="ats.twopay"
           header="2Pay Transport Balance."
