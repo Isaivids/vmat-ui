@@ -89,7 +89,7 @@ const Payment = () => {
         disabled={rowData._id !== selectedRowId}
         value={rowData[field.field]}
         onChange={(e) => onInputChange(e, rowData._id, field.field)}
-        keyfilter={isStringField ? "alphanum" : "num"}
+        keyfilter={isStringField ? undefined : "num"}
         onBlur={() => onInputBlur(rowData._id, field.field)}
       />
     );

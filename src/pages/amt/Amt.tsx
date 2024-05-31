@@ -90,7 +90,7 @@ const Amt = () => {
           disabled={rowData._id !== selectedRowId}
           value={rowData[field.field]}
           onChange={(e) => onInputChange(e, rowData._id, field.field)}
-          keyfilter={isNumberField ? "num" : "alphanum"}
+          keyfilter={isNumberField ? "num" : undefined}
           style={{ width: "150px" }}
         />
         {isMt && <span className="font-semibold abs">mt</span>}
@@ -459,7 +459,7 @@ const Amt = () => {
           ></Column>
           <Column
             field="transaddvtype"
-            header="Transport Advance type"
+            header="Transporter Advance type to Truck"
             body={(rowData, field) =>
               renderDropdown(rowData, field, "transaddvtype")
             }
@@ -471,12 +471,12 @@ const Amt = () => {
           ></Column>
           <Column
             field="vmatadv"
-            header="Advance from Transporter to VMAT"
+            header="Advance from transporter to VMAT/Truck"
             body={renderInput}
           ></Column>
           <Column
             field="modeofadvance"
-            header="Mode Of Advance"
+            header="Mode of Advance to Truck"
             body={(rowData, field) =>
               renderDropdown(rowData, field, "modeofadvance")
             }
@@ -505,7 +505,7 @@ const Amt = () => {
           <Column
             header="Actions"
             body={renderButton}
-            style={{ width: "200px", right: "0", position: "sticky" }}
+            style={{ width: "150px", right: "0", position: "sticky" }}
           ></Column>
         </DataTable>
         <Paginator

@@ -10,7 +10,7 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const menu = [
     {
-      name: "AMT & Truck Details",
+      name: "Daily Report & Truck detail ",
       to: "/amt",
       image: require("../../assets/ico1.svg").default,
     },
@@ -30,7 +30,7 @@ const Sidebar = () => {
       image: require("../../assets/ico4.svg").default,
     },
     {
-      name: "Transport Details",
+      name: "Transport & Truck Details",
       to: "/transport",
       image: require("../../assets/ico5.svg").default,
     },

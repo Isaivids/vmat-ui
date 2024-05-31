@@ -200,7 +200,7 @@ const Ccpto = () => {
     if([null,'',undefined].includes(rowData.paymentReceivedDate) || [null,'',undefined].includes(rowData.modeofpayment)){
       return 'red'
     }
-    return '';
+    return 'green';
   };
 
   return (
