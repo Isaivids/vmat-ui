@@ -46,12 +46,13 @@ const Amt = () => {
     const calcField = ['truckf','transf','truckadv','transadv']
     const newData = data.map((row: any) => {
       if (row._id === id) {
+        let updatedRow = { ...row, [field]: value };
         if(calcField.includes(field)){
-          const updatedRow = { ...row, [field]: value };
+          updatedRow = { ...row, [field]: value };
           updatedRow.truckbln = Number(updatedRow.truckf) - Number(updatedRow.truckadv);
           updatedRow.transbln = Number(updatedRow.transf) - Number(updatedRow.transadv);
-          return updatedRow;
         }
+        return updatedRow;
       }
       return row;
     });
