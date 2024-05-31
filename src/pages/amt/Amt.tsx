@@ -160,7 +160,6 @@ const Amt = () => {
       truckf: Number(inputObject.truckf),
       transf: Number(inputObject.transf),
       vmatf: Number(inputObject.vmatf),
-      vmatadv: Number(inputObject.vmatadv),
       modeofadvance: Number(inputObject.modeofadvance),
       transadv: Number(inputObject.transadv),
       truckbln: Number(inputObject.truckbln),
@@ -291,7 +290,6 @@ const Amt = () => {
       truckf: 0,
       transf: 0,
       vmatf: 0,
-      vmatadv: 0,
       modeofadvance: 0,
       transadv: 0,
       truckbln: 0,
@@ -466,11 +464,6 @@ const Amt = () => {
           ></Column>
           <Column
             field="transadv"
-            header="Transport Advance"
-            body={renderInput}
-          ></Column>
-          <Column
-            field="vmatadv"
             header="Advance from transporter to VMAT/Truck"
             body={renderInput}
           ></Column>
