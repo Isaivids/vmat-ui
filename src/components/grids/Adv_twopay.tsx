@@ -17,11 +17,7 @@ const AdvTwopay = () => {
   const searchQuery = useSelector((state: any) => state.search.query);
   const toast = useRef<Toast>(null);
   const dispatch = useDispatch<AppDispatch>();
-  const modeOfPayments = [
-    { name: "Cash", code: "CASH" },
-    { name: "Internet", code: "INT" },
-    { name: "UPI", code: "UPI" },
-  ];
+  const modeOfPayments = messages.modeofpayments;
   const [data, setData]: any = useState([]);
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);

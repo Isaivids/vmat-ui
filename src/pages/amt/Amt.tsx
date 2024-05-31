@@ -43,9 +43,15 @@ const Amt = () => {
   // ----------end of pagination
   const onInputChange = (e: any, id: any, field: any) => {
     const { value } = e.target;
+    const calcField = ['truckf','transf','truckadv','transadv']
     const newData = data.map((row: any) => {
       if (row._id === id) {
-        return { ...row, [field]: value };
+        if(calcField.includes(field)){
+          const updatedRow = { ...row, [field]: value };
+          updatedRow.truckbln = Number(updatedRow.truckf) - Number(updatedRow.truckadv);
+          updatedRow.transbln = Number(updatedRow.transf) - Number(updatedRow.transadv);
+          return updatedRow;
+        }
       }
       return row;
     });
@@ -482,12 +488,12 @@ const Amt = () => {
           <Column
             field="truckbln"
             header="Truck Balance"
-            body={renderInput}
+            // body={renderInput}
           ></Column>
           <Column
             field="transbln"
             header="Transport Balance"
-            body={renderInput}
+            // body={renderInput}
           ></Column>
           <Column field="twopay" header="2-Pay" body={renderInput}></Column>
           <Column

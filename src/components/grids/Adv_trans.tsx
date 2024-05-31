@@ -19,11 +19,7 @@ import { messages } from "../../api/constants";
 const AdvTrans = () => {
   const searchQuery = useSelector((state: any) => state.search.query);
   const toast = useRef<Toast>(null);
-  const modeOfPayments = [
-    { name: "Cash", code: "CASH" },
-    { name: "Internet", code: "INT" },
-    { name: "UPI", code: "UPI" },
-  ];
+  const modeOfPayments = messages.modeofpayments;
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);

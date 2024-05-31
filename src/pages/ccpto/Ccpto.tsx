@@ -19,11 +19,7 @@ const Ccpto = () => {
   const [data, setData]: any = useState([]);
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
-  const modeOfPayments = [
-    { name: "Cash", code: "CASH" },
-    { name: "Internet", code: "INT" },
-    { name: "UPI", code: "UPI" },
-  ];
+  const modeOfPayments = messages.modeofpayments;
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
