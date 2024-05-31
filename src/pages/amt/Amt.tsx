@@ -168,7 +168,6 @@ const Amt = () => {
     const payload = getNewdataPayload(data);
     try {
       const response = await dispatch(addAts(payload));
-      console.log(response)
       const index = data.findIndex(
         (item: any) => item._id === response.payload.data._id
       );

@@ -35,20 +35,56 @@ const Payment = () => {
     setRows(event.rows);
   };
   // ----------end of pagination
+  // const onInputChange = (e: any, id: any, field: any) => {
+  //   const { value } = e.target;
+  //   const newData: any = data.map((row: any) => {
+  //     if (row._id === id) {
+  //       const updatedRow = { ...row, [field]: value };
+  //       const transAdvance = Number(updatedRow.ats.transadv);
+  //       const loadUnloadChar = Number(updatedRow.plusorminus) + Number(updatedRow.loadunloadchar);
+  //       console.log(loadUnloadChar)
+  //       updatedRow.loadunloadchar = loadUnloadChar;
+  //       updatedRow.tyrasporterpaidamt = transAdvance + loadUnloadChar;
+  //       return updatedRow;
+  //     }
+  //     return row;
+  //   });
+  //   setData(newData);
+  // };
   const onInputChange = (e: any, id: any, field: any) => {
     const { value } = e.target;
     const newData: any = data.map((row: any) => {
       if (row._id === id) {
         const updatedRow = { ...row, [field]: value };
-        const transAdvance = Number(updatedRow.ats.transadv);
-        const loadUnloadChar = Number(updatedRow.loadunloadchar);
-        updatedRow.tyrasporterpaidamt = transAdvance + loadUnloadChar;
+        const currentLoadUnloadChar = Number(row.loadunloadchar) || 0;
+        const currentPlusOrMinus = Number(row.plusorminus) || 0;
+        const newPlusOrMinusValue = Number(value) || 0;
+  
+        if (field === "plusorminus") {
+          updatedRow.loadunloadchar = currentLoadUnloadChar - currentPlusOrMinus + newPlusOrMinusValue;
+        }
+        updatedRow.tyrasporterpaidamt = Number(updatedRow.ats.transadv) - Number(updatedRow.loadunloadchar);
+  
         return updatedRow;
       }
       return row;
     });
     setData(newData);
   };
+
+  const onInputBlur = (id: any, field: any) => {
+    const newData: any = data.map((row: any) => {
+      if (row._id === id) {
+        if (field === "plusorminus") {
+          const updatedRow = { ...row, [field]: 0 };
+          return updatedRow;
+        }
+      }
+      return row;
+    });
+    setData(newData);
+  };
+  
 
   const renderInput = (rowData: any, field: any) => {
     const isStringField = ["remarks"].includes(field.field);
@@ -58,6 +94,7 @@ const Payment = () => {
         value={rowData[field.field]}
         onChange={(e) => onInputChange(e, rowData._id, field.field)}
         keyfilter={isStringField ? "alphanum" : "num"}
+        onBlur={() => onInputBlur(rowData._id, field.field)}
       />
     );
   };
@@ -241,6 +278,11 @@ const Payment = () => {
         <Column
           field="loadunloadchar"
           header="Loading / Unloading Charges"
+          // body={renderInput}
+        ></Column>
+        <Column
+          field="plusorminus"
+          header="+/- Charge"
           body={renderInput}
         ></Column>
         <Column
