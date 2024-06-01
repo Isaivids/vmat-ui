@@ -198,7 +198,7 @@ const AdvVmat = () => {
         ></Column>
         <Column field="others" header="Others" body={renderInput}></Column>
         <Column field="othersreason" header="Reason" body={renderInput}></Column>
-        <Column field="total" header="Total"></Column>
+        <Column field="total" header="Advance Payment Paid to truck"></Column>
         <Column field="remarks" header="Remarks" body={renderInput}></Column>
         <Column
           header="Actions"
