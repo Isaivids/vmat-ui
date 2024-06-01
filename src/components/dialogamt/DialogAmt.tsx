@@ -73,11 +73,11 @@ const DialogAmt = ({ visible, setVisible, selectedData }: any) => {
             marginBottom: "10px",
           }}
         >
-          <div style={{ width: "50%", textAlign: "left" }}>
+          <div style={{ width: "50%", textAlign: "left", textTransform : "uppercase" }}>
             <strong>{keyMapping[key1] || key1}:</strong> {renderValue(key1,data[key1])}
           </div>
           {key2 && (
-            <div style={{ width: "50%", textAlign: "left" }}>
+            <div style={{ width: "50%", textAlign: "left", textTransform : "uppercase" }}>
               <strong>{keyMapping[key2] || key2}:</strong> {renderValue(key2,data[key2])}
             </div>
           )}
