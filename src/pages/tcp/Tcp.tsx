@@ -9,6 +9,8 @@ import { Button } from "primereact/button";
 import { messages } from "../../api/constants";
 import { InputText } from "primereact/inputtext";
 import { gettcp, updatetcp } from "../../store/slice/tcpSlice";
+import { downloadPDF } from "./document";
+
 
 const Tcp = () => {
   const searchQuery = useSelector((state: any) => state.search.query);
@@ -17,6 +19,11 @@ const Tcp = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
+
+  //seection
+  const [selectedProducts, setSelectedProducts] = useState(null);
+  const [rowClick, setRowClick] = useState(true);
+  //eo selection
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
@@ -33,7 +40,8 @@ const Tcp = () => {
     const newData = data.map((row: any) => {
       if (row._id === id) {
         const updatedRow = { ...row, [field]: value };
-        updatedRow.total = Number(updatedRow.transcrossing) + Number(updatedRow.others);
+        updatedRow.total =
+          Number(updatedRow.transcrossing) + Number(updatedRow.others);
         return updatedRow;
       }
       return row;
@@ -123,6 +131,7 @@ const Tcp = () => {
     );
   };
 
+
   const fetchData = useCallback(async () => {
     try {
       const trcukData = await dispatch(
@@ -152,7 +161,14 @@ const Tcp = () => {
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
-      <DataTable value={data} showGridlines scrollable scrollHeight="80vh">
+      <Button
+        label="Download"
+        severity="secondary"
+        className="my-3 text-bold"
+        onClick={() => downloadPDF(selectedProducts)}
+      />
+      <DataTable value={data} showGridlines scrollable scrollHeight="70vh" selectionMode={rowClick ? null : 'checkbox'} selection={selectedProducts} onSelectionChange={(e:any) => setSelectedProducts(e.value)}>
+        <Column selectionMode="multiple"></Column>
         <Column field="ats.sno" header="S.No"></Column>
         <Column field="ats.date" header="Date"></Column>
         <Column field="ats.transname" header="Transport Name"></Column>

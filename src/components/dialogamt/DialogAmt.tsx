@@ -27,20 +27,38 @@ const keyMapping: any = {
   truckloadwt: "TRUCK LOAD WEIGHT",
 };
 
+const modeOfAdvanceArr = [
+  { name: "By VMAT", code: 1 },
+  { name: "By Transport", code: 2 },
+  { name: "By TwoPay", code: 3 },
+];
+const transportAdvanceTypes = [
+  { name: "To VMAT", code: 1 },
+  { name: "To Truck", code: 2 },
+];
+
 const DialogAmt = ({ visible, setVisible, selectedData }: any) => {
-  const renderValue = (value: any) => {
+  const renderValue = (key:any,value: any) => {
     if (value instanceof Date) {
       return value.toLocaleString();
     }
     if (typeof value === "object") {
       return JSON.stringify(value);
     }
+    if (key === "modeofadvance") {
+      const mode = modeOfAdvanceArr.find((mode) => mode.code === value);
+      return mode ? mode.name : "";
+    }
+    if(key === "transaddvtype"){
+      const mode = transportAdvanceTypes.find((mode) => mode.code === value);
+      return mode ? mode.name : "";
+    }
     return value.toString();
   };
 
   const renderPairs = (data: any) => {
     const keys = Object.keys(data).filter(
-      (key) => key !== "_id" && key !== "created_at" && key !== "updated_at" && key !== "__v"
+      (key) => key !== "_id" && key !== "created_at" && key !== "updated_at" && key !== "__v" && key !== "ackmodeofpayment"
     );
     const pairs = [];
     for (let i = 0; i < keys.length; i += 2) {
@@ -56,11 +74,11 @@ const DialogAmt = ({ visible, setVisible, selectedData }: any) => {
           }}
         >
           <div style={{ width: "50%", textAlign: "left" }}>
-            <strong>{keyMapping[key1] || key1}:</strong> {renderValue(data[key1])}
+            <strong>{keyMapping[key1] || key1}:</strong> {renderValue(key1,data[key1])}
           </div>
           {key2 && (
             <div style={{ width: "50%", textAlign: "left" }}>
-              <strong>{keyMapping[key2] || key2}:</strong> {renderValue(data[key2])}
+              <strong>{keyMapping[key2] || key2}:</strong> {renderValue(key2,data[key2])}
             </div>
           )}
         </div>
@@ -73,7 +91,7 @@ const DialogAmt = ({ visible, setVisible, selectedData }: any) => {
     <Dialog
       header="Daily Report & Truck Detail"
       visible={visible}
-      style={{ width: "50vw" }}
+      style={{ width: "70vw" }}
       onHide={() => {
         if (!visible) return;
         setVisible(false);
