@@ -30,23 +30,7 @@ const Payment = () => {
     setFirst(event.first);
     setRows(event.rows);
   };
-  // ----------end of pagination
-  // const onInputChange = (e: any, id: any, field: any) => {
-  //   const { value } = e.target;
-  //   const newData: any = data.map((row: any) => {
-  //     if (row._id === id) {
-  //       const updatedRow = { ...row, [field]: value };
-  //       const transAdvance = Number(updatedRow.ats.transadv);
-  //       const loadUnloadChar = Number(updatedRow.plusorminus) + Number(updatedRow.loadunloadchar);
-  //       console.log(loadUnloadChar)
-  //       updatedRow.loadunloadchar = loadUnloadChar;
-  //       updatedRow.tyrasporterpaidamt = transAdvance + loadUnloadChar;
-  //       return updatedRow;
-  //     }
-  //     return row;
-  //   });
-  //   setData(newData);
-  // };
+
   const onInputChange = (e: any, id: any, field: any) => {
     const { value } = e.target;
     const newData: any = data.map((row: any) => {
@@ -253,10 +237,17 @@ const Payment = () => {
     fetchDataAndLog();
   }, [fetchData]);
 
+  const rowClassName = (rowData:any) => {
+    if([null,'',undefined].includes(rowData.paymentreceiveddate) || [null,'',undefined].includes(rowData.modeofpayment)){
+      return 'red'
+    }
+    return 'green';
+  };
+
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
-      <DataTable value={data} showGridlines scrollable scrollHeight="80vh">
+      <DataTable value={data} showGridlines scrollable scrollHeight="80vh" rowClassName={rowClassName}>
         <Column
           field="ats.sno"
           header="S.No"
