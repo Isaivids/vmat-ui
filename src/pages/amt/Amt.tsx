@@ -12,6 +12,7 @@ import { Toast } from "primereact/toast";
 import { Paginator } from "primereact/paginator";
 import { Dropdown } from "primereact/dropdown";
 import { messages } from "../../api/constants";
+import DialogAmt from "../../components/dialogamt/DialogAmt";
 
 const Amt = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -30,6 +31,8 @@ const Amt = () => {
     { name: "To VMAT", code: 1 },
     { name: "To Truck", code: 2 },
   ];
+  const [visible, setVisible] = useState<boolean>(false);
+  const [selectedData, setSelectedData]:any = useState({});
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
@@ -97,6 +100,12 @@ const Amt = () => {
       </div>
     );
   };
+
+  const renderLinkToDialog = (rowData:any) =>{
+    return(
+      <b className="cursor-pointer" onClick={() => {setVisible(true);setSelectedData(rowData)}}>{rowData.sno}</b>
+    )
+  }
 
   const renderButton = (rowData: any) => {
     return (
@@ -385,6 +394,7 @@ const Amt = () => {
   return (
     <>
       <Toast ref={toast} />
+      <DialogAmt visible={visible} setVisible={setVisible} selectedData={selectedData}/>
       <div className="p-2" style={{ overflowX: "auto" }}>
         <Button
           label="New"
@@ -401,6 +411,7 @@ const Amt = () => {
         >
           <Column
             field="sno"
+            body={renderLinkToDialog}
             style={{ minWidth: "100px" }}
             header="S.No"
           ></Column>
