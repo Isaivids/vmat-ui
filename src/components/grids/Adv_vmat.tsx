@@ -185,6 +185,7 @@ const AdvVmat = () => {
         <Column field="ats.truckname" header="Truck Name"></Column>
         <Column field="ats.trucknumber" header="Truck Number"></Column>
         <Column field="advanceamount" header="Advance"></Column>
+        <Column field="vmatcommision" header="VMAT Commision"></Column>
         <Column
           field="pendinglabourwages"
           header="Pending Labour Wages"
@@ -197,7 +198,6 @@ const AdvVmat = () => {
         ></Column>
         <Column field="others" header="Others" body={renderInput}></Column>
         <Column field="othersreason" header="Reason" body={renderInput}></Column>
-        <Column field="vmatcommision" header="VMAT Commision"></Column>
         <Column field="total" header="Total"></Column>
         <Column field="remarks" header="Remarks" body={renderInput}></Column>
         <Column
