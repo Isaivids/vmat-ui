@@ -19,7 +19,7 @@ const Ccpto = () => {
   const [data, setData]: any = useState([]);
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
-  const modeOfPayments = messages.modeofpayments;
+  const modeOfPayments = [...messages.modeofpayments, { name: "Pending", code: "PENDING" },];
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
@@ -197,7 +197,7 @@ const Ccpto = () => {
   }, [fetchData]);
 
   const rowClassName = (rowData:any) => {
-    if([null,'',undefined].includes(rowData.paymentReceivedDate) || [null,'',undefined].includes(rowData.modeofpayment)){
+    if(['PENDING'].includes(rowData.modeofpayment)){
       return 'red'
     }
     return 'green';
