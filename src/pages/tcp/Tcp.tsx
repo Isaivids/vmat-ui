@@ -22,7 +22,6 @@ const Tcp = () => {
 
   //seection
   const [selectedProducts, setSelectedProducts] = useState([]);
-  const [rowClick, setRowClick] = useState(true);
   //eo selection
   //pagination
   const [first, setFirst] = useState(0);
@@ -168,7 +167,7 @@ const Tcp = () => {
         onClick={() => downloadPDF(selectedProducts)}
         disabled={selectedProducts.length <= 0}
       />
-      <DataTable value={data} showGridlines scrollable scrollHeight="70vh" selectionMode={rowClick ? null : 'checkbox'} selection={selectedProducts} onSelectionChange={(e:any) => setSelectedProducts(e.value)}>
+      <DataTable value={data} showGridlines scrollable scrollHeight="70vh"  selection={selectedProducts} onSelectionChange={(e:any) => setSelectedProducts(e.value)}>
         <Column selectionMode="multiple"></Column>
         <Column field="ats.sno" header="S.No"></Column>
         <Column field="ats.date" header="Date"></Column>
