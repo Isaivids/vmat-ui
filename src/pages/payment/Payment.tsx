@@ -258,7 +258,7 @@ const Payment = () => {
           header="Date"
           style={{ minWidth: "100px" }}
         ></Column>
-        <Column field="ats.transname" header="Truck Name"></Column>
+        <Column field="ats.truckname" header="Truck Name"></Column>
         <Column field="ats.trucknumber" header="Truck Number"></Column>
         <Column field="ats.transbln" header="Transport balance"></Column>
         {/* <Column field="ats.transadv" header="Transport Advance"></Column> */}
