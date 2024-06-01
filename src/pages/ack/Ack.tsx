@@ -21,7 +21,7 @@ const Ack = () => {
   const searchQuery = useSelector((state: any) => state.search.query);
   const toast = useRef<Toast>(null);
 
-  const modeOfPayments = messages.modeofpayments;
+  const modeOfPayments = [...messages.modeofpayments, { name: "Pending", code: "PENDING" },];
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
