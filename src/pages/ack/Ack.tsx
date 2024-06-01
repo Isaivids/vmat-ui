@@ -9,7 +9,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { getAck, updateAck } from "../../store/slice/ackSlice";
 import { Paginator } from "primereact/paginator";
-import { validateFields } from "./validation";
 import { Toast } from "primereact/toast";
 import { messages } from "../../api/constants";
 import { Checkbox } from "primereact/checkbox";
