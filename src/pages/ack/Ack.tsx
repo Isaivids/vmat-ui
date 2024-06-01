@@ -136,17 +136,17 @@ const Ack = () => {
   };
 
   const handleSave = async (rowData: any) => {
-    const { isValid, missingFields } = validateFields(rowData);
+    // const { isValid, missingFields } = validateFields(rowData);
 
-    if (!isValid) {
-      toast.current?.show({
-        severity: "error",
-        summary: messages.validationerror,
-        detail: `${missingFields.join(", ")} is required`,
-        life: 3000,
-      });
-      return;
-    }
+    // if (!isValid) {
+    //   toast.current?.show({
+    //     severity: "error",
+    //     summary: messages.validationerror,
+    //     detail: `${missingFields.join(", ")} is required`,
+    //     life: 3000,
+    //   });
+    //   return;
+    // }
     const payload = {
       acknowledgementReceivedDate: getFormattedDate(
         rowData.acknowledgementReceivedDate
