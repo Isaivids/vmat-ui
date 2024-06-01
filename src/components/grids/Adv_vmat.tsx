@@ -35,7 +35,7 @@ const AdvVmat = () => {
       if (row._id === id) {
         const updatedRow = { ...row, [field]: value };
         if(!['remarks'].includes(field)){
-          updatedRow.total = Number(updatedRow.ats.truckadv) + Number(updatedRow.pendinglabourwages) + Number(updatedRow.extlabourwages) + Number(updatedRow.others) + Number(updatedRow.vmatcommision);
+          updatedRow.total = (Number(updatedRow.ats.truckadv) - Number(updatedRow.vmatcommision)) + Number(updatedRow.pendinglabourwages) + Number(updatedRow.extlabourwages) + Number(updatedRow.others);
         }
         return updatedRow;
       }

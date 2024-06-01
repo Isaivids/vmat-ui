@@ -59,7 +59,7 @@ const Payment = () => {
         if (field === "plusorminus") {
           updatedRow.loadunloadchar = currentLoadUnloadChar - currentPlusOrMinus + newPlusOrMinusValue;
         }
-        updatedRow.tyrasporterpaidamt = Number(updatedRow.ats.transadv) - Number(updatedRow.loadunloadchar);
+        updatedRow.tyrasporterpaidamt = Number(updatedRow.ats.transbln) - Number(updatedRow.loadunloadchar);
   
         return updatedRow;
       }
@@ -269,8 +269,8 @@ const Payment = () => {
         ></Column>
         <Column field="ats.transname" header="Truck Name"></Column>
         <Column field="ats.trucknumber" header="Truck Number"></Column>
-        <Column field="ats.transf" header="Transport Freight"></Column>
-        <Column field="ats.transadv" header="Transport Advance"></Column>
+        <Column field="ats.transbln" header="Transport balance"></Column>
+        {/* <Column field="ats.transadv" header="Transport Advance"></Column> */}
         <Column
           field="loadunloadchar"
           header="Loading / Unloading Charges"
