@@ -148,15 +148,15 @@ const Ack = () => {
     //   return;
     // }
     const payload = {
-      acknowledgementReceivedDate: getFormattedDate(
+      acknowledgementReceivedDate: rowData.acknowledgementReceivedDate ? getFormattedDate(
         rowData.acknowledgementReceivedDate
-      ),
+      ) : '',
       hidevc : rowData.hidevc,
       hidevcm : rowData.hidevcm,
       hidetc : rowData.hidetc,
       expense: Number(rowData.expense),
       finaltotaltotruckowner: Number(rowData.finaltotaltotruckowner),
-      paymentReceivedDate: getFormattedDate(rowData.paymentReceivedDate),
+      paymentReceivedDate: rowData.paymentReceivedDate ? getFormattedDate(rowData.paymentReceivedDate) : '',
       modeofpayment: rowData.modeofpayment,
       _id: rowData._id,
     };
