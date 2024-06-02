@@ -74,6 +74,9 @@ const Transport = () => {
       phonenumber: rowData.phonenumber,
       accountnumber: rowData.accountnumber,
       pannumber: rowData.pannumber,
+      loadingaddress: rowData.loadingaddress,
+      unloadingaddress: rowData.unloadingaddress,
+      location: rowData.location,
       _id: rowData._id,
     };
 
@@ -130,6 +133,9 @@ const Transport = () => {
       phonenumber: "",
       accountnumber: "",
       pannumber: "",
+      loadingaddress: "",
+      unloadingaddress: "",
+      location: "",
     };
     setData([newRow, ...data]);
     setSelectedRowId(newRow._id);
@@ -213,6 +219,9 @@ const Transport = () => {
         ></Column>
         <Column field="accountnumber" header="Account Number" body={renderInput}></Column>
         <Column field="pannumber" header="PAN Number" body={renderInput}></Column>
+        <Column field="loadingaddress" header="Loading Address" body={renderInput}></Column>
+        <Column field="unloadingaddress" header="Unloading Address" body={renderInput}></Column>
+        <Column field="location" header="Location" body={renderInput}></Column>
         <Column
           header="Actions"
           body={renderButton}
