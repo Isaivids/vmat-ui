@@ -10,6 +10,8 @@ import { Paginator } from "primereact/paginator";
 import { validateFields } from "./validation1";
 import { messages } from "../../api/constants";
 import { Toast } from "primereact/toast";
+import CommonDatePicker from "../calender/CommonDatePicker";
+import CommonDropdown from "../dropdown/CommonDropdown";
 
 const AdvVmat = () => {
   const searchQuery = useSelector((state: any) => state.search.query);
@@ -34,8 +36,13 @@ const AdvVmat = () => {
     const newData: any = data.map((row: any) => {
       if (row._id === id) {
         const updatedRow = { ...row, [field]: value };
-        if(!['remarks'].includes(field)){
-          updatedRow.total = (Number(updatedRow.ats.truckadv) - Number(updatedRow.vmatcommision)) + Number(updatedRow.pendinglabourwages) + Number(updatedRow.extlabourwages) + Number(updatedRow.others);
+        if (!["remarks"].includes(field)) {
+          updatedRow.total =
+            Number(updatedRow.ats.truckadv) -
+            Number(updatedRow.vmatcommision) +
+            Number(updatedRow.pendinglabourwages) +
+            Number(updatedRow.extlabourwages) +
+            Number(updatedRow.others);
         }
         return updatedRow;
       }
@@ -45,7 +52,7 @@ const AdvVmat = () => {
   };
 
   const renderInput = (rowData: any, field: any) => {
-    const isStringField = ['remarks','othersreason'].includes(field.field);
+    const isStringField = ["remarks", "othersreason"].includes(field.field);
     return (
       <InputText
         disabled={rowData._id !== selectedRowId}
@@ -71,16 +78,17 @@ const AdvVmat = () => {
       pendinglabourwages: Number(rowData.pendinglabourwages),
       extlabourwages: Number(rowData.extlabourwages),
       others: Number(rowData.others),
-      othersreason : rowData.othersreason,
+      othersreason: rowData.othersreason,
       advanceamount: Number(rowData.advanceamount),
       total: Number(rowData.total),
-      remarks: rowData.remarks,
-      _id : rowData._id
-    }
+      paymentreceiveddate: rowData.paymentreceiveddate,
+      modeofpayment : rowData.modeofpayment,
+      _id: rowData._id,
+    };
     try {
       const response = await dispatch(updateByVmat(payload));
       if (!response.payload.error) {
-        const index = data.findIndex((item:any) => item._id === rowData._id);
+        const index = data.findIndex((item: any) => item._id === rowData._id);
         if (index !== -1) {
           data[index]._id = response.payload.data._id;
         }
@@ -101,7 +109,6 @@ const AdvVmat = () => {
       });
     }
   };
-  
 
   const handleCancel = () => {
     if (backupData) {
@@ -133,20 +140,63 @@ const AdvVmat = () => {
               severity="success"
               onClick={() => handleSave(rowData)}
             />
-            <Button
-              label="Cancel"
-              severity="danger"
-              onClick={handleCancel}
-            />
+            <Button label="Cancel" severity="danger" onClick={handleCancel} />
           </>
         )}
       </div>
     );
   };
 
+  const onDateChange = (e: any, id: any, field: any) => {
+    const value = e.value;
+    const newData: any = data.map((row: any) => {
+      if (row._id === id) {
+        return { ...row, [field]: value };
+      }
+      return row;
+    });
+    setData(newData);
+  };
+
+  const onDropdownChange = (e: any, id: any, field: any) => {
+    const { value } = e;
+    const newData = data.map((row: any) => {
+      if (row._id === id) {
+        return { ...row, [field]: value.code };
+      }
+      return row;
+    });
+    setData(newData);
+  };
+
+  const renderDatePicker = (rowData: any, field: any) => {
+    return (
+      <CommonDatePicker
+        rowData={rowData}
+        field={field}
+        selectedRowId={selectedRowId}
+        onDateChange={onDateChange}
+      />
+    );
+  };
+
+  const renderDropdown = (rowData: any, field: any) => {
+    return (
+      <CommonDropdown
+        rowData={rowData}
+        field={field}
+        modeOfPayments={messages.modeofpayments}
+        selectedRowId={selectedRowId}
+        handleDropdownChange={onDropdownChange}
+      />
+    );
+  };
+
   const fetchData = useCallback(async () => {
     try {
-      const trcukData = await dispatch(getByVmat({ limit: rows, offset: page * rows, search: searchQuery }));
+      const trcukData = await dispatch(
+        getByVmat({ limit: rows, offset: page * rows, search: searchQuery })
+      );
       if (trcukData.payload.data.length && !trcukData.payload.error) {
         setData(trcukData.payload.data);
         setTotalPage(trcukData.payload.pagination.totalDocuments);
@@ -197,9 +247,23 @@ const AdvVmat = () => {
           body={renderInput}
         ></Column>
         <Column field="others" header="Others" body={renderInput}></Column>
-        <Column field="othersreason" header="Reason" body={renderInput}></Column>
+        <Column
+          field="othersreason"
+          header="Reason"
+          body={renderInput}
+        ></Column>
         <Column field="total" header="Advance Payment Paid to truck"></Column>
-        <Column field="remarks" header="Remarks" body={renderInput}></Column>
+        {/* <Column field="remarks" header="Remarks" body={renderInput}></Column> */}
+        <Column
+          field="paymentreceiveddate"
+          header="Payment Received Date"
+          body={renderDatePicker}
+        ></Column>
+        <Column
+          field="modeofpayment"
+          header="Mode Of Payment"
+          body={renderDropdown}
+        ></Column>
         <Column
           header="Actions"
           body={renderButton}
@@ -207,11 +271,11 @@ const AdvVmat = () => {
         ></Column>
       </DataTable>
       <Paginator
-          first={first}
-          rows={rows}
-          totalRecords={totalPage}
-          onPageChange={onPageChange}
-        />
+        first={first}
+        rows={rows}
+        totalRecords={totalPage}
+        onPageChange={onPageChange}
+      />
     </div>
   );
 };
