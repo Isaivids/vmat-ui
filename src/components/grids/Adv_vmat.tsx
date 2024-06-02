@@ -188,12 +188,12 @@ const AdvVmat = () => {
         <Column field="vmatcommision" header="VMAT Commision"></Column>
         <Column
           field="pendinglabourwages"
-          header="Pending Labour Wages"
+          header="Loading Wages Pending"
           body={renderInput}
         ></Column>
         <Column
           field="extlabourwages"
-          header="Extra Labour Wages"
+          header="Extra loading wages paid by driver"
           body={renderInput}
         ></Column>
         <Column field="others" header="Others" body={renderInput}></Column>

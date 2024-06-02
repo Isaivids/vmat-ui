@@ -3,8 +3,6 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
-import { Calendar } from "primereact/calendar";
-import { Dropdown } from "primereact/dropdown";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { getAck, updateAck } from "../../store/slice/ackSlice";
@@ -12,6 +10,8 @@ import { Paginator } from "primereact/paginator";
 import { Toast } from "primereact/toast";
 import { messages } from "../../api/constants";
 import { Checkbox } from "primereact/checkbox";
+import CommonDatePicker from "../../components/calender/CommonDatePicker";
+import CommonDropdown from "../../components/dropdown/CommonDropdown";
 const Ack = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [data, setData]: any = useState([]);
@@ -20,7 +20,7 @@ const Ack = () => {
   const searchQuery = useSelector((state: any) => state.search.query);
   const toast = useRef<Toast>(null);
 
-  const modeOfPayments = [...messages.modeofpayments, { name: "Pending", code: "PENDING" },];
+  const modeOfPayments = messages.modeofpayments;
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
@@ -102,18 +102,18 @@ const Ack = () => {
   setData(newData);
 };
 
-  const handleDateChange = (value: Date, field: string) => {
-    setData((prevData: any) =>
-      prevData.map((row: any) => {
-        if (row._id === selectedRowId) {
-          return { ...row, [field]: value };
-        }
-        return row;
-      })
-    );
-  };
+const onDateChange = (e: any, id: any, field: any) => {
+  const value = e.value;
+  const newData = data.map((row: any) => {
+    if (row._id === id) {
+      return { ...row, [field]: value };
+    }
+    return row;
+  });
+  setData(newData);
+};
 
-  const handleDropdownChange = (e: any, id: any, field: any) => {
+  const onDropdownChange = (e: any, id: any, field: any) => {
     const { value } = e;
     const newData: any = data.map((row: any) => {
       if (row._id === id) {
@@ -204,28 +204,23 @@ const Ack = () => {
 
   const renderDatePicker = (rowData: any, field: any) => {
     return (
-      <Calendar
-        value={new Date(rowData[field.field]) || null}
-        style={{ width: "150px" }}
-        disabled={rowData._id !== selectedRowId}
-        onChange={(e: any) => handleDateChange(e.value, field.field)}
+      <CommonDatePicker
+        rowData={rowData}
+        field={field}
+        selectedRowId={selectedRowId}
+        onDateChange={onDateChange}
       />
     );
   };
 
   const renderDropdown = (rowData: any, field: any) => {
-    const selectedValue = modeOfPayments.find(
-      (option) => option.code === rowData.modeofpayment
-    );
     return (
-      <Dropdown
-        value={selectedValue}
-        options={modeOfPayments}
-        optionLabel="name"
-        placeholder="Select a Payment"
-        disabled={rowData._id !== selectedRowId}
-        onChange={(e) => handleDropdownChange(e, rowData._id, field.field)}
-        style={{ width: "150px" }}
+      <CommonDropdown
+        rowData={rowData}
+        field={field}
+        modeOfPayments={modeOfPayments}
+        selectedRowId={selectedRowId}
+        handleDropdownChange={onDropdownChange}
       />
     );
   };

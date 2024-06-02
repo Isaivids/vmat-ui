@@ -3,8 +3,6 @@ import { DataTable } from "primereact/datatable";
 import { InputText } from "primereact/inputtext";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "primereact/button";
-import { Calendar } from "primereact/calendar";
-import { Dropdown } from "primereact/dropdown";
 import { getTransCrossing, updateTransAdvance } from "../../store/slice/transSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
@@ -12,6 +10,8 @@ import { Paginator } from "primereact/paginator";
 import { validateFields } from "./validation";
 import { messages } from "../../api/constants";
 import { Toast } from "primereact/toast";
+import CommonDatePicker from "../../components/calender/CommonDatePicker";
+import CommonDropdown from "../../components/dropdown/CommonDropdown";
 const Payment = () => {
   const dispatch = useDispatch<AppDispatch>();
   const toast = useRef<Toast>(null);
@@ -123,6 +123,8 @@ const Payment = () => {
       modeofpayment: rowData.modeofpayment,
       paymentreceiveddate: localDate,
       remarks : rowData.remarks,
+      extraloadingwagespaidbydriver : Number(rowData.extraloadingwagespaidbydriver),
+      loadingwagespending : Number(rowData.loadingwagespending),
       _id: rowData._id,
     };
     try {
@@ -187,28 +189,23 @@ const Payment = () => {
 
   const renderDatePicker = (rowData: any, field: any) => {
     return (
-      <Calendar
-        value={new Date(rowData[field.field]) || null}
-        onChange={(e) => onDateChange(e, rowData._id, field.field)}
-        style={{ width: "100px" }}
-        disabled={rowData._id !== selectedRowId}
+      <CommonDatePicker
+        rowData={rowData}
+        field={field}
+        selectedRowId={selectedRowId}
+        onDateChange={onDateChange}
       />
     );
   };
 
   const renderDropdown = (rowData: any, field: any) => {
-    const selectedValue = modeOfPayments.find(
-      (option) => option.code === rowData.modeofpayment
-    );
     return (
-      <Dropdown
-        value={selectedValue}
-        onChange={(e) => onDropdownChange(e, rowData._id, field.field)}
-        options={modeOfPayments}
-        optionLabel="name"
-        placeholder="Select a Payment"
-        disabled={rowData._id !== selectedRowId}
-        style={{ width: "150px" }}
+      <CommonDropdown
+        rowData={rowData}
+        field={field}
+        modeOfPayments={modeOfPayments}
+        selectedRowId={selectedRowId}
+        handleDropdownChange={onDropdownChange}
       />
     );
   };
@@ -263,13 +260,23 @@ const Payment = () => {
         <Column field="ats.transbln" header="Transport balance"></Column>
         {/* <Column field="ats.transadv" header="Transport Advance"></Column> */}
         <Column
+          field="loadingwagespending"
+          header="Loading Wages Pending"
+          body={renderInput}
+        ></Column>
+        <Column
+          field="extraloadingwagespaidbydriver"
+          header="Extra loading wages paid by driver"
+          body={renderInput}
+        ></Column>
+        <Column
           field="loadunloadchar"
-          header="Loading / Unloading Charges"
+          header="Unloading Wages"
           // body={renderInput}
         ></Column>
         <Column
           field="plusorminus"
-          header="+/- Charge"
+          header="Unloading Charge"
           body={renderInput}
         ></Column>
         <Column

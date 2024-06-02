@@ -1,8 +1,6 @@
 import { Button } from 'primereact/button';
-import { Calendar } from 'primereact/calendar';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,6 +10,8 @@ import { Paginator } from 'primereact/paginator';
 import { Toast } from 'primereact/toast';
 import { messages } from '../../api/constants';
 import { validateFields } from './validation3';
+import CommonDatePicker from '../calender/CommonDatePicker';
+import CommonDropdown from '../dropdown/CommonDropdown';
 
 const AdvTwopay = () => {
   const searchQuery = useSelector((state: any) => state.search.query);
@@ -165,28 +165,23 @@ const AdvTwopay = () => {
 
   const renderDatePicker = (rowData: any, field: any) => {
     return (
-      <Calendar
-        value={new Date(rowData[field.field]) || null}
-        onChange={(e) => onDateChange(e, rowData._id, field.field)}
-        style={{ width: "150px" }}
-        disabled={rowData._id !== selectedRowId}
+      <CommonDatePicker
+        rowData={rowData}
+        field={field}
+        selectedRowId={selectedRowId}
+        onDateChange={onDateChange}
       />
     );
   };
 
   const renderDropdown = (rowData: any, field: any) => {
-    const selectedValue = modeOfPayments.find(
-      (option) => option.code === rowData.modeofpayment
-    );
     return (
-      <Dropdown
-        value={selectedValue}
-        onChange={(e) => onDropdownChange(e, rowData._id, field.field)}
-        options={modeOfPayments}
-        optionLabel="name"
-        placeholder="Select a Payment"
-        disabled={rowData._id !== selectedRowId}
-        style={{ width: "150px" }}
+      <CommonDropdown
+        rowData={rowData}
+        field={field}
+        modeOfPayments={modeOfPayments}
+        selectedRowId={selectedRowId}
+        handleDropdownChange={onDropdownChange}
       />
     );
   };

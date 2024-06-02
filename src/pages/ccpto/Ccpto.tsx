@@ -8,9 +8,9 @@ import { Paginator } from "primereact/paginator";
 import { messages } from "../../api/constants";
 import { Toast } from "primereact/toast";
 import { validateFields } from "./Validation";
-import { Dropdown } from "primereact/dropdown";
-import { Calendar } from "primereact/calendar";
 import { getccpto, updateccpto } from "../../store/slice/ccptoSlice";
+import CommonDatePicker from "../../components/calender/CommonDatePicker";
+import CommonDropdown from "../../components/dropdown/CommonDropdown";
 
 const Ccpto = () => {
   const searchQuery = useSelector((state: any) => state.search.query);
@@ -19,7 +19,7 @@ const Ccpto = () => {
   const [data, setData]: any = useState([]);
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
-  const modeOfPayments = [...messages.modeofpayments, { name: "Pending", code: "PENDING" },];
+  const modeOfPayments = messages.modeofpayments;
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
@@ -34,27 +34,27 @@ const Ccpto = () => {
 
   const renderDatePicker = (rowData: any, field: any) => {
     return (
-      <Calendar
-        value={new Date(rowData[field.field]) || null}
-        style={{ width: "150px" }}
-        disabled={rowData._id !== selectedRowId}
-        onChange={(e: any) => handleDateChange(e.value, field.field)}
+      <CommonDatePicker
+        rowData={rowData}
+        field={field}
+        selectedRowId={selectedRowId}
+        onDateChange={onDateChange}
       />
     );
   };
 
-  const handleDateChange = (value: Date, field: string) => {
-    setData((prevData: any) =>
-      prevData.map((row: any) => {
-        if (row._id === selectedRowId) {
-          return { ...row, [field]: value };
-        }
-        return row;
-      })
-    );
+  const onDateChange = (e: any, id: any, field: any) => {
+    const value = e.value;
+    const newData = data.map((row: any) => {
+      if (row._id === id) {
+        return { ...row, [field]: value };
+      }
+      return row;
+    });
+    setData(newData);
   };
 
-  const handleDropdownChange = (e: any, id: any, field: any) => {
+  const onDropdownChange = (e: any, id: any, field: any) => {
     const { value } = e;
     const newData: any = data.map((row: any) => {
       if (row._id === id) {
@@ -66,18 +66,13 @@ const Ccpto = () => {
   };
 
   const renderDropdown = (rowData: any, field: any) => {
-    const selectedValue = modeOfPayments.find(
-      (option) => option.code === rowData.modeofpayment
-    );
     return (
-      <Dropdown
-        value={selectedValue}
-        options={modeOfPayments}
-        optionLabel="name"
-        placeholder="Select a Payment"
-        disabled={rowData._id !== selectedRowId}
-        onChange={(e) => handleDropdownChange(e, rowData._id, field.field)}
-        style={{ width: "150px" }}
+      <CommonDropdown
+        rowData={rowData}
+        field={field}
+        modeOfPayments={modeOfPayments}
+        selectedRowId={selectedRowId}
+        handleDropdownChange={onDropdownChange}
       />
     );
   };
@@ -196,17 +191,23 @@ const Ccpto = () => {
     fetchDataAndLog();
   }, [fetchData]);
 
-  const rowClassName = (rowData:any) => {
-    if(['PENDING'].includes(rowData.modeofpayment)){
-      return 'red'
+  const rowClassName = (rowData: any) => {
+    if (["PENDING"].includes(rowData.modeofpayment)) {
+      return "red";
     }
-    return 'green';
+    return "green";
   };
 
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
-      <DataTable value={data} showGridlines scrollable scrollHeight="80vh" rowClassName={rowClassName}>
+      <DataTable
+        value={data}
+        showGridlines
+        scrollable
+        scrollHeight="80vh"
+        rowClassName={rowClassName}
+      >
         <Column field="ats.sno" header="S.No"></Column>
         <Column field="ats.date" header="Date"></Column>
         <Column field="ats.transname" header="Transport Name"></Column>

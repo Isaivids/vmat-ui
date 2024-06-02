@@ -3,8 +3,6 @@ import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { InputText } from "primereact/inputtext";
-import { Calendar } from "primereact/calendar";
-import { Dropdown } from "primereact/dropdown";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import {
@@ -15,6 +13,8 @@ import { Paginator } from "primereact/paginator";
 import { validateFields } from "./validation2";
 import { Toast } from "primereact/toast";
 import { messages } from "../../api/constants";
+import CommonDatePicker from "../calender/CommonDatePicker";
+import CommonDropdown from "../dropdown/CommonDropdown";
 
 const AdvTrans = () => {
   const searchQuery = useSelector((state: any) => state.search.query);
@@ -170,11 +170,11 @@ const AdvTrans = () => {
 
   const renderDatePicker = (rowData: any, field: any) => {
     return (
-      <Calendar
-        value={new Date(rowData[field.field]) || null}
-        onChange={(e) => onDateChange(e, rowData._id, field.field)}
-        style={{ width: "150px" }}
-        disabled={rowData._id !== selectedRowId}
+      <CommonDatePicker
+        rowData={rowData}
+        field={field}
+        selectedRowId={selectedRowId}
+        onDateChange={onDateChange}
       />
     );
   };
@@ -191,25 +191,26 @@ const AdvTrans = () => {
   };
 
   const renderDropdown = (rowData: any, field: any) => {
-    const selectedValue = modeOfPayments.find(
-      (option) => option.code === rowData.modeofpayment
-    );
     return (
-      <Dropdown
-        value={selectedValue}
-        onChange={(e) => onDropdownChange(e, rowData._id, field.field)}
-        options={modeOfPayments}
-        optionLabel="name"
-        placeholder="Select a Payment"
-        disabled={rowData._id !== selectedRowId}
-        style={{ width: "150px" }}
+      <CommonDropdown
+        rowData={rowData}
+        field={field}
+        modeOfPayments={modeOfPayments}
+        selectedRowId={selectedRowId}
+        handleDropdownChange={onDropdownChange}
       />
     );
   };
 
   const fetchData = useCallback(async () => {
     try {
-      const trcukData = await dispatch(getbytransporter({ limit: rows, offset: page * rows, search: searchQuery }));
+      const trcukData = await dispatch(
+        getbytransporter({
+          limit: rows,
+          offset: page * rows,
+          search: searchQuery,
+        })
+      );
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
         setData(trcukData.payload.data);
         setTotalPage(trcukData.payload.pagination.totalDocuments);
@@ -274,11 +275,11 @@ const AdvTrans = () => {
         ></Column>
       </DataTable>
       <Paginator
-          first={first}
-          rows={rows}
-          totalRecords={totalPage}
-          onPageChange={onPageChange}
-        />
+        first={first}
+        rows={rows}
+        totalRecords={totalPage}
+        onPageChange={onPageChange}
+      />
     </div>
   );
 };

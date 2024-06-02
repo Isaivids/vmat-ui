@@ -3,7 +3,6 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
-import { Calendar } from "primereact/calendar";
 import { addAts, getAts, updateats } from "../../store/slice/atsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
@@ -13,6 +12,7 @@ import { Paginator } from "primereact/paginator";
 import { Dropdown } from "primereact/dropdown";
 import { messages } from "../../api/constants";
 import DialogAmt from "../../components/dialogamt/DialogAmt";
+import CommonDatePicker from "../../components/calender/CommonDatePicker";
 
 const Amt = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -32,7 +32,7 @@ const Amt = () => {
     { name: "To Truck", code: 2 },
   ];
   const [visible, setVisible] = useState<boolean>(false);
-  const [selectedData, setSelectedData]:any = useState({});
+  const [selectedData, setSelectedData]: any = useState({});
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
@@ -46,14 +46,16 @@ const Amt = () => {
   // ----------end of pagination
   const onInputChange = (e: any, id: any, field: any) => {
     const { value } = e.target;
-    const calcField = ['truckf','transf','truckadv','transadv']
+    const calcField = ["truckf", "transf", "truckadv", "transadv"];
     const newData = data.map((row: any) => {
       if (row._id === id) {
         let updatedRow = { ...row, [field]: value };
-        if(calcField.includes(field)){
+        if (calcField.includes(field)) {
           updatedRow = { ...row, [field]: value };
-          updatedRow.truckbln = Number(updatedRow.truckf) - Number(updatedRow.truckadv);
-          updatedRow.transbln = Number(updatedRow.transf) - Number(updatedRow.transadv);
+          updatedRow.truckbln =
+            Number(updatedRow.truckf) - Number(updatedRow.truckadv);
+          updatedRow.transbln =
+            Number(updatedRow.transf) - Number(updatedRow.transadv);
         }
         return updatedRow;
       }
@@ -101,11 +103,19 @@ const Amt = () => {
     );
   };
 
-  const renderLinkToDialog = (rowData:any) =>{
-    return(
-      <b className="cursor-pointer" onClick={() => {setVisible(true);setSelectedData(rowData)}}>{rowData.sno}</b>
-    )
-  }
+  const renderLinkToDialog = (rowData: any) => {
+    return (
+      <b
+        className="cursor-pointer"
+        onClick={() => {
+          setVisible(true);
+          setSelectedData(rowData);
+        }}
+      >
+        {rowData.sno}
+      </b>
+    );
+  };
 
   const renderButton = (rowData: any) => {
     return (
@@ -313,11 +323,11 @@ const Amt = () => {
 
   const renderDatePicker = (rowData: any, field: any) => {
     return (
-      <Calendar
-        value={rowData[field.field]}
-        onChange={(e) => onDateChange(e, rowData._id, field.field)}
-        disabled={rowData._id !== selectedRowId}
-        style={{ width: "150px" }}
+      <CommonDatePicker
+        rowData={rowData}
+        field={field}
+        selectedRowId={selectedRowId}
+        onDateChange={onDateChange}
       />
     );
   };
@@ -362,7 +372,7 @@ const Amt = () => {
   const fetchData = useCallback(async () => {
     try {
       const atsData = await dispatch(
-        getAts({ limit: rows, offset: page * rows , search: searchQuery })
+        getAts({ limit: rows, offset: page * rows, search: searchQuery })
       );
       if (Array.isArray(atsData.payload.data) && !atsData.payload.error) {
         const formattedData = atsData.payload.data.map((item: any) => ({
@@ -394,7 +404,11 @@ const Amt = () => {
   return (
     <>
       <Toast ref={toast} />
-      <DialogAmt visible={visible} setVisible={setVisible} selectedData={selectedData}/>
+      <DialogAmt
+        visible={visible}
+        setVisible={setVisible}
+        selectedData={selectedData}
+      />
       <div className="p-2" style={{ overflowX: "auto" }}>
         <Button
           label="New"
