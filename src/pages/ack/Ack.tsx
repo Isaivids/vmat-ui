@@ -276,10 +276,17 @@ const onDateChange = (e: any, id: any, field: any) => {
     fetchDataAndLog();
   }, [fetchData]);
 
+  const rowClassName = (rowData: any) => {
+    if (["PENDING",'',null,undefined].includes(rowData.modeofpayment)) {
+      return "";
+    }
+    return "green";
+  };
+
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
-      <DataTable value={data} showGridlines scrollable scrollHeight="80vh">
+      <DataTable value={data} showGridlines scrollable scrollHeight="70vh" rowClassName={rowClassName}>
         <Column
           field="ats.sno"
           header="S.No"

@@ -78,13 +78,17 @@ const Ccpto = () => {
   };
 
   const getFormattedDate = (inputDate: any) => {
-    const date = new Date(inputDate);
-    const localDate = new Date(
-      date.getTime() - date.getTimezoneOffset() * 60000
-    )
-      .toISOString()
-      .split("T")[0];
-    return localDate;
+    if (["", null, undefined].includes(inputDate)) {
+      return "";
+    } else {
+      const date = new Date(inputDate);
+      const localDate = new Date(
+        date.getTime() - date.getTimezoneOffset() * 60000
+      )
+        .toISOString()
+        .split("T")[0];
+      return localDate;
+    }
   };
 
   const handleSave = async (rowData: any) => {

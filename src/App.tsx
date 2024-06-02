@@ -14,6 +14,7 @@ import Loader from "./components/loader/Loader";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Ccpto from "./pages/ccpto/Ccpto";
 import Tcp from "./pages/tcp/Tcp";
+import AdvTwopay from "./components/grids/Adv_twopay";
 
 const App = () => {
   const atsState = useSelector((state:any) => state.ats);
@@ -56,6 +57,7 @@ const App = () => {
               <Route path="/amt" element={<ProtectedRoute element={<Amt />} />} />
               <Route path="/ack" element={<ProtectedRoute element={<Ack />} />} />
               <Route path="/advance" element={<ProtectedRoute element={<Advance />} />} />
+              <Route path="/topay" element={<ProtectedRoute element={<AdvTwopay />} />} />
               <Route path="/payment" element={<ProtectedRoute element={<Payment />} />} />
               <Route path="/transport" element={<ProtectedRoute element={<Transport />} />} />
               <Route path="/ccpto" element={<ProtectedRoute element={<Ccpto />} />} />

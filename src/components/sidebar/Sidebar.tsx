@@ -35,6 +35,11 @@ const Sidebar = () => {
       image: require("../../assets/ico5.svg").default,
     },
     {
+      name: "By To Pay",
+      to: "/topay",
+      image: require("../../assets/ico5.svg").default,
+    },
+    {
       // name : 'Commission Crossing Pending from Truck Owner',
       name : 'Commission Crossing Pending',
       to: "/ccpto",

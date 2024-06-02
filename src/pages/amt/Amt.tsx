@@ -22,17 +22,6 @@ const Amt = () => {
   const [originalData, setOriginalData] = useState({});
   const [newRowAdded, setNewRowAdded] = useState(false);
   const searchQuery = useSelector((state: any) => state.search.query);
-  const modeOfAdvance = [
-    { name: "By VMAT", code: 1 },
-    { name: "By Transport", code: 2 },
-    { name: "By To Pay", code: 3 },
-  ];
-  const transportAdvanceTypes = [
-    { name: "To VMAT", code: 1 },
-    { name: "To Truck", code: 2 },
-    { name: "To pay", code: 3 },
-    { name: "Nil", code: 4 },
-  ];
   const [visible, setVisible] = useState<boolean>(false);
   const [selectedData, setSelectedData]: any = useState({});
   //pagination
@@ -89,6 +78,8 @@ const Amt = () => {
       "twopay",
       "truckloadwt",
       "halting",
+      "dateofadvancepayment",
+      "refrenceorrtgsnumber",
     ].includes(field.field);
     const isMt = ["truckloadwt"].includes(field.field);
     return (
@@ -154,13 +145,17 @@ const Amt = () => {
   };
 
   const getFormatteddate = (inputDate: any) => {
-    const date = new Date(inputDate);
-    const localDate = new Date(
-      date.getTime() - date.getTimezoneOffset() * 60000
-    )
-      .toISOString()
-      .split("T")[0];
-    return localDate;
+    if ([null, undefined, ""].includes(inputDate)) {
+      return "";
+    } else {
+      const date = new Date(inputDate);
+      const localDate = new Date(
+        date.getTime() - date.getTimezoneOffset() * 60000
+      )
+        .toISOString()
+        .split("T")[0];
+      return localDate;
+    }
   };
 
   const getNewdataPayload = (inputObject: any) => {
@@ -182,11 +177,15 @@ const Amt = () => {
       transf: Number(inputObject.transf),
       vmatf: Number(inputObject.vmatf),
       modeofadvance: Number(inputObject.modeofadvance),
+      transbalancetype: inputObject.transbalancetype,
+      truckbalancetype: inputObject.truckbalancetype,
       transadv: Number(inputObject.transadv),
       truckbln: Number(inputObject.truckbln),
       transbln: Number(inputObject.transbln),
       twopay: Number(inputObject.twopay),
       truckloadwt: Number(inputObject.truckloadwt),
+      dateofadvancepayment: getFormatteddate(inputObject.dateofadvancepayment),
+      refrenceorrtgsnumber: inputObject.refrenceorrtgsnumber,
     };
     return outputObject;
   };
@@ -314,9 +313,13 @@ const Amt = () => {
       modeofadvance: 0,
       transadv: 0,
       truckbln: 0,
+      truckbalancetype: "",
+      transbalancetype: "",
       transbln: 0,
       twopay: 0,
       truckloadwt: 0,
+      dateofadvancepayment: "",
+      refrenceorrtgsnumber: "",
     };
     setData([newRow, ...data]);
     setSelectedRowId(newRow._id);
@@ -338,7 +341,12 @@ const Amt = () => {
     const { value } = e;
     const newData = data.map((row: any) => {
       if (row._id === id) {
-        return { ...row, [field]: value.code };
+        // return { ...row, [field]: value.code };
+        const updatedRow = { ...row, [field]: value.code };
+        if(updatedRow.modeofadvance === 3){
+          updatedRow.twopay = updatedRow.transbln
+        }
+        return updatedRow
       }
       return row;
     });
@@ -347,24 +355,36 @@ const Amt = () => {
 
   const renderDropdown = (rowData: any, field: any, type: string) => {
     let selectedValue: any;
+    let dropdownValue: any = [];
     if (type === "modeofadvance") {
-      selectedValue = modeOfAdvance.find(
+      selectedValue = messages.modeOfAdvance.find(
         (option) => option.code === rowData.modeofadvance
       );
+      dropdownValue = messages.modeOfAdvance;
     } else if (type === "transaddvtype") {
-      selectedValue = transportAdvanceTypes.find(
+      selectedValue = messages.transportAdvanceTypes.find(
         (option) => option.code === rowData.transaddvtype
       );
+      dropdownValue = messages.transportAdvanceTypes;
+    } else if (type === "truckbalancetype") {
+      selectedValue = messages.modeofbalance.find(
+        (option) => option.code === rowData.truckbalancetype
+      );
+      dropdownValue = messages.modeofbalance;
+    } else if (type === "transbalancetype") {
+      selectedValue = messages.modeofbalance.find(
+        (option) => option.code === rowData.transbalancetype
+      );
+      dropdownValue = messages.modeofbalance;
     }
+
     return (
       <Dropdown
         value={selectedValue}
         onChange={(e) => onDropdownChange(e, rowData._id, field.field)}
-        options={
-          type === "modeofadvance" ? modeOfAdvance : transportAdvanceTypes
-        }
+        options={dropdownValue}
         optionLabel="name"
-        placeholder="Select Advance"
+        placeholder="Select"
         disabled={rowData._id !== selectedRowId}
         style={{ width: "150px" }}
       />
@@ -465,7 +485,11 @@ const Amt = () => {
             body={renderDatePicker}
             style={{ minWidth: "150px" }}
           ></Column>
-          <Column field="lateday" header="Late delivery" body={renderInput}></Column>
+          <Column
+            field="lateday"
+            header="Late delivery"
+            body={renderInput}
+          ></Column>
           <Column field="halting" header="Halting" body={renderInput}></Column>
           <Column
             field="truckf"
@@ -480,6 +504,16 @@ const Amt = () => {
           <Column
             field="transf"
             header="Transport Freight"
+            body={renderInput}
+          ></Column>
+          <Column
+            field="dateofadvancepayment"
+            header="Date of Advance Payment"
+            body={renderDatePicker}
+          ></Column>
+          <Column
+            field="refrenceorrtgsnumber"
+            header="Reference/RTGS number"
             body={renderInput}
           ></Column>
           <Column
@@ -507,16 +541,30 @@ const Amt = () => {
             body={renderInput}
           ></Column>
           <Column
+            field="truckbalancetype"
+            header="Truck Balance Type"
+            body={(rowData, field) =>
+              renderDropdown(rowData, field, "truckbalancetype")
+            }
+          ></Column>
+          <Column
             field="truckbln"
             header="Truck Balance"
             // body={renderInput}
+          ></Column>
+          <Column
+            field="transbalancetype"
+            header="Transport Balance Type"
+            body={(rowData, field) =>
+              renderDropdown(rowData, field, "transbalancetype")
+            }
           ></Column>
           <Column
             field="transbln"
             header="Transport Balance"
             // body={renderInput}
           ></Column>
-          <Column field="twopay" header="By To Pay" body={renderInput}></Column>
+          <Column field="twopay" header="By To Pay"></Column>
           <Column
             field="truckloadwt"
             header="Truck Load Weight"
