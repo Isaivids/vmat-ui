@@ -2,7 +2,6 @@ export const validateFields = (data: any) => {
     const requiredFields = [
         "wages",
         "others",
-        "paymentreceiveddate",
         "modeofpayment"
     ];
 

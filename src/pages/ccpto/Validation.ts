@@ -1,6 +1,5 @@
 export const validateFields = (data: any) => {
     const requiredFields = [
-        "paymentReceivedDate",
         "modeofpayment",
     ];
 
