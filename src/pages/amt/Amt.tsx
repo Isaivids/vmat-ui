@@ -25,11 +25,13 @@ const Amt = () => {
   const modeOfAdvance = [
     { name: "By VMAT", code: 1 },
     { name: "By Transport", code: 2 },
-    { name: "By TwoPay", code: 3 },
+    { name: "By To Pay", code: 3 },
   ];
   const transportAdvanceTypes = [
     { name: "To VMAT", code: 1 },
     { name: "To Truck", code: 2 },
+    { name: "To pay", code: 3 },
+    { name: "Nil", code: 4 },
   ];
   const [visible, setVisible] = useState<boolean>(false);
   const [selectedData, setSelectedData]: any = useState({});
@@ -463,7 +465,7 @@ const Amt = () => {
             body={renderDatePicker}
             style={{ minWidth: "150px" }}
           ></Column>
-          <Column field="lateday" header="Late Day" body={renderInput}></Column>
+          <Column field="lateday" header="Late delivery" body={renderInput}></Column>
           <Column field="halting" header="Halting" body={renderInput}></Column>
           <Column
             field="truckf"
@@ -514,7 +516,7 @@ const Amt = () => {
             header="Transport Balance"
             // body={renderInput}
           ></Column>
-          <Column field="twopay" header="2-Pay" body={renderInput}></Column>
+          <Column field="twopay" header="By To Pay" body={renderInput}></Column>
           <Column
             field="truckloadwt"
             header="Truck Load Weight"

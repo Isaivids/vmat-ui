@@ -23,14 +23,14 @@ const keyMapping: any = {
   vmatadv: "VMAT ADVANCE",
   truckbln: "TRUCK BALANCE",
   transbln: "TRANSPORT BALANCE",
-  twopay: "TWO PAY BALANCE",
+  twopay: "BY TO PAY BALANCE",
   truckloadwt: "TRUCK LOAD WEIGHT",
 };
 
 const modeOfAdvanceArr = [
   { name: "By VMAT", code: 1 },
   { name: "By Transport", code: 2 },
-  { name: "By TwoPay", code: 3 },
+  { name: "By ToPay", code: 3 },
 ];
 const transportAdvanceTypes = [
   { name: "To VMAT", code: 1 },

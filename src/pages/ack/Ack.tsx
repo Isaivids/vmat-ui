@@ -311,7 +311,7 @@ const onDateChange = (e: any, id: any, field: any) => {
         <Column field="transcrossing" body={(rowData) => renderCheckbox(rowData,'hidetc', 'transcrossing')} header="Transport Crossing"></Column>
         <Column
           field="ats.twopay"
-          header="2Pay Transport Balance."
+          header="By To Pay Transport Balance."
           style={{ minWidth: "200px" }}
         ></Column>
         <Column

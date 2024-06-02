@@ -22,6 +22,7 @@ const CommonDatePicker: React.FC<CommonDatePickerProps> = ({
       onChange={(e) => onDateChange(e, rowData._id, field.field)}
       disabled={rowData._id !== selectedRowId}
       style={{ width: "150px" }}
+      minDate={new Date()}
     />
   );
 };
