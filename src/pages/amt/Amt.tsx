@@ -78,8 +78,6 @@ const Amt = () => {
       "twopay",
       "truckloadwt",
       "halting",
-      "dateofadvancepayment",
-      "refrenceorrtgsnumber",
     ].includes(field.field);
     const isMt = ["truckloadwt"].includes(field.field);
     return (
@@ -184,8 +182,6 @@ const Amt = () => {
       transbln: Number(inputObject.transbln),
       twopay: Number(inputObject.twopay),
       truckloadwt: Number(inputObject.truckloadwt),
-      dateofadvancepayment: getFormatteddate(inputObject.dateofadvancepayment),
-      refrenceorrtgsnumber: inputObject.refrenceorrtgsnumber,
     };
     return outputObject;
   };
@@ -318,8 +314,6 @@ const Amt = () => {
       transbln: 0,
       twopay: 0,
       truckloadwt: 0,
-      dateofadvancepayment: "",
-      refrenceorrtgsnumber: "",
     };
     setData([newRow, ...data]);
     setSelectedRowId(newRow._id);
@@ -504,16 +498,6 @@ const Amt = () => {
           <Column
             field="transf"
             header="Transport Freight"
-            body={renderInput}
-          ></Column>
-          <Column
-            field="dateofadvancepayment"
-            header="Date of Advance Payment"
-            body={renderDatePicker}
-          ></Column>
-          <Column
-            field="refrenceorrtgsnumber"
-            header="Reference/RTGS number"
             body={renderInput}
           ></Column>
           <Column
