@@ -85,8 +85,8 @@ const Ack = () => {
         addThree += updatedRow.vmatcommision;
       }
     }
-    updatedRow.pendingamountfromtruckowner = addThree + expense + (lateday * halting);
-    updatedRow.finaltotaltotruckowner = updatedRow.ats.truckbln - addThree;
+    updatedRow.pendingamountfromtruckowner = updatedRow.ats.truckbln - (Math.abs(addThree) + Math.abs(expense) + Math.abs(lateday * halting));
+    updatedRow.finaltotaltotruckowner = updatedRow.ats.truckbln - Math.abs(addThree);
     return updatedRow
   }
 
