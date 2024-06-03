@@ -7,7 +7,6 @@ import { getByVmat, updateByVmat } from "../../store/slice/byvmatSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Paginator } from "primereact/paginator";
-import { validateFields } from "./validation1";
 import { messages } from "../../api/constants";
 import { Toast } from "primereact/toast";
 import CommonDatePicker from "../calender/CommonDatePicker";
@@ -64,16 +63,16 @@ const AdvVmat = () => {
   };
 
   const handleSave = async (rowData: any) => {
-    const { isValid, missingFields } = validateFields(rowData);
-    if (!isValid) {
-      toast.current?.show({
-        severity: "error",
-        summary: messages.validationerror,
-        detail: `${missingFields.join(", ")} is required`,
-        life: 3000,
-      });
-      return;
-    }
+    // const { isValid, missingFields } = validateFields(rowData);
+    // if (!isValid) {
+    //   toast.current?.show({
+    //     severity: "error",
+    //     summary: messages.validationerror,
+    //     detail: `${missingFields.join(", ")} is required`,
+    //     life: 3000,
+    //   });
+    //   return;
+    // }
     const payload = {
       pendinglabourwages: Number(rowData.pendinglabourwages),
       extlabourwages: Number(rowData.extlabourwages),
@@ -256,7 +255,7 @@ const AdvVmat = () => {
         {/* <Column field="remarks" header="Remarks" body={renderInput}></Column> */}
         <Column
           field="paymentreceiveddate"
-          header="Payment Received Date"
+          header="Payment RTGS Date"
           body={renderDatePicker}
         ></Column>
         <Column

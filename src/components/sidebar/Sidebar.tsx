@@ -63,7 +63,7 @@ const Sidebar = () => {
       style={{ height: "calc(100vh - 60px)", overflowY : 'auto', minWidth : '270px' }}
       className="primary pr-3 text-50 font-semibold flex flex-column justify-content-between"
     >
-      <div className="flex flex-column gap-5 py-2">
+      <div className="flex flex-column gap-3 py-1">
         {menu.length &&
           menu.map((x: any, index: number) => {
             return (
@@ -71,7 +71,7 @@ const Sidebar = () => {
                 to={x.to}
                 key={index}
                 onClick={() => dispatch(clearSearchQuery())}
-                className={({ isActive }) => isActive ? 'active-link flex gap-1 align-items-center' : 'non-active-link flex gap-1 align-items-center'}
+                className={({ isActive }) => isActive ? 'active-link flex align-items-center' : 'non-active-link flex align-items-center'}
               >
                 <img src={x.image} alt="VMAT" />
                 <span>{x.name}</span>

@@ -186,6 +186,11 @@ const AdvTwopay = () => {
     );
   };
 
+  const getAdvanceType = (type:any) =>{
+    const mode = messages.transportAdvanceTypes.find((mode) => mode.code === type.ats.transaddvtype);
+    return mode ? mode.name : "";
+  }
+
   const fetchData = useCallback(async () => {
     try {
       const trcukData = await dispatch(getbytwopay({ limit: rows, offset: page * rows, search: searchQuery }));
@@ -220,7 +225,8 @@ const AdvTwopay = () => {
           <Column field="ats.trucknumber" header="Truck Number"></Column>
           <Column field="ats.transname" header="Transport Name"></Column>
           <Column field="ats.transf" header="Transport Freight"></Column>
-          <Column field="advanceamount" header="Advance"></Column>
+          <Column field="ats.transaddvtype" body={(rowData:any) => getAdvanceType(rowData)} header="Transporter advance type to Truck"></Column>
+          <Column field="advanceamount" header="Transport Advance"></Column>
           <Column field="luxwages" header="Loading/Unloading Extra Wages" body={renderInput}></Column>
           <Column field="total" header="Total"></Column>
           <Column

@@ -9,7 +9,8 @@ export const messages = {
         { name: "Cash", code: "CASH" },
         { name: "IMPS", code: "IMPS" },
         { name: "G-Pay", code: "GPAY" },
-        { name: "Phone Pay", code: "PHONEPAY" },
+        // { name: "Phone Pay", code: "PHONEPAY" },
+        { name: "RC Owner Account", code: "RCOWNER" },
         { name: "VMAT account", code: "VMATACCOUNT" },
         { name: "Pending", code: "PENDING" }
     ],

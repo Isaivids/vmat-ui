@@ -44,7 +44,8 @@ const AdvTrans = () => {
         if (["wages", "others"].includes(field)) {
           const wages = Number(updatedRow.wages);
           const others = Number(updatedRow.others);
-          updatedRow.transadvtotruck = Number(wages + others);
+          const transAdv = Number(updatedRow.advanceamount);
+          updatedRow.transadvtotruck = transAdv - Math.abs(wages) - Math.abs(others);
         }
         return updatedRow;
       }
