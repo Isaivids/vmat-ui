@@ -60,7 +60,6 @@ const Ack = () => {
 
   const calculateUpdatedRow = (updatedRow:any) =>{
     const expense = Number(updatedRow.expense);
-    const lateday = Number(updatedRow.ats.lateday);
     const halting = Number(updatedRow.ats.halting);
     let addThree = 0;
     
