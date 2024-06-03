@@ -36,14 +36,13 @@ const Payment = () => {
     const newData: any = data.map((row: any) => {
       if (row._id === id) {
         const updatedRow = { ...row, [field]: value };
-        const currentLoadUnloadChar = Number(row.loadunloadchar) || 0;
         const currentPlusOrMinus = Number(row.plusorminus) || 0;
         const newPlusOrMinusValue = Number(value) || 0;
   
         if (field === "plusorminus") {
-          updatedRow.loadunloadchar = currentLoadUnloadChar - currentPlusOrMinus + newPlusOrMinusValue;
+          updatedRow.loadunloadchar = Number(row.loadunloadchar) - Number(currentPlusOrMinus) + Number(newPlusOrMinusValue);
         }
-        updatedRow.tyrasporterpaidamt = Number(updatedRow.ats.transbln) - Number(updatedRow.loadunloadchar);
+        updatedRow.tyrasporterpaidamt = Number(updatedRow.ats.transbln) - Math.abs(Number(updatedRow.loadunloadchar));
   
         return updatedRow;
       }
