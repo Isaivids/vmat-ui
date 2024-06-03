@@ -15,11 +15,13 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Ccpto from "./pages/ccpto/Ccpto";
 import Tcp from "./pages/tcp/Tcp";
 import AdvTwopay from "./components/grids/Adv_twopay";
+import TruckDetail from "./pages/truck/TruckDetail";
 
 const App = () => {
   const atsState = useSelector((state:any) => state.ats);
   const ackState = useSelector((state:any) => state.ack);
   const truckState = useSelector((state:any) => state.truck);
+  const transportState = useSelector((state:any) => state.transport);
   const transState = useSelector((state:any) => state.trans);
   const bytwopay = useSelector((state:any) => state.bytwopay);
   const bytrans = useSelector((state:any) => state.bytrans);
@@ -48,7 +50,7 @@ const App = () => {
             bytrans.loading ||
             bytwopay.loading ||
             byvmat.loading ||
-            user.loading || ccpto.loading || tcp.loading) && <SpinnerWithLogo />}
+            user.loading || ccpto.loading || tcp.loading || transportState.loading) && <SpinnerWithLogo />}
           <Routes>
             <Route element={<WithOutNavBar />}>
               <Route path="/" element={<Login />} />
@@ -60,6 +62,7 @@ const App = () => {
               <Route path="/topay" element={<ProtectedRoute element={<AdvTwopay />} />} />
               <Route path="/payment" element={<ProtectedRoute element={<Payment />} />} />
               <Route path="/transport" element={<ProtectedRoute element={<Transport />} />} />
+              <Route path="/truck" element={<ProtectedRoute element={<TruckDetail />} />} />
               <Route path="/ccpto" element={<ProtectedRoute element={<Ccpto />} />} />
               <Route path="/tcp" element={<ProtectedRoute element={<Tcp />} />} />
             </Route>

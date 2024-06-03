@@ -2,16 +2,18 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
+import {
+  gettruckdetail,
+  updateTruckDetail,
+} from "../../store/slice/transportSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Paginator } from "primereact/paginator";
 import { Toast } from "primereact/toast";
 import { messages } from "../../api/constants";
-import { validateFields } from "./validation";
-import { getTransportDetail, updateTransportDetail } from "../../store/slice/truckSlice";
 
-const Transport = () => {
+const TruckDetail = () => {
   const searchQuery = useSelector((state: any) => state.search.query);
   const toast = useRef<Toast>(null);
   const [data, setData]: any = useState([]);
@@ -54,19 +56,8 @@ const Transport = () => {
   };
 
   const handleSave = async (rowData: any) => {
-    // const { isValid, missingFields } = validateFields(rowData);
-    // if (!isValid) {
-    //   toast.current?.show({
-    //     severity: "error",
-    //     summary: messages.validationerror,
-    //     detail: `${missingFields.join(", ")} is required`,
-    //     life: 3000,
-    //   });
-    //   return;
-    // }
     const payload = {
       truckname: rowData.truckname,
-      transportname: rowData.transportname,
       address: rowData.address,
       phonenumber: rowData.phonenumber,
       accountnumber: rowData.accountnumber,
@@ -78,7 +69,7 @@ const Transport = () => {
     };
 
     try {
-      const response = await dispatch(updateTransportDetail(payload));
+      const response = await dispatch(updateTruckDetail(payload));
 
       if (!response.payload.error) {
         const index = data.findIndex((item: any) => item._id === rowData._id);
@@ -124,7 +115,6 @@ const Transport = () => {
   const handleAddNewRow = () => {
     const newRow = {
       _id: new Date(),
-      transportname: "",
       truckname: "",
       address: "",
       phonenumber: "",
@@ -165,7 +155,7 @@ const Transport = () => {
   const fetchData = useCallback(async () => {
     try {
       const trcukData = await dispatch(
-        getTransportDetail({ limit: rows, offset: page * rows, search: searchQuery })
+        gettruckdetail({ limit: rows, offset: page * rows, search: searchQuery })
       );
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
         setData(trcukData.payload.data);
@@ -199,8 +189,8 @@ const Transport = () => {
       />
       <DataTable value={data} scrollable scrollHeight="80vh" showGridlines>
         <Column
-          field="transportname"
-          header="Transport Name"
+          field="truckname"
+          header="Truck Name"
           body={renderInput}
         ></Column>
         <Column field="address" header="Address" body={renderInput}></Column>
@@ -230,4 +220,4 @@ const Transport = () => {
   );
 };
 
-export default Transport;
+export default TruckDetail;

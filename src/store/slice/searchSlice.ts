@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     query: '',
+    loading : false,
 };
 
 const searchSlice = createSlice({
@@ -14,6 +15,12 @@ const searchSlice = createSlice({
         clearSearchQuery: (state) => {
             state.query = '';
         },
+        setLoading : (state:any) =>{
+            state.loading = true;
+        },
+        clearLoading : (state:any) =>{
+            state.loading = false;
+        }
     },
 });
 

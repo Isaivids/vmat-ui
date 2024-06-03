@@ -13,53 +13,53 @@ const initialState: State = {
     error: false,
 };
 
-export const gettruckdetail = createAsyncThunk('gettruckdetail', async (payload:any) => {
-    const response:any = await apiCall.get(`/gettruckdetail?limit=${payload.limit}&offset=${payload.offset}&search=${payload.search}`);
+export const getTransportDetail = createAsyncThunk('getTransportDetail', async (payload:any) => {
+    const response:any = await apiCall.get(`/getTransportDetail?limit=${payload.limit}&offset=${payload.offset}&search=${payload.search}`);
     if (response.error) {
         throw new Error("Error message");
     }
     return response.data;
 });
 
-export const updateTruckDetail = createAsyncThunk('updatetruckdetail', async (payload: any) => {
-    const response:any = await apiCall.put(`/updatetruckdetail`, payload);
+export const updateTransportDetail = createAsyncThunk('updateTransportDetail', async (payload: any) => {
+    const response:any = await apiCall.put(`/updateTransportDetail`, payload);
     if (response.error) {
         throw new Error("Error message");
     }
     return response.data;
 });
 
-const truckSlice = createSlice({
+const transportSlice = createSlice({
     initialState,
-    name: 'TRUCKDETAIL',
+    name: 'TRANSPORTDETAIL',
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(gettruckdetail.pending, (state) => {
+            .addCase(getTransportDetail.pending, (state) => {
                 state.loading = true;
                 state.error = false;
             })
-            .addCase(gettruckdetail.fulfilled, (state, action) => {
+            .addCase(getTransportDetail.fulfilled, (state, action) => {
                 state.body = action.payload;
                 state.loading = false;
             })
-            .addCase(gettruckdetail.rejected, (state) => {
+            .addCase(getTransportDetail.rejected, (state) => {
                 state.loading = false;
                 state.error = true;
             })
-            .addCase(updateTruckDetail.pending, (state) => {
+            .addCase(updateTransportDetail.pending, (state) => {
                 state.loading = true;
                 state.error = false;
             })
-            .addCase(updateTruckDetail.fulfilled, (state) => {
+            .addCase(updateTransportDetail.fulfilled, (state) => {
                 state.loading = false;
                 state.error = false;
             })
-            .addCase(updateTruckDetail.rejected, (state) => {
+            .addCase(updateTransportDetail.rejected, (state) => {
                 state.loading = false;
                 state.error = true;
             });
     },
 });
 
-export default truckSlice.reducer;
+export default transportSlice.reducer;

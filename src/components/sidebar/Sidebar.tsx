@@ -30,11 +30,6 @@ const Sidebar = () => {
       image: require("../../assets/ico4.svg").default,
     },
     {
-      name: "Transport & Truck Details",
-      to: "/transport",
-      image: require("../../assets/ico5.svg").default,
-    },
-    {
       name: "By To Pay",
       to: "/topay",
       image: require("../../assets/ico5.svg").default,
@@ -49,7 +44,18 @@ const Sidebar = () => {
       name : "Transport Crossing Payment",
       to: "/tcp",
       image: require("../../assets/ico5.svg").default,
-    }
+    },
+    {
+      name: "Transport Details",
+      to: "/transport",
+      image: require("../../assets/ico5.svg").default,
+    },
+    {
+      name: "Truck Details",
+      to: "/truck",
+      image: require("../../assets/ico5.svg").default,
+    },
+
   ];
 
   const logoutProfile = () =>{
@@ -63,7 +69,7 @@ const Sidebar = () => {
       style={{ height: "calc(100vh - 60px)", overflowY : 'auto', minWidth : '270px' }}
       className="primary pr-3 text-50 font-semibold flex flex-column justify-content-between"
     >
-      <div className="flex flex-column gap-3 py-1">
+      <div className="flex flex-column gap-3 py-1 overflow-y-auto	">
         {menu.length &&
           menu.map((x: any, index: number) => {
             return (

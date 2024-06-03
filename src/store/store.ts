@@ -10,11 +10,13 @@ import searchSlice from "./slice/searchSlice";
 import userSlice from "./slice/userSlice";
 import ccptoSlice from "./slice/ccptoSlice";
 import tcpSlice from "./slice/tcpSlice";
+import truckSlice from "./slice/truckSlice";
 export const Store = configureStore({
     reducer: { 
         ats: atsSlice, 
         ack: ackSlice, 
-        truck: transportSlice, 
+        truck: truckSlice,
+        transport : transportSlice, 
         trans: transcrossingSLice,
         bytrans : bytransSlice,
         byvmat : byvmatSlice,
