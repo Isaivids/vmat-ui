@@ -8,7 +8,6 @@ import { InputTextarea } from "primereact/inputtextarea";
 import { Paginator } from "primereact/paginator";
 import { Toast } from "primereact/toast";
 import { messages } from "../../api/constants";
-import { validateFields } from "./validation";
 import { getTransportDetail, updateTransportDetail } from "../../store/slice/truckSlice";
 
 const Transport = () => {
