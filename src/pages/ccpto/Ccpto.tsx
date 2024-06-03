@@ -218,6 +218,7 @@ const Ccpto = () => {
         <Column field="ats.truckname" header="Truck name"></Column>
         <Column field="ats.trucknumber" header="Truck Number"></Column>
         <Column field="vmatcommision" header="VMAT Commission"></Column>
+        <Column field="vmatcrossing" header="VMAT Crossing"></Column>
         <Column field="crossing" header="Crossing"></Column>
         <Column field="ack.expense" header="Expense"></Column>
         <Column field="pending" header="Pending"></Column>

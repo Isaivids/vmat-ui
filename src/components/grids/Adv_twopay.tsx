@@ -228,7 +228,7 @@ const AdvTwopay = () => {
           <Column field="ats.transaddvtype" body={(rowData:any) => getAdvanceType(rowData)} header="Transporter advance type to Truck"></Column>
           <Column field="advanceamount" header="Transport Advance"></Column>
           <Column field="luxwages" header="Loading/Unloading Extra Wages" body={renderInput}></Column>
-          <Column field="total" header="Total"></Column>
+          <Column field="total" header="Advance Amount Paid to Truck"></Column>
           <Column
             field="paymentreceiveddate"
             header="Payment Received Date"

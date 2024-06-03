@@ -85,8 +85,15 @@ const Ack = () => {
         addThree += updatedRow.vmatcommision;
       }
     }
-    updatedRow.pendingamountfromtruckowner = updatedRow.ats.truckbln - (Math.abs(addThree) + Math.abs(expense) + Math.abs(lateday * halting));
-    updatedRow.finaltotaltotruckowner = updatedRow.ats.truckbln - Math.abs(addThree);
+    if(updatedRow.ats.modeofadvance === 3){
+      updatedRow.pendingamountfromtruckowner = addThree;
+      updatedRow.finaltotaltotruckowner = Number(updatedRow.ats.transbln) - Math.abs(expense);
+  }else{
+      updatedRow.pendingamountfromtruckowner = Number(updatedRow.ats.truckbln) -  (Math.abs(addThree) + Math.abs(expense) + Math.abs(halting));
+      updatedRow.finaltotaltotruckowner = (updatedRow.ats.truckbln) - Math.abs(addThree);
+  }
+    // updatedRow.pendingamountfromtruckowner = updatedRow.ats.truckbln - (Math.abs(addThree) + Math.abs(expense) + Math.abs(lateday * halting));
+    // updatedRow.finaltotaltotruckowner = updatedRow.ats.truckbln - Math.abs(addThree);
     return updatedRow
   }
 

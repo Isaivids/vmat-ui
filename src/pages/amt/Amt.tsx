@@ -466,7 +466,7 @@ const Amt = () => {
             header="Transport Name"
             body={renderInput}
           ></Column>
-          <Column field="from" header="From" body={renderInput}></Column>
+          {/* <Column field="from" header="From" body={renderInput}></Column>
           <Column field="to" header="To" body={renderInput}></Column>
           <Column
             field="repdate"
@@ -478,7 +478,7 @@ const Amt = () => {
             header="Unload Date"
             body={renderDatePicker}
             style={{ minWidth: "150px" }}
-          ></Column>
+          ></Column> */}
           <Column
             field="lateday"
             header="Late delivery"
