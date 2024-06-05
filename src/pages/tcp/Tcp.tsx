@@ -49,13 +49,14 @@ const Tcp = () => {
   };
 
   const renderInput = (rowData: any, field: any) => {
+    const isStringField = ['remarks'].includes(field.field)
     return (
       <div className="flex align-items-center rel">
         <InputText
           disabled={rowData._id !== selectedRowId}
           value={rowData[field.field]}
           onChange={(e) => onInputChange(e, rowData._id, field.field)}
-          keyfilter={"num"}
+          keyfilter={isStringField ? undefined : "num"}
           style={{ width: "150px" }}
         />
       </div>
@@ -79,6 +80,7 @@ const Tcp = () => {
     const payload = {
       total: rowData.total,
       others: rowData.others,
+      remarks: rowData.remarks,
       _id: rowData._id,
     };
     try {
@@ -175,6 +177,7 @@ const Tcp = () => {
         <Column field="ats.trucknumber" header="Truck Number"></Column>
         <Column field="transcrossing" header="Trans Crossing"></Column>
         <Column field="others" body={renderInput} header="Others"></Column>
+        <Column field="remarks" body={renderInput} header="Remarks"></Column>
         <Column field="total" header="Total"></Column>
         <Column
           header="Actions"

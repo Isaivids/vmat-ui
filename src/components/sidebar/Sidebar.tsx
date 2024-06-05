@@ -30,7 +30,7 @@ const Sidebar = () => {
       image: require("../../assets/ico4.svg").default,
     },
     {
-      name: "By To Pay",
+      name: "By To Pay Advance",
       to: "/topay",
       image: require("../../assets/ico5.svg").default,
     },

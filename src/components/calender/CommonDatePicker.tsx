@@ -23,6 +23,8 @@ const CommonDatePicker: React.FC<CommonDatePickerProps> = ({
       disabled={rowData._id !== selectedRowId}
       style={{ width: "150px" }}
       minDate={new Date()}
+      dateFormat="dd/mm/yy"
+      placeholder="Select Date"
     />
   );
 };

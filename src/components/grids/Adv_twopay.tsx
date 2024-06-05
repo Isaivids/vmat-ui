@@ -9,7 +9,6 @@ import { getbytwopay, updateByTwoPay } from '../../store/slice/bytwopaySlice';
 import { Paginator } from 'primereact/paginator';
 import { Toast } from 'primereact/toast';
 import { messages } from '../../api/constants';
-import { validateFields } from './validation3';
 import CommonDatePicker from '../calender/CommonDatePicker';
 import CommonDropdown from '../dropdown/CommonDropdown';
 
@@ -53,7 +52,7 @@ const AdvTwopay = () => {
         disabled={rowData._id !== selectedRowId}
         value={rowData[field.field]}
         onChange={(e) => onInputChange(e, rowData._id, field.field)}
-        keyfilter={"num"}
+        keyfilter={ field.field === 'rtgsnumber' ? undefined :  "num"}
       />
     );
   };
@@ -82,25 +81,37 @@ const AdvTwopay = () => {
     );
   };
 
-  const handleSave = async (rowData: any) => {
-    const { isValid, missingFields } = validateFields(rowData);
-    if (!isValid) {
-      toast.current?.show({
-        severity: "error",
-        summary: messages.validationerror,
-        detail: `${missingFields.join(", ")} is required`,
-        life: 3000,
-      });
-      return;
+  const getFormattedDate = (inputDate: any) => {
+    if (["", null, undefined].includes(inputDate)) {
+      return "";
+    } else {
+      const date = new Date(inputDate);
+      const localDate = new Date(
+        date.getTime() - date.getTimezoneOffset() * 60000
+      )
+        .toISOString()
+        .split("T")[0];
+      return localDate;
     }
-    const date = new Date(rowData.paymentreceiveddate);
-    const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().split("T")[0];
-    
+  };
+  const handleSave = async (rowData: any) => {
+    // const { isValid, missingFields } = validateFields(rowData);
+    // if (!isValid) {
+    //   toast.current?.show({
+    //     severity: "error",
+    //     summary: messages.validationerror,
+    //     detail: `${missingFields.join(", ")} is required`,
+    //     life: 3000,
+    //   });
+    //   return;
+    // }
+
     const payload = {
       luxwages: Number(rowData.luxwages),
       total: Number(rowData.total),
       modeofpayment: rowData.modeofpayment,
-      paymentreceiveddate: localDate,
+      paymentreceiveddate: getFormattedDate(rowData.paymentreceiveddate),
+      rtgsnumber : rowData.rtgsnumber,
       _id : rowData._id
     };
     try {
@@ -239,6 +250,7 @@ const AdvTwopay = () => {
             header="Mode Of Payment"
             body={renderDropdown}
           ></Column>
+          <Column field="rtgsnumber" header="RTGS Number" body={renderInput}></Column>
           <Column
             header="Actions"
             body={renderButton}

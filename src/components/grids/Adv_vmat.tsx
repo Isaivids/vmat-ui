@@ -35,7 +35,7 @@ const AdvVmat = () => {
     const newData: any = data.map((row: any) => {
       if (row._id === id) {
         const updatedRow = { ...row, [field]: value };
-        if (!["remarks"].includes(field)) {
+        if (!["remarks","rtgsnumber"].includes(field)) {
           updatedRow.total =
             Number(updatedRow.ats.truckadv) -
             Number(updatedRow.vmatcommision) +
@@ -82,6 +82,7 @@ const AdvVmat = () => {
       total: Number(rowData.total),
       paymentreceiveddate: rowData.paymentreceiveddate,
       modeofpayment : rowData.modeofpayment,
+      rtgsnumber : rowData.rtgsnumber,
       _id: rowData._id,
     };
     try {
@@ -263,6 +264,7 @@ const AdvVmat = () => {
           header="Mode Of Payment"
           body={renderDropdown}
         ></Column>
+        <Column field="rtgsnumber" header="RTGS Number" body={renderInput}></Column>
         <Column
           header="Actions"
           body={renderButton}

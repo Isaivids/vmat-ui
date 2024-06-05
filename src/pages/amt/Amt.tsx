@@ -279,9 +279,7 @@ const Amt = () => {
   };
 
   const addNewRow = () => {
-    const currentDate = new Date();
-    const month = currentDate.getMonth();
-    const year = currentDate.getFullYear();
+    const currentDate = new Date().toLocaleDateString().split('/').join('');
     const nextSno =
       data.reduce((maxSno: any, row: any) => {
         const sno = parseInt(row.sno);
@@ -290,8 +288,8 @@ const Amt = () => {
 
     const newRow = {
       _id: new Date().getDate().toString(),
-      sno: nextSno.toString() + `/` + month + `-` + year,
-      date: currentDate,
+      sno: nextSno.toString() + currentDate,
+      date: '',
       truckname: "",
       trucknumber: "",
       transname: "",

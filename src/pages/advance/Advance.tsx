@@ -18,10 +18,6 @@ const Advance = () => {
                     <RadioButton inputId="transporter" value="2" onChange={(e: RadioButtonChangeEvent) => setSelection(e.value)} checked={selection === '2'} />
                     <label htmlFor="transporter" className="ml-2">By Transporter</label>
                 </div>
-                {/* <div className="flex align-items-center">
-                    <RadioButton inputId="twopay" value="3" onChange={(e: RadioButtonChangeEvent) => setSelection(e.value)} checked={selection === '3'} />
-                    <label htmlFor="twopay" className="ml-2">By 2 Pay</label>
-                </div> */}
             </div>
         </div>
     )
@@ -32,7 +28,6 @@ const Advance = () => {
       <RadioSelection />
       {selection === '1' && <AdvVmat />}
       {selection === '2' && <AdvTrans />}
-      {/* {selection === '3' && <AdvTwopay />} */}
     </div>
   );
 };

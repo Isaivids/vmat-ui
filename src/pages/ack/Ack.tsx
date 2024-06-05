@@ -137,6 +137,7 @@ const onDateChange = (e: any, id: any, field: any) => {
     )
       .toISOString()
       .split("T")[0];
+      console.log(localDate)
     return localDate;
   };
 
@@ -162,7 +163,10 @@ const onDateChange = (e: any, id: any, field: any) => {
       expense: Number(rowData.expense),
       finaltotaltotruckowner: Number(rowData.finaltotaltotruckowner),
       paymentReceivedDate: rowData.paymentReceivedDate ? getFormattedDate(rowData.paymentReceivedDate) : '',
+      reportingdate: rowData.reportingdate ? getFormattedDate(rowData.reportingdate) : '',
+      deliverydate: rowData.deliverydate ? getFormattedDate(rowData.deliverydate) : '',
       modeofpayment: rowData.modeofpayment,
+      rtgsnumber : rowData.rtgsnumber,
       _id: rowData._id,
     };
     try {
@@ -316,9 +320,20 @@ const onDateChange = (e: any, id: any, field: any) => {
         <Column field="ats.trucknumber" header="Truck Number"></Column>
         <Column field="ats.transname" header="Transport Name"></Column>
         <Column field="ats.truckbln" header="Truck Balance"></Column>
-        <Column field="expense" header="Expense" body={renderInput}></Column>
+        <Column
+          field="reportingdate"
+          header="Reporting Date"
+          body={renderDatePicker}
+        ></Column>
+        <Column
+          field="deliverydate"
+          header="Delivery Date"
+          body={renderDatePicker}
+        ></Column>
         <Column field="ats.lateday" header="Late Delivery"></Column>
         <Column field="ats.halting" header="Halting"></Column>
+        <Column field="expense" header="Expense" body={renderInput}></Column>
+        <Column field="podcharge" header="POD Charge" body={renderInput}></Column>
         <Column field="vmatcrossing" body={(rowData) => renderCheckbox(rowData,'hidevc' ,'vmatcrossing')} header="VMAT Crossing"></Column>
         <Column field="vmatcommision" body={(rowData) => renderCheckbox(rowData,'hidevcm', 'vmatcommision')} header="VMAT Commission"></Column>
         <Column field="transcrossing" body={(rowData) => renderCheckbox(rowData,'hidetc', 'transcrossing')} header="Transport Crossing"></Column>
@@ -347,6 +362,7 @@ const onDateChange = (e: any, id: any, field: any) => {
           header="Mode Of Payment"
           body={renderDropdown}
         ></Column>
+        <Column field="rtgsnumber" header="RTGS Number" body={renderInput}></Column>
         <Column
           header="Actions"
           body={renderButton}

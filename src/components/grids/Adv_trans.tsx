@@ -10,7 +10,6 @@ import {
   updateByTransporter,
 } from "../../store/slice/bytransSlice";
 import { Paginator } from "primereact/paginator";
-import { validateFields } from "./validation2";
 import { Toast } from "primereact/toast";
 import { messages } from "../../api/constants";
 import CommonDatePicker from "../calender/CommonDatePicker";
@@ -55,7 +54,7 @@ const AdvTrans = () => {
   };
 
   const renderInput = (rowData: any, field: any) => {
-    const isStringField = ["remarks"].includes(field.field);
+    const isStringField = ["remarks","rtgsnumber"].includes(field.field);
     return (
       <InputText
         disabled={rowData._id !== selectedRowId}
@@ -67,26 +66,30 @@ const AdvTrans = () => {
   };
 
   const getFormattedDate = (inputDate: any) => {
-    const date = new Date(inputDate);
-    const localDate = new Date(
-      date.getTime() - date.getTimezoneOffset() * 60000
-    )
-      .toISOString()
-      .split("T")[0];
-    return localDate;
+    if (["", null, undefined].includes(inputDate)) {
+      return "";
+    } else {
+      const date = new Date(inputDate);
+      const localDate = new Date(
+        date.getTime() - date.getTimezoneOffset() * 60000
+      )
+        .toISOString()
+        .split("T")[0];
+      return localDate;
+    }
   };
 
   const handleSave = async (rowData: any) => {
-    const { isValid, missingFields } = validateFields(rowData);
-    if (!isValid) {
-      toast.current?.show({
-        severity: "error",
-        summary: messages.validationerror,
-        detail: `${missingFields.join(", ")} is required`,
-        life: 3000,
-      });
-      return;
-    }
+    // const { isValid, missingFields } = validateFields(rowData);
+    // if (!isValid) {
+    //   toast.current?.show({
+    //     severity: "error",
+    //     summary: messages.validationerror,
+    //     detail: `${missingFields.join(", ")} is required`,
+    //     life: 3000,
+    //   });
+    //   return;
+    // }
     const payload = {
       wages: Number(rowData.wages),
       others: Number(rowData.others),
@@ -94,6 +97,7 @@ const AdvTrans = () => {
       remarks: rowData.remarks,
       modeofpayment: rowData.modeofpayment,
       paymentreceiveddate: getFormattedDate(rowData.paymentreceiveddate),
+      rtgsnumber : rowData.rtgsnumber,
       _id: rowData._id,
     };
     try {
@@ -270,6 +274,7 @@ const AdvTrans = () => {
           header="Mode Of Payment"
           body={renderDropdown}
         ></Column>
+        <Column field="rtgsnumber" header="RTGS Number" body={renderInput}></Column>
         <Column
           header="Actions"
           body={renderButton}

@@ -7,10 +7,10 @@ import { AppDispatch } from "../../store/store";
 import { Paginator } from "primereact/paginator";
 import { messages } from "../../api/constants";
 import { Toast } from "primereact/toast";
-import { validateFields } from "./Validation";
 import { getccpto, updateccpto } from "../../store/slice/ccptoSlice";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import CommonDropdown from "../../components/dropdown/CommonDropdown";
+import { InputText } from "primereact/inputtext";
 
 const Ccpto = () => {
   const searchQuery = useSelector((state: any) => state.search.query);
@@ -31,6 +31,27 @@ const Ccpto = () => {
     setRows(event.rows);
   };
   // ----------end of pagination
+  const onInputChange = (e: any, id: any, field: any) => {
+    const { value } = e.target;
+    const newData: any = data.map((row: any) => {
+      if (row._id === id) {
+       return { ...row, [field]: value };
+      }
+      return row;
+    });
+    setData(newData);
+  };
+
+  
+  const renderInput = (rowData: any, field: any) => {
+    return (
+      <InputText
+        disabled={rowData._id !== selectedRowId}
+        value={rowData[field.field]}
+        onChange={(e:any) => onInputChange(e, rowData._id, field.field)}
+      />
+    );
+  };
 
   const renderDatePicker = (rowData: any, field: any) => {
     return (
@@ -92,19 +113,20 @@ const Ccpto = () => {
   };
 
   const handleSave = async (rowData: any) => {
-    const { isValid, missingFields } = validateFields(rowData);
-    if (!isValid) {
-      toast.current?.show({
-        severity: "error",
-        summary: messages.validationerror,
-        detail: `${missingFields.join(", ")} is required`,
-        life: 3000,
-      });
-      return;
-    }
+    // const { isValid, missingFields } = validateFields(rowData);
+    // if (!isValid) {
+    //   toast.current?.show({
+    //     severity: "error",
+    //     summary: messages.validationerror,
+    //     detail: `${missingFields.join(", ")} is required`,
+    //     life: 3000,
+    //   });
+    //   return;
+    // }
     const payload = {
       paymentReceivedDate: getFormattedDate(rowData.paymentReceivedDate),
       modeofpayment: rowData.modeofpayment,
+      rtgsnumber : rowData.rtgsnumber,
       _id: rowData._id,
     };
     try {
@@ -232,6 +254,7 @@ const Ccpto = () => {
           header="Mode Of Payment"
           body={renderDropdown}
         ></Column>
+        <Column field="rtgsnumber" header="RTGS Number" body={renderInput}></Column>
         <Column
           header="Actions"
           body={renderButton}

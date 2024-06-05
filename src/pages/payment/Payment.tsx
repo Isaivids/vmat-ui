@@ -7,7 +7,6 @@ import { getTransCrossing, updateTransAdvance } from "../../store/slice/transSli
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Paginator } from "primereact/paginator";
-import { validateFields } from "./validation";
 import { messages } from "../../api/constants";
 import { Toast } from "primereact/toast";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
@@ -66,7 +65,7 @@ const Payment = () => {
   
 
   const renderInput = (rowData: any, field: any) => {
-    const isStringField = ["remarks"].includes(field.field);
+    const isStringField = ["remarks","rtgsnumber"].includes(field.field);
     return (
       <InputText
         disabled={rowData._id !== selectedRowId}
@@ -102,28 +101,41 @@ const Payment = () => {
     );
   };
 
-  const handleSave = async (rowData: any) => {
-    const { isValid, missingFields } = validateFields(rowData);
-    if (!isValid) {
-      toast.current?.show({
-        severity: "error",
-        summary: messages.validationerror,
-        detail: `${missingFields.join(", ")} is required`,
-        life: 3000,
-      });
-      return;
+  const getFormattedDate = (inputDate: any) => {
+    if (["", null, undefined].includes(inputDate)) {
+      return "";
+    } else {
+      const date = new Date(inputDate);
+      const localDate = new Date(
+        date.getTime() - date.getTimezoneOffset() * 60000
+      )
+        .toISOString()
+        .split("T")[0];
+      return localDate;
     }
-    const date = new Date(rowData.paymentreceiveddate);
-    const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().split("T")[0];
-    
+  };
+
+  const handleSave = async (rowData: any) => {
+    // const { isValid, missingFields } = validateFields(rowData);
+    // if (!isValid) {
+    //   toast.current?.show({
+    //     severity: "error",
+    //     summary: messages.validationerror,
+    //     detail: `${missingFields.join(", ")} is required`,
+    //     life: 3000,
+    //   });
+    //   return;
+    // }
+
     const payload = {
       loadunloadchar: Number(rowData.loadunloadchar),
       tyrasporterpaidamt: Number(rowData.tyrasporterpaidamt),
       modeofpayment: rowData.modeofpayment,
-      paymentreceiveddate: localDate,
+      paymentreceiveddate: getFormattedDate(rowData.paymentreceiveddate),
       remarks : rowData.remarks,
       extraloadingwagespaidbydriver : Number(rowData.extraloadingwagespaidbydriver),
       loadingwagespending : Number(rowData.loadingwagespending),
+      rtgsnumber : rowData.rtgsnumber,
       _id: rowData._id,
     };
     try {
@@ -280,7 +292,7 @@ const Payment = () => {
         ></Column>
         <Column
           field="tyrasporterpaidamt"
-          header="Transporter Paid Advance Amount"
+          header="Transporter Paid Balance Amount"
           style={{minWidth : '200px'}}
         ></Column>
         <Column
@@ -298,6 +310,7 @@ const Payment = () => {
           header="Mode Of Payment"
           body={renderDropdown}
         ></Column>
+        <Column field="rtgsnumber" header="RTGS Number" body={renderInput}></Column>
         <Column
           header="Actions"
           body={renderButton}

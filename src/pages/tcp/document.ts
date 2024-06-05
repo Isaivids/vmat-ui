@@ -16,6 +16,7 @@ export const downloadPDF = (data:any) => {
       { field: "ats.trucknumber", header: "Truck Number" },
       { field: "ats.transcrossing", header: "Trans Crossing" },
       { field: "others", header: "Others" },
+      { field: "remarks", header: "Remarks" },
       { field: "total", header: "Total" },
     ];
     const tableHeaders = columns.map((col) => ({
@@ -48,7 +49,7 @@ export const downloadPDF = (data:any) => {
         {
           table: {
             headerRows: 1,
-            widths: ["auto", "auto", "*", "auto", "auto", "*"],
+            widths: ["auto", "auto", "*", "auto", "auto", "*", '*'],
             body: tableBody,
           },
         },
