@@ -2,7 +2,6 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { InputText } from "primereact/inputtext";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { getTransCrossing, updateTransAdvance } from "../../store/slice/transSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Paginator } from "primereact/paginator";
@@ -10,8 +9,10 @@ import { messages } from "../../api/constants";
 import { Toast } from "primereact/toast";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import CommonDropdown from "../../components/dropdown/CommonDropdown";
+import { gettransportadvance, updateTransportAdvance } from "../../store/slice/transportadvance";
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
-const Payment = () => {
+
+const TransportAdvance = () => {
   const dispatch = useDispatch<AppDispatch>();
   const toast = useRef<Toast>(null);
   const searchQuery = useSelector((state: any) => state.search.query);
@@ -35,14 +36,6 @@ const Payment = () => {
     const newData: any = data.map((row: any) => {
       if (row._id === id) {
         const updatedRow = { ...row, [field]: value };
-        const currentPlusOrMinus = Number(row.plusorminus) || 0;
-        const newPlusOrMinusValue = Number(value) || 0;
-  
-        if (field === "plusorminus") {
-          updatedRow.loadunloadchar = Number(row.loadunloadchar) - Number(currentPlusOrMinus) + Number(newPlusOrMinusValue);
-        }
-        updatedRow.tyrasporterpaidamt = Number(updatedRow.ats.transbln) - Math.abs(Number(updatedRow.loadunloadchar));
-  
         return updatedRow;
       }
       return row;
@@ -104,6 +97,7 @@ const Payment = () => {
   };
 
   const handleSave = async (rowData: any) => {
+
     const payload = {
       loadunloadchar: Number(rowData.loadunloadchar),
       tyrasporterpaidamt: Number(rowData.tyrasporterpaidamt),
@@ -116,7 +110,7 @@ const Payment = () => {
       _id: rowData._id,
     };
     try {
-      const response = await dispatch(updateTransAdvance(payload));
+      const response = await dispatch(updateTransportAdvance(payload));
       if (response.payload.data && !response.payload.error) {
         const index = data.findIndex((item:any) => item._id === rowData._id);
         if (index !== -1) {
@@ -200,7 +194,7 @@ const Payment = () => {
 
   const fetchData = useCallback(async () => {
     try {
-      const trcukData = await dispatch(getTransCrossing({ limit: rows, offset: page * rows, search: searchQuery }));
+      const trcukData = await dispatch(gettransportadvance({ limit: rows, offset: page * rows, search: searchQuery }));
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
         setData(trcukData.payload.data);
         setTotalPage(trcukData.payload.pagination.totalDocuments);
@@ -243,13 +237,13 @@ const Payment = () => {
           header="Date"
           style={{ minWidth: "100px" }}
         ></Column>
+        <Column field="ats.transname" header="Transport Name"></Column>
         <Column field="ats.truckname" header="Truck Name"></Column>
         <Column field="ats.trucknumber" header="Truck Number"></Column>
-        <Column field="ats.transbln" header="Transport balance"></Column>
-        {/* <Column field="ats.transadv" header="Transport Advance"></Column> */}
+        <Column field="ats.transadv" header="Transport Advance"></Column>
         <Column
           field="loadingwagespending"
-          header="Loading Wages Pending"
+          header="Loading Wages"
           body={renderInput}
         ></Column>
         <Column
@@ -258,19 +252,8 @@ const Payment = () => {
           body={renderInput}
         ></Column>
         <Column
-          field="loadunloadchar"
-          header="Unloading Wages"
-          // body={renderInput}
-        ></Column>
-        <Column
-          field="plusorminus"
-          header="Unloading Charge"
-          body={renderInput}
-        ></Column>
-        <Column
-          field="tyrasporterpaidamt"
-          header="Transporter Paid Balance Amount"
-          style={{minWidth : '200px'}}
+          field="transporterpaidadvanceamount"
+          header="Transporter Paid Advance Amount"
         ></Column>
         <Column
           field="remarks"
@@ -278,8 +261,8 @@ const Payment = () => {
           body={renderInput}
         ></Column>
         <Column
-          field="paymentreceiveddate"
-          header="Payment Received Date"
+          field="dateofadvancepayment"
+          header="Date of Advance Payment"
           body={renderDatePicker}
         ></Column>
         <Column
@@ -304,4 +287,4 @@ const Payment = () => {
   );
 };
 
-export default Payment;
+export default TransportAdvance;

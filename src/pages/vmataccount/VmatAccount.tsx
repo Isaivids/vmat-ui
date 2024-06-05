@@ -2,20 +2,18 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { InputText } from "primereact/inputtext";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { getTransCrossing, updateTransAdvance } from "../../store/slice/transSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Paginator } from "primereact/paginator";
 import { messages } from "../../api/constants";
 import { Toast } from "primereact/toast";
-import CommonDatePicker from "../../components/calender/CommonDatePicker";
-import CommonDropdown from "../../components/dropdown/CommonDropdown";
+import { getvmataccount, updatevmataccount } from "../../store/slice/vmataccount";
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
-const Payment = () => {
+
+const VmatAccount = () => {
   const dispatch = useDispatch<AppDispatch>();
   const toast = useRef<Toast>(null);
   const searchQuery = useSelector((state: any) => state.search.query);
-  const modeOfPayments = messages.modeofpayments;
   const [data, setData]: any = useState([]);
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
@@ -35,13 +33,13 @@ const Payment = () => {
     const newData: any = data.map((row: any) => {
       if (row._id === id) {
         const updatedRow = { ...row, [field]: value };
-        const currentPlusOrMinus = Number(row.plusorminus) || 0;
-        const newPlusOrMinusValue = Number(value) || 0;
+        // const currentPlusOrMinus = Number(row.plusorminus) || 0;
+        // const newPlusOrMinusValue = Number(value) || 0;
   
-        if (field === "plusorminus") {
-          updatedRow.loadunloadchar = Number(row.loadunloadchar) - Number(currentPlusOrMinus) + Number(newPlusOrMinusValue);
-        }
-        updatedRow.tyrasporterpaidamt = Number(updatedRow.ats.transbln) - Math.abs(Number(updatedRow.loadunloadchar));
+        // if (field === "plusorminus") {
+        //   updatedRow.loadunloadchar = Number(row.loadunloadchar) - Number(currentPlusOrMinus) + Number(newPlusOrMinusValue);
+        // }
+        // updatedRow.tyrasporterpaidamt = Number(updatedRow.ats.transbln) - Math.abs(Number(updatedRow.loadunloadchar));
   
         return updatedRow;
       }
@@ -89,34 +87,14 @@ const Payment = () => {
     );
   };
 
-  const getFormattedDate = (inputDate: any) => {
-    if (["", null, undefined].includes(inputDate)) {
-      return "";
-    } else {
-      const date = new Date(inputDate);
-      const localDate = new Date(
-        date.getTime() - date.getTimezoneOffset() * 60000
-      )
-        .toISOString()
-        .split("T")[0];
-      return localDate;
-    }
-  };
-
   const handleSave = async (rowData: any) => {
     const payload = {
-      loadunloadchar: Number(rowData.loadunloadchar),
-      tyrasporterpaidamt: Number(rowData.tyrasporterpaidamt),
-      modeofpayment: rowData.modeofpayment,
-      paymentreceiveddate: getFormattedDate(rowData.paymentreceiveddate),
-      remarks : rowData.remarks,
-      extraloadingwagespaidbydriver : Number(rowData.extraloadingwagespaidbydriver),
-      loadingwagespending : Number(rowData.loadingwagespending),
-      rtgsnumber : rowData.rtgsnumber,
+      expense : Number(rowData.expense),
+      reason : rowData.reason,
       _id: rowData._id,
     };
     try {
-      const response = await dispatch(updateTransAdvance(payload));
+      const response = await dispatch(updatevmataccount(payload));
       if (response.payload.data && !response.payload.error) {
         const index = data.findIndex((item:any) => item._id === rowData._id);
         if (index !== -1) {
@@ -153,57 +131,21 @@ const Payment = () => {
     setSelectedRowId(null);
   };
 
-  const onDateChange = (e: any, id: any, field: any) => {
-    const value = e.value;
-    const newData: any = data.map((row: any) => {
-      if (row._id === id) {
-        return { ...row, [field]: value };
-      }
-      return row;
-    });
-    setData(newData);
-  };
-
-  const onDropdownChange = (e: any, id: any, field: any) => {
-    const { value } = e;
-    const newData = data.map((row: any) => {
-      if (row._id === id) {
-        return { ...row, [field]: value.code };
-      }
-      return row;
-    });
-    setData(newData);
-  };
-
-  const renderDatePicker = (rowData: any, field: any) => {
-    return (
-      <CommonDatePicker
-        rowData={rowData}
-        field={field}
-        selectedRowId={selectedRowId}
-        onDateChange={onDateChange}
-      />
-    );
-  };
-
-  const renderDropdown = (rowData: any, field: any) => {
-    return (
-      <CommonDropdown
-        rowData={rowData}
-        field={field}
-        modeOfPayments={modeOfPayments}
-        selectedRowId={selectedRowId}
-        handleDropdownChange={onDropdownChange}
-      />
-    );
-  };
-
   const fetchData = useCallback(async () => {
     try {
-      const trcukData = await dispatch(getTransCrossing({ limit: rows, offset: page * rows, search: searchQuery }));
+      const trcukData = await dispatch(getvmataccount({ limit: rows, offset: page * rows, search: searchQuery }));
+      console.log(trcukData)
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
         setData(trcukData.payload.data);
         setTotalPage(trcukData.payload.pagination.totalDocuments);
+      }
+      if(trcukData.payload.error){
+        toast.current?.show({
+          severity: "error",
+          summary: messages.error,
+          detail: trcukData.payload.message || messages.loadfailure,
+          life: 3000,
+        });
       }
     } catch (error) {
       toast.current?.show({
@@ -222,17 +164,10 @@ const Payment = () => {
     fetchDataAndLog();
   }, [fetchData]);
 
-  const rowClassName = (rowData:any) => {
-    if([null,'',undefined].includes(rowData.paymentreceiveddate) || [null,'',undefined].includes(rowData.modeofpayment)){
-      return 'red'
-    }
-    return 'green';
-  };
-
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
-      <DataTable value={data} showGridlines scrollable scrollHeight="80vh" rowClassName={rowClassName}>
+      <DataTable value={data} showGridlines scrollable scrollHeight="80vh">
         <Column
           field="ats.sno"
           header="S.No"
@@ -243,51 +178,20 @@ const Payment = () => {
           header="Date"
           style={{ minWidth: "100px" }}
         ></Column>
-        <Column field="ats.truckname" header="Truck Name"></Column>
+        <Column field="ats.transname" header="Transport Name"></Column>
         <Column field="ats.trucknumber" header="Truck Number"></Column>
-        <Column field="ats.transbln" header="Transport balance"></Column>
-        {/* <Column field="ats.transadv" header="Transport Advance"></Column> */}
+        <Column field="vmatcommision" header="VMAT Commission"></Column>
+        <Column field="vmatcrossing" header="VMAT Crossing"></Column>
         <Column
-          field="loadingwagespending"
-          header="Loading Wages Pending"
+          field="vmatexpense"
+          header="Vmat Expense"
           body={renderInput}
         ></Column>
         <Column
-          field="extraloadingwagespaidbydriver"
-          header="Extra loading wages paid by driver"
+          field="reason"
+          header="Reason"
           body={renderInput}
         ></Column>
-        <Column
-          field="loadunloadchar"
-          header="Unloading Wages"
-          // body={renderInput}
-        ></Column>
-        <Column
-          field="plusorminus"
-          header="Unloading Charge"
-          body={renderInput}
-        ></Column>
-        <Column
-          field="tyrasporterpaidamt"
-          header="Transporter Paid Balance Amount"
-          style={{minWidth : '200px'}}
-        ></Column>
-        <Column
-          field="remarks"
-          header="Remarks"
-          body={renderInput}
-        ></Column>
-        <Column
-          field="paymentreceiveddate"
-          header="Payment Received Date"
-          body={renderDatePicker}
-        ></Column>
-        <Column
-          field="modeofpayment"
-          header="Mode Of Payment"
-          body={renderDropdown}
-        ></Column>
-        <Column field="rtgsnumber" header="RTGS Number" body={renderInput}></Column>
         <Column
           header="Actions"
           body={renderButton}
@@ -304,4 +208,4 @@ const Payment = () => {
   );
 };
 
-export default Payment;
+export default VmatAccount;

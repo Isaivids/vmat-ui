@@ -1,7 +1,6 @@
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Button } from "primereact/button";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Paginator } from "primereact/paginator";
@@ -11,6 +10,7 @@ import { getccpto, updateccpto } from "../../store/slice/ccptoSlice";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import CommonDropdown from "../../components/dropdown/CommonDropdown";
 import { InputText } from "primereact/inputtext";
+import CustomButtonComponent from "../../components/button/CustomButtonComponent";
 
 const Ccpto = () => {
   const searchQuery = useSelector((state: any) => state.search.query);
@@ -113,16 +113,6 @@ const Ccpto = () => {
   };
 
   const handleSave = async (rowData: any) => {
-    // const { isValid, missingFields } = validateFields(rowData);
-    // if (!isValid) {
-    //   toast.current?.show({
-    //     severity: "error",
-    //     summary: messages.validationerror,
-    //     detail: `${missingFields.join(", ")} is required`,
-    //     life: 3000,
-    //   });
-    //   return;
-    // }
     const payload = {
       paymentReceivedDate: getFormattedDate(rowData.paymentReceivedDate),
       modeofpayment: rowData.modeofpayment,
@@ -169,25 +159,13 @@ const Ccpto = () => {
 
   const renderButton = (rowData: any) => {
     return (
-      <div className="flex gap-2 justify-content-center">
-        {!selectedRowId && (
-          <Button
-            label="Edit"
-            severity="warning"
-            onClick={() => handleEdit(rowData)}
-          />
-        )}
-        {selectedRowId === rowData._id && (
-          <>
-            <Button
-              label="Save"
-              severity="success"
-              onClick={() => handleSave(rowData)}
-            />
-            <Button label="Cancel" severity="danger" onClick={handleCancel} />
-          </>
-        )}
-      </div>
+      <CustomButtonComponent
+        rowData={rowData}
+        selectedRowId={selectedRowId}
+        handleEdit={handleEdit}
+        handleSave={handleSave}
+        handleCancel={handleCancel}
+      />
     );
   };
 

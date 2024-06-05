@@ -10,6 +10,7 @@ import { messages } from "../../api/constants";
 import { InputText } from "primereact/inputtext";
 import { gettcp, updatetcp } from "../../store/slice/tcpSlice";
 import { downloadPDF } from "./document";
+import CustomButtonComponent from "../../components/button/CustomButtonComponent";
 
 
 const Tcp = () => {
@@ -110,25 +111,13 @@ const Tcp = () => {
 
   const renderButton = (rowData: any) => {
     return (
-      <div className="flex gap-2 justify-content-center">
-        {!selectedRowId && (
-          <Button
-            label="Edit"
-            severity="warning"
-            onClick={() => handleEdit(rowData)}
-          />
-        )}
-        {selectedRowId === rowData._id && (
-          <>
-            <Button
-              label="Save"
-              severity="success"
-              onClick={() => handleSave(rowData)}
-            />
-            <Button label="Cancel" severity="danger" onClick={handleCancel} />
-          </>
-        )}
-      </div>
+      <CustomButtonComponent
+        rowData={rowData}
+        selectedRowId={selectedRowId}
+        handleEdit={handleEdit}
+        handleSave={handleSave}
+        handleCancel={handleCancel}
+      />
     );
   };
 

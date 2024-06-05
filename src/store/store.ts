@@ -11,7 +11,9 @@ import userSlice from "./slice/userSlice";
 import ccptoSlice from "./slice/ccptoSlice";
 import tcpSlice from "./slice/tcpSlice";
 import truckSlice from "./slice/truckSlice";
-export const Store = configureStore({
+import transportadvanceSlice from "./slice/transportadvance";
+import vmatAccountSLice from "./slice/vmataccount";
+export const Store:any = configureStore({
     reducer: { 
         ats: atsSlice, 
         ack: ackSlice, 
@@ -24,7 +26,9 @@ export const Store = configureStore({
         search : searchSlice,
         user : userSlice,
         ccpto : ccptoSlice,
-        tcp : tcpSlice
+        tcp : tcpSlice,
+        transportadvance : transportadvanceSlice,
+        vmat : vmatAccountSLice
     }
 })
 

@@ -12,6 +12,7 @@ import { InputTextarea } from "primereact/inputtextarea";
 import { Paginator } from "primereact/paginator";
 import { Toast } from "primereact/toast";
 import { messages } from "../../api/constants";
+import CustomButtonComponent from "../../components/button/CustomButtonComponent";
 
 const TruckDetail = () => {
   const searchQuery = useSelector((state: any) => state.search.query);
@@ -130,25 +131,13 @@ const TruckDetail = () => {
 
   const renderButton = (rowData: any) => {
     return (
-      <div className="flex gap-2 justify-content-center">
-        {!selectedRowId && (
-          <Button
-            label="Edit"
-            severity="warning"
-            onClick={() => handleEdit(rowData)}
-          />
-        )}
-        {selectedRowId === rowData._id && (
-          <>
-            <Button
-              label="Save"
-              severity="success"
-              onClick={() => handleSave(rowData)}
-            />
-            <Button label="Cancel" severity="danger" onClick={handleCancel} />
-          </>
-        )}
-      </div>
+      <CustomButtonComponent
+        rowData={rowData}
+        selectedRowId={selectedRowId}
+        handleEdit={handleEdit}
+        handleSave={handleSave}
+        handleCancel={handleCancel}
+      />
     );
   };
 

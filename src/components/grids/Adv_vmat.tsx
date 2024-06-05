@@ -2,7 +2,6 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { InputText } from "primereact/inputtext";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Button } from "primereact/button";
 import { getByVmat, updateByVmat } from "../../store/slice/byvmatSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
@@ -11,6 +10,7 @@ import { messages } from "../../api/constants";
 import { Toast } from "primereact/toast";
 import CommonDatePicker from "../calender/CommonDatePicker";
 import CommonDropdown from "../dropdown/CommonDropdown";
+import CustomButtonComponent from "../button/CustomButtonComponent";
 
 const AdvVmat = () => {
   const searchQuery = useSelector((state: any) => state.search.query);
@@ -63,16 +63,6 @@ const AdvVmat = () => {
   };
 
   const handleSave = async (rowData: any) => {
-    // const { isValid, missingFields } = validateFields(rowData);
-    // if (!isValid) {
-    //   toast.current?.show({
-    //     severity: "error",
-    //     summary: messages.validationerror,
-    //     detail: `${missingFields.join(", ")} is required`,
-    //     life: 3000,
-    //   });
-    //   return;
-    // }
     const payload = {
       pendinglabourwages: Number(rowData.pendinglabourwages),
       extlabourwages: Number(rowData.extlabourwages),
@@ -125,25 +115,13 @@ const AdvVmat = () => {
 
   const renderButton = (rowData: any) => {
     return (
-      <div className="flex gap-2 justify-content-center">
-        {!selectedRowId && (
-          <Button
-            label="Edit"
-            severity="warning"
-            onClick={() => handleEdit(rowData)}
-          />
-        )}
-        {selectedRowId === rowData._id && (
-          <>
-            <Button
-              label="Save"
-              severity="success"
-              onClick={() => handleSave(rowData)}
-            />
-            <Button label="Cancel" severity="danger" onClick={handleCancel} />
-          </>
-        )}
-      </div>
+      <CustomButtonComponent
+        rowData={rowData}
+        selectedRowId={selectedRowId}
+        handleEdit={handleEdit}
+        handleSave={handleSave}
+        handleCancel={handleCancel}
+      />
     );
   };
 
@@ -253,7 +231,6 @@ const AdvVmat = () => {
           body={renderInput}
         ></Column>
         <Column field="total" header="Advance Payment Paid to truck"></Column>
-        {/* <Column field="remarks" header="Remarks" body={renderInput}></Column> */}
         <Column
           field="paymentreceiveddate"
           header="Payment RTGS Date"

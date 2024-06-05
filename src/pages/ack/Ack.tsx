@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
-import { Button } from "primereact/button";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { getAck, updateAck } from "../../store/slice/ackSlice";
@@ -12,6 +11,7 @@ import { messages } from "../../api/constants";
 import { Checkbox } from "primereact/checkbox";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import CommonDropdown from "../../components/dropdown/CommonDropdown";
+import CustomButtonComponent from "../../components/button/CustomButtonComponent";
 const Ack = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [data, setData]: any = useState([]);
@@ -36,7 +36,6 @@ const Ack = () => {
   const handleCheckboxChange = (rowData: any, field: string) => {
     const updatedData = data.map((row: any) => {
       if (row._id === rowData._id) {
-        // return { ...row, [field]: !row[field] };
         const updatedRow = { ...row, [field]: !row[field] };
         return calculateUpdatedRow(updatedRow);
       }
@@ -137,22 +136,10 @@ const onDateChange = (e: any, id: any, field: any) => {
     )
       .toISOString()
       .split("T")[0];
-      console.log(localDate)
     return localDate;
   };
 
   const handleSave = async (rowData: any) => {
-    // const { isValid, missingFields } = validateFields(rowData);
-
-    // if (!isValid) {
-    //   toast.current?.show({
-    //     severity: "error",
-    //     summary: messages.validationerror,
-    //     detail: `${missingFields.join(", ")} is required`,
-    //     life: 3000,
-    //   });
-    //   return;
-    // }
     const payload = {
       acknowledgementReceivedDate: rowData.acknowledgementReceivedDate ? getFormattedDate(
         rowData.acknowledgementReceivedDate
@@ -235,30 +222,20 @@ const onDateChange = (e: any, id: any, field: any) => {
     );
   };
 
+  const handleEdit = (rowData: any) => {
+    setSelectedRowId(rowData._id);
+    setBackupData([...data]);
+  };
+
   const renderButton = (rowData: any) => {
     return (
-      <div className="flex gap-2 justify-content-center">
-        {!selectedRowId && (
-          <Button
-            label="Edit"
-            severity="warning"
-            onClick={() => {
-              setSelectedRowId(rowData._id);
-              setBackupData([...data]);
-            }}
-          />
-        )}
-        {selectedRowId === rowData._id && (
-          <>
-            <Button
-              label="Save"
-              severity="success"
-              onClick={() => handleSave(rowData)}
-            />
-            <Button label="Cancel" severity="danger" onClick={handleCancel} />
-          </>
-        )}
-      </div>
+      <CustomButtonComponent
+        rowData={rowData}
+        selectedRowId={selectedRowId}
+        handleEdit={handleEdit}
+        handleSave={handleSave}
+        handleCancel={handleCancel}
+      />
     );
   };
 
