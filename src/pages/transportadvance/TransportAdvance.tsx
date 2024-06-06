@@ -39,20 +39,8 @@ const TransportAdvance = () => {
     const newData: any = data.map((row: any) => {
       if (row._id === id) {
         const updatedRow = { ...row, [field]: value };
+        updatedRow.transporterpaidadvanceamount = Number(updatedRow.ats.transadv) - (Number(updatedRow.ats.loadingwages) + Number(updatedRow.extraloadingwagespaidbydriver));
         return updatedRow;
-      }
-      return row;
-    });
-    setData(newData);
-  };
-
-  const onInputBlur = (id: any, field: any) => {
-    const newData: any = data.map((row: any) => {
-      if (row._id === id) {
-        if (field === "plusorminus") {
-          const updatedRow = { ...row, [field]: 0 };
-          return updatedRow;
-        }
       }
       return row;
     });
@@ -67,7 +55,6 @@ const TransportAdvance = () => {
         value={rowData[field.field]}
         onChange={(e) => onInputChange(e, rowData._id, field.field)}
         keyfilter={isStringField ? undefined : "num"}
-        onBlur={() => onInputBlur(rowData._id, field.field)}
       />
     );
   };
@@ -100,15 +87,11 @@ const TransportAdvance = () => {
 
   const handleSave = async (rowData: any) => {
     const payload = {
-      loadunloadchar: Number(rowData.loadunloadchar),
-      tyrasporterpaidamt: Number(rowData.tyrasporterpaidamt),
+      transporterpaidadvanceamount: Number(rowData.transporterpaidadvanceamount),
       modeofpayment: rowData.modeofpayment,
-      paymentreceiveddate: getFormattedDate(rowData.paymentreceiveddate),
+      dateofadvancepayment: getFormattedDate(rowData.paymentreceiveddate),
       remarks: rowData.remarks,
-      extraloadingwagespaidbydriver: Number(
-        rowData.extraloadingwagespaidbydriver
-      ),
-      loadingwagespending: Number(rowData.loadingwagespending),
+      extraloadingwagespaidbydriver: Number(rowData.extraloadingwagespaidbydriver),
       rtgsnumber: rowData.rtgsnumber,
       _id: rowData._id,
     };
@@ -230,10 +213,7 @@ const TransportAdvance = () => {
   }, [fetchData]);
 
   const rowClassName = (rowData: any) => {
-    if (
-      [null, "", undefined].includes(rowData.paymentreceiveddate) ||
-      [null, "", undefined].includes(rowData.modeofpayment)
-    ) {
+    if ([null, "", undefined].includes(rowData.modeofpayment)) {
       return "red";
     }
     return "green";
@@ -264,9 +244,8 @@ const TransportAdvance = () => {
         <Column field="ats.trucknumber" header="Truck Number"></Column>
         <Column field="ats.transadv" header="Transport Advance"></Column>
         <Column
-          field="loadingwagespending"
+          field="ats.loadingwages"
           header="Loading Wages"
-          body={renderInput}
         ></Column>
         <Column
           field="extraloadingwagespaidbydriver"

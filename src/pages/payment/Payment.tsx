@@ -114,6 +114,7 @@ const Payment = () => {
       loadingwagespending : Number(rowData.loadingwagespending),
       rtgsnumber : rowData.rtgsnumber,
       _id: rowData._id,
+      atsid : rowData.ats._id
     };
     try {
       const response = await dispatch(updateTransAdvance(payload));
