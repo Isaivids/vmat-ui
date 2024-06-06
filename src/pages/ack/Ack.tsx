@@ -20,7 +20,6 @@ const Ack = () => {
   const searchQuery = useSelector((state: any) => state.search.query);
   const toast = useRef<Toast>(null);
 
-  const modeOfPayments = messages.modeofpayments;
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
@@ -44,7 +43,7 @@ const Ack = () => {
     setData(updatedData);
   };
 
-  const renderCheckbox = (rowData: any, field: string,parent:any) => {
+  const renderCheckbox = (rowData: any, field: string, parent: any) => {
     return (
       <div className="flex gap-3 align-items-center">
         <Checkbox
@@ -57,11 +56,11 @@ const Ack = () => {
     );
   };
 
-  const calculateUpdatedRow = (updatedRow:any) =>{
+  const calculateUpdatedRow = (updatedRow: any) => {
     const expense = Number(updatedRow.expense);
     const halting = Number(updatedRow.ats.halting);
     let addThree = 0;
-    
+
     if ([1, 2].includes(updatedRow.modeofadvance)) {
       if (updatedRow.hidevc) {
         addThree += updatedRow.vmatcrossing;
@@ -83,46 +82,82 @@ const Ack = () => {
         addThree += updatedRow.vmatcommision;
       }
     }
-    if(updatedRow.ats.modeofadvance === 3){
+    if (updatedRow.ats.modeofadvance === 3) {
       updatedRow.pendingamountfromtruckowner = addThree;
-      updatedRow.finaltotaltotruckowner = Number(updatedRow.ats.transbln) - Math.abs(expense);
-  }else{
-      updatedRow.pendingamountfromtruckowner = Number(updatedRow.ats.truckbln) -  (Math.abs(addThree) + Math.abs(expense) + Math.abs(halting));
-      updatedRow.finaltotaltotruckowner = (updatedRow.ats.truckbln) - Math.abs(addThree);
-  }
-    // updatedRow.pendingamountfromtruckowner = updatedRow.ats.truckbln - (Math.abs(addThree) + Math.abs(expense) + Math.abs(lateday * halting));
-    // updatedRow.finaltotaltotruckowner = updatedRow.ats.truckbln - Math.abs(addThree);
-    return updatedRow
-  }
+      updatedRow.finaltotaltotruckowner =
+        Number(updatedRow.ats.transbln) - Math.abs(expense);
+    } else {
+      updatedRow.pendingamountfromtruckowner =
+        Number(updatedRow.ats.truckbln) -
+        (Math.abs(addThree) + Math.abs(expense) + Math.abs(halting));
+      updatedRow.finaltotaltotruckowner =
+        updatedRow.ats.truckbln - Math.abs(addThree);
+    }
+    return updatedRow;
+  };
 
   const onInputChange = (e: any, id: any, field: any) => {
-  const { value } = e.target;
-  const newData: any = data.map((row: any) => {
-    if (row._id === id) {
-      const updatedRow = { ...row, [field]: value };
-      return calculateUpdatedRow(updatedRow);
-    }
-    return row;
-  });
-  setData(newData);
-};
+    const { value } = e.target;
+    const newData: any = data.map((row: any) => {
+      if (row._id === id) {
+        const updatedRow = { ...row, [field]: value };
+        return calculateUpdatedRow(updatedRow);
+      }
+      return row;
+    });
+    setData(newData);
+  };
 
-const onDateChange = (e: any, id: any, field: any) => {
-  const value = e.value;
-  const newData = data.map((row: any) => {
-    if (row._id === id) {
-      return { ...row, [field]: value };
-    }
-    return row;
-  });
-  setData(newData);
-};
+  const onDateChange = (e: any, id: any, field: any) => {
+    const value = e.value;
+    const newData = data.map((row: any) => {
+      if (row._id === id) {
+        return { ...row, [field]: value };
+      }
+      return row;
+    });
+    setData(newData);
+  };
 
   const onDropdownChange = (e: any, id: any, field: any) => {
     const { value } = e;
     const newData: any = data.map((row: any) => {
       if (row._id === id) {
-        return { ...row, [field]: value.code };
+        const updatedRow = { ...row, [field]: value.code };
+        console.log(field, value.code);
+        let addThree = 0;
+        if ([1, 2].includes(updatedRow.modeofadvance)) {
+          if (updatedRow.hidevc) {
+            addThree += updatedRow.vmatcrossing;
+          }
+          if (updatedRow.hidevcm) {
+            addThree += updatedRow.vmatcommision;
+          }
+          if (updatedRow.hidetc) {
+            addThree += updatedRow.transcrossing;
+          }
+        } else {
+          if (updatedRow.hidetc) {
+            addThree += updatedRow.transcrossing;
+          }
+          if (updatedRow.hidevc) {
+            addThree += updatedRow.vmatcrossing;
+          }
+          if (updatedRow.hidevcm) {
+            addThree += updatedRow.vmatcommision;
+          }
+        }
+        if (field === "podcharge") {
+          if (updatedRow.ats.modeofadvance === 3) {
+            updatedRow.finaltotaltotruckowner =
+              Number(updatedRow.ats.transbln) -
+              Math.abs(Number(updatedRow.expense)- Number(updatedRow.podcharge));
+          } else {
+            updatedRow.finaltotaltotruckowner =
+              updatedRow.ats.truckbln - Math.abs(addThree) - Number(updatedRow.podcharge);
+          }
+        }
+        return updatedRow;
       }
       return row;
     });
@@ -141,19 +176,20 @@ const onDateChange = (e: any, id: any, field: any) => {
 
   const handleSave = async (rowData: any) => {
     const payload = {
-      acknowledgementReceivedDate: rowData.acknowledgementReceivedDate ? getFormattedDate(
-        rowData.acknowledgementReceivedDate
-      ) : '',
-      hidevc : rowData.hidevc,
-      hidevcm : rowData.hidevcm,
-      hidetc : rowData.hidetc,
+      acknowledgementReceivedDate: rowData.acknowledgementReceivedDate
+        ? getFormattedDate(rowData.acknowledgementReceivedDate)
+        : "",
+      hidevc: rowData.hidevc,
+      hidevcm: rowData.hidevcm,
+      hidetc: rowData.hidetc,
       expense: Number(rowData.expense),
       finaltotaltotruckowner: Number(rowData.finaltotaltotruckowner),
-      paymentReceivedDate: rowData.paymentReceivedDate ? getFormattedDate(rowData.paymentReceivedDate) : '',
-      reportingdate: rowData.reportingdate ? getFormattedDate(rowData.reportingdate) : '',
-      deliverydate: rowData.deliverydate ? getFormattedDate(rowData.deliverydate) : '',
+      paymentReceivedDate: rowData.paymentReceivedDate
+        ? getFormattedDate(rowData.paymentReceivedDate)
+        : "",
       modeofpayment: rowData.modeofpayment,
-      rtgsnumber : rowData.rtgsnumber,
+      podcharge: rowData.podcharge,
+      rtgsnumber: rowData.rtgsnumber,
       _id: rowData._id,
     };
     try {
@@ -211,11 +247,26 @@ const onDateChange = (e: any, id: any, field: any) => {
   };
 
   const renderDropdown = (rowData: any, field: any) => {
+    let dropValues: any = [];
+    let selectedValue: any;
+    if (field.field === "podcharge") {
+      dropValues = messages.podCharge;
+      selectedValue = dropValues.find(
+        (option: any) => option.code === rowData.podcharge
+      );
+    } else {
+      dropValues = messages.modeofpayments;
+      selectedValue = dropValues.find(
+        (option: any) => option.code === rowData.modeofpayment
+      );
+    }
+
     return (
       <CommonDropdown
+        selectedValue = {selectedValue}
         rowData={rowData}
         field={field}
-        modeOfPayments={modeOfPayments}
+        modeOfPayments={dropValues}
         selectedRowId={selectedRowId}
         handleDropdownChange={onDropdownChange}
       />
@@ -241,7 +292,9 @@ const onDateChange = (e: any, id: any, field: any) => {
 
   const fetchData = useCallback(async () => {
     try {
-      const ackdata = await dispatch(getAck({ limit: rows, offset: page * rows, search: searchQuery }));
+      const ackdata = await dispatch(
+        getAck({ limit: rows, offset: page * rows, search: searchQuery })
+      );
       if (Array.isArray(ackdata.payload.data) && !ackdata.payload.error) {
         setData(ackdata.payload.data);
         setTotalPage(ackdata.payload.pagination.totalDocuments);
@@ -264,7 +317,7 @@ const onDateChange = (e: any, id: any, field: any) => {
   }, [fetchData]);
 
   const rowClassName = (rowData: any) => {
-    if (["PENDING",'',null,undefined].includes(rowData.modeofpayment)) {
+    if (["PENDING", "", null, undefined].includes(rowData.modeofpayment)) {
       return "red";
     }
     return "green";
@@ -273,7 +326,13 @@ const onDateChange = (e: any, id: any, field: any) => {
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
-      <DataTable value={data} showGridlines scrollable scrollHeight="70vh" rowClassName={rowClassName}>
+      <DataTable
+        value={data}
+        showGridlines
+        scrollable
+        scrollHeight="70vh"
+        rowClassName={rowClassName}
+      >
         <Column
           field="ats.sno"
           header="S.No"
@@ -297,36 +356,44 @@ const onDateChange = (e: any, id: any, field: any) => {
         <Column field="ats.trucknumber" header="Truck Number"></Column>
         <Column field="ats.transname" header="Transport Name"></Column>
         <Column field="ats.truckbln" header="Truck Balance"></Column>
-        <Column
-          field="reportingdate"
-          header="Reporting Date"
-          body={renderDatePicker}
-        ></Column>
-        <Column
-          field="deliverydate"
-          header="Delivery Date"
-          body={renderDatePicker}
-        ></Column>
         <Column field="ats.lateday" header="Late Delivery"></Column>
         <Column field="ats.halting" header="Halting"></Column>
         <Column field="expense" header="Expense" body={renderInput}></Column>
-        <Column field="podcharge" header="POD Charge" body={renderInput}></Column>
-        <Column field="vmatcrossing" body={(rowData) => renderCheckbox(rowData,'hidevc' ,'vmatcrossing')} header="VMAT Crossing"></Column>
-        <Column field="vmatcommision" body={(rowData) => renderCheckbox(rowData,'hidevcm', 'vmatcommision')} header="VMAT Commission"></Column>
-        <Column field="transcrossing" body={(rowData) => renderCheckbox(rowData,'hidetc', 'transcrossing')} header="Transport Crossing"></Column>
+        <Column
+          field="podcharge"
+          header="POD Charge"
+          body={renderDropdown}
+        ></Column>
+        <Column
+          field="vmatcrossing"
+          body={(rowData) => renderCheckbox(rowData, "hidevc", "vmatcrossing")}
+          header="VMAT Crossing"
+        ></Column>
+        <Column
+          field="vmatcommision"
+          body={(rowData) =>
+            renderCheckbox(rowData, "hidevcm", "vmatcommision")
+          }
+          header="VMAT Commission"
+        ></Column>
+        <Column
+          field="transcrossing"
+          body={(rowData) => renderCheckbox(rowData, "hidetc", "transcrossing")}
+          header="Transport Crossing"
+        ></Column>
         <Column
           field="ats.twopay"
           header="By To Pay Transport Balance."
           style={{ minWidth: "200px" }}
         ></Column>
         <Column
-          field="pendingamountfromtruckowner"
-          header="Pending Amount From Truck Owner"
+          field="finaltotaltotruckowner"
+          header="Final Total to Truck Owner"
           style={{ minWidth: "200px" }}
         ></Column>
         <Column
-          field="finaltotaltotruckowner"
-          header="Final Total to Truck Owner"
+          field="pendingamountfromtruckowner"
+          header="Pending Amount From Truck Owner"
           style={{ minWidth: "200px" }}
         ></Column>
         <Column
@@ -339,7 +406,11 @@ const onDateChange = (e: any, id: any, field: any) => {
           header="Mode Of Payment"
           body={renderDropdown}
         ></Column>
-        <Column field="rtgsnumber" header="RTGS Number" body={renderInput}></Column>
+        <Column
+          field="rtgsnumber"
+          header="RTGS Number"
+          body={renderInput}
+        ></Column>
         <Column
           header="Actions"
           body={renderButton}
@@ -347,11 +418,11 @@ const onDateChange = (e: any, id: any, field: any) => {
         ></Column>
       </DataTable>
       <Paginator
-          first={first}
-          rows={rows}
-          totalRecords={totalPage}
-          onPageChange={onPageChange}
-        />
+        first={first}
+        rows={rows}
+        totalRecords={totalPage}
+        onPageChange={onPageChange}
+      />
     </div>
   );
 };

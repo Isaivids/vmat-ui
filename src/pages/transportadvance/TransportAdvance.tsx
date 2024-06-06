@@ -9,7 +9,10 @@ import { messages } from "../../api/constants";
 import { Toast } from "primereact/toast";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import CommonDropdown from "../../components/dropdown/CommonDropdown";
-import { gettransportadvance, updateTransportAdvance } from "../../store/slice/transportadvance";
+import {
+  gettransportadvance,
+  updateTransportAdvance,
+} from "../../store/slice/transportadvance";
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
 
 const TransportAdvance = () => {
@@ -55,10 +58,9 @@ const TransportAdvance = () => {
     });
     setData(newData);
   };
-  
 
   const renderInput = (rowData: any, field: any) => {
-    const isStringField = ["remarks","rtgsnumber"].includes(field.field);
+    const isStringField = ["remarks", "rtgsnumber"].includes(field.field);
     return (
       <InputText
         disabled={rowData._id !== selectedRowId}
@@ -97,22 +99,23 @@ const TransportAdvance = () => {
   };
 
   const handleSave = async (rowData: any) => {
-
     const payload = {
       loadunloadchar: Number(rowData.loadunloadchar),
       tyrasporterpaidamt: Number(rowData.tyrasporterpaidamt),
       modeofpayment: rowData.modeofpayment,
       paymentreceiveddate: getFormattedDate(rowData.paymentreceiveddate),
-      remarks : rowData.remarks,
-      extraloadingwagespaidbydriver : Number(rowData.extraloadingwagespaidbydriver),
-      loadingwagespending : Number(rowData.loadingwagespending),
-      rtgsnumber : rowData.rtgsnumber,
+      remarks: rowData.remarks,
+      extraloadingwagespaidbydriver: Number(
+        rowData.extraloadingwagespaidbydriver
+      ),
+      loadingwagespending: Number(rowData.loadingwagespending),
+      rtgsnumber: rowData.rtgsnumber,
       _id: rowData._id,
     };
     try {
       const response = await dispatch(updateTransportAdvance(payload));
       if (response.payload.data && !response.payload.error) {
-        const index = data.findIndex((item:any) => item._id === rowData._id);
+        const index = data.findIndex((item: any) => item._id === rowData._id);
         if (index !== -1) {
           data[index]._id = response.payload.data._id;
         }
@@ -181,8 +184,12 @@ const TransportAdvance = () => {
   };
 
   const renderDropdown = (rowData: any, field: any) => {
+    const selectedValue = messages.modeofpayments.find(
+      (option: any) => option.code === rowData.modeofpayment
+    );
     return (
       <CommonDropdown
+        selectedValue={selectedValue}
         rowData={rowData}
         field={field}
         modeOfPayments={modeOfPayments}
@@ -194,7 +201,13 @@ const TransportAdvance = () => {
 
   const fetchData = useCallback(async () => {
     try {
-      const trcukData = await dispatch(gettransportadvance({ limit: rows, offset: page * rows, search: searchQuery }));
+      const trcukData = await dispatch(
+        gettransportadvance({
+          limit: rows,
+          offset: page * rows,
+          search: searchQuery,
+        })
+      );
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
         setData(trcukData.payload.data);
         setTotalPage(trcukData.payload.pagination.totalDocuments);
@@ -216,17 +229,26 @@ const TransportAdvance = () => {
     fetchDataAndLog();
   }, [fetchData]);
 
-  const rowClassName = (rowData:any) => {
-    if([null,'',undefined].includes(rowData.paymentreceiveddate) || [null,'',undefined].includes(rowData.modeofpayment)){
-      return 'red'
+  const rowClassName = (rowData: any) => {
+    if (
+      [null, "", undefined].includes(rowData.paymentreceiveddate) ||
+      [null, "", undefined].includes(rowData.modeofpayment)
+    ) {
+      return "red";
     }
-    return 'green';
+    return "green";
   };
 
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
-      <DataTable value={data} showGridlines scrollable scrollHeight="80vh" rowClassName={rowClassName}>
+      <DataTable
+        value={data}
+        showGridlines
+        scrollable
+        scrollHeight="80vh"
+        rowClassName={rowClassName}
+      >
         <Column
           field="ats.sno"
           header="S.No"
@@ -255,11 +277,7 @@ const TransportAdvance = () => {
           field="transporterpaidadvanceamount"
           header="Transporter Paid Advance Amount"
         ></Column>
-        <Column
-          field="remarks"
-          header="Remarks"
-          body={renderInput}
-        ></Column>
+        <Column field="remarks" header="Remarks" body={renderInput}></Column>
         <Column
           field="dateofadvancepayment"
           header="Date of Advance Payment"
@@ -270,7 +288,11 @@ const TransportAdvance = () => {
           header="Mode Of Payment"
           body={renderDropdown}
         ></Column>
-        <Column field="rtgsnumber" header="RTGS Number" body={renderInput}></Column>
+        <Column
+          field="rtgsnumber"
+          header="RTGS Number"
+          body={renderInput}
+        ></Column>
         <Column
           header="Actions"
           body={renderButton}
@@ -278,11 +300,11 @@ const TransportAdvance = () => {
         ></Column>
       </DataTable>
       <Paginator
-          first={first}
-          rows={rows}
-          totalRecords={totalPage}
-          onPageChange={onPageChange}
-        />
+        first={first}
+        rows={rows}
+        totalRecords={totalPage}
+        onPageChange={onPageChange}
+      />
     </div>
   );
 };

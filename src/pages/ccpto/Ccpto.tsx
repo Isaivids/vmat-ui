@@ -35,20 +35,19 @@ const Ccpto = () => {
     const { value } = e.target;
     const newData: any = data.map((row: any) => {
       if (row._id === id) {
-       return { ...row, [field]: value };
+        return { ...row, [field]: value };
       }
       return row;
     });
     setData(newData);
   };
 
-  
   const renderInput = (rowData: any, field: any) => {
     return (
       <InputText
         disabled={rowData._id !== selectedRowId}
         value={rowData[field.field]}
-        onChange={(e:any) => onInputChange(e, rowData._id, field.field)}
+        onChange={(e: any) => onInputChange(e, rowData._id, field.field)}
       />
     );
   };
@@ -87,8 +86,12 @@ const Ccpto = () => {
   };
 
   const renderDropdown = (rowData: any, field: any) => {
+    const selectedValue = messages.modeofpayments.find(
+      (option: any) => option.code === rowData.modeofpayment
+    );
     return (
       <CommonDropdown
+        selectedValue={selectedValue}
         rowData={rowData}
         field={field}
         modeOfPayments={modeOfPayments}
@@ -116,7 +119,7 @@ const Ccpto = () => {
     const payload = {
       paymentReceivedDate: getFormattedDate(rowData.paymentReceivedDate),
       modeofpayment: rowData.modeofpayment,
-      rtgsnumber : rowData.rtgsnumber,
+      rtgsnumber: rowData.rtgsnumber,
       _id: rowData._id,
     };
     try {
@@ -232,7 +235,11 @@ const Ccpto = () => {
           header="Mode Of Payment"
           body={renderDropdown}
         ></Column>
-        <Column field="rtgsnumber" header="RTGS Number" body={renderInput}></Column>
+        <Column
+          field="rtgsnumber"
+          header="RTGS Number"
+          body={renderInput}
+        ></Column>
         <Column
           header="Actions"
           body={renderButton}

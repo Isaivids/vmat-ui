@@ -41,7 +41,7 @@ const Payment = () => {
         if (field === "plusorminus") {
           updatedRow.loadunloadchar = Number(row.loadunloadchar) - Number(currentPlusOrMinus) + Number(newPlusOrMinusValue);
         }
-        updatedRow.tyrasporterpaidamt = Number(updatedRow.ats.transbln) - Math.abs(Number(updatedRow.loadunloadchar));
+        updatedRow.tyrasporterpaidamt = Number(updatedRow.ats.transbln) + Number(updatedRow.loadunloadchar) + Number(updatedRow.loadingwagespending) + Number(updatedRow.extraloadingwagespaidbydriver);
   
         return updatedRow;
       }
@@ -187,8 +187,12 @@ const Payment = () => {
   };
 
   const renderDropdown = (rowData: any, field: any) => {
+    const selectedValue = messages.modeofpayments.find(
+      (option: any) => option.code === rowData.modeofpayment
+    );
     return (
       <CommonDropdown
+        selectedValue={selectedValue}
         rowData={rowData}
         field={field}
         modeOfPayments={modeOfPayments}

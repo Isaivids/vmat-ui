@@ -174,8 +174,12 @@ const AdvTrans = () => {
   };
 
   const renderDropdown = (rowData: any, field: any) => {
+    const selectedValue = messages.modeofpayments.find(
+      (option: any) => option.code === rowData.modeofpayment
+    );
     return (
       <CommonDropdown
+        selectedValue={selectedValue}
         rowData={rowData}
         field={field}
         modeOfPayments={modeOfPayments}

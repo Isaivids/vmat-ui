@@ -2,6 +2,7 @@ import React from 'react';
 import { Dropdown } from 'primereact/dropdown';
 
 interface CommonDropdownProps {
+  selectedValue : any,
   rowData: any;
   field: any;
   modeOfPayments: { code: string; name: string }[];
@@ -10,15 +11,13 @@ interface CommonDropdownProps {
 }
 
 const CommonDropdown: React.FC<CommonDropdownProps> = ({
+  selectedValue,
   rowData,
   field,
   modeOfPayments,
   selectedRowId,
   handleDropdownChange
 }) => {
-  const selectedValue = modeOfPayments.find(
-    (option) => option.code === rowData.modeofpayment
-  );
 
   return (
     <Dropdown

@@ -169,6 +169,8 @@ const Amt = () => {
       transaddvtype: Number(inputObject.transaddvtype),
       repdate: getFormatteddate(inputObject.repdate),
       unloaddate: getFormatteddate(inputObject.unloaddate),
+      deliverydate : getFormatteddate(inputObject.deliverydate),
+      reportingdate : getFormatteddate(inputObject.reportingdate),
       lateday: inputObject.lateday,
       halting: inputObject.halting,
       truckf: Number(inputObject.truckf),
@@ -290,8 +292,8 @@ const Amt = () => {
 
     const newRow = {
       _id: new Date().getDate().toString(),
-      sno: nextSno.toString() + `/` + month+ year,      
-      date: '',
+      sno: nextSno.toString() + `/` + month + year,
+      date: "",
       truckname: "",
       trucknumber: "",
       transname: "",
@@ -314,6 +316,8 @@ const Amt = () => {
       transbln: 0,
       twopay: 0,
       truckloadwt: 0,
+      deliverydate : '',
+      reportingdate : '',
     };
     setData([newRow, ...data]);
     setSelectedRowId(newRow._id);
@@ -337,10 +341,10 @@ const Amt = () => {
       if (row._id === id) {
         // return { ...row, [field]: value.code };
         const updatedRow = { ...row, [field]: value.code };
-        if(updatedRow.modeofadvance === 3){
-          updatedRow.twopay = updatedRow.transbln
+        if (updatedRow.modeofadvance === 3) {
+          updatedRow.twopay = updatedRow.transbln;
         }
-        return updatedRow
+        return updatedRow;
       }
       return row;
     });
@@ -466,19 +470,16 @@ const Amt = () => {
             header="Transport Name"
             body={renderInput}
           ></Column>
-          {/* <Column field="from" header="From" body={renderInput}></Column>
-          <Column field="to" header="To" body={renderInput}></Column>
           <Column
-            field="repdate"
+            field="reportingdate"
             header="Reporting Date"
             body={renderDatePicker}
           ></Column>
           <Column
-            field="unloaddate"
-            header="Unload Date"
+            field="deliverydate"
+            header="Delivery Date"
             body={renderDatePicker}
-            style={{ minWidth: "150px" }}
-          ></Column> */}
+          ></Column>
           <Column
             field="lateday"
             header="Late delivery"

@@ -18,10 +18,23 @@ export const messages = {
         { name: "Balance", code: "BALANCE" },
         { name: "To Pay", code: "TOPAY" }
     ],
+    podCharge : [
+      {name : 100, code : "100"},
+      {name : 200, code : "200"},
+      {name : 300, code : "300"},
+      {name : 400, code : "400"},
+      {name : 500, code : "500"},
+      {name : 600, code : "600"},
+      {name : 700, code : "700"},
+      {name : 800, code : "800"},
+      {name : 900, code : "900"},
+      {name : 1000, code : "1000"},
+    ],
     modeOfAdvance: [
         { name: "By VMAT", code: 1 },
         { name: "By Transport", code: 2 },
         { name: "By Transporter / To pay", code: 3 },
+        { name: "By To pay", code: 3 },
     ],
     transportAdvanceTypes  :[
         { name: "To VMAT", code: 1 },
@@ -40,6 +53,11 @@ export const messages = {
           name: "Truck Advance",
           to: "/advance",
           image: require("../assets/ico3.svg").default,
+        },
+        {
+          name: "Transport Advance",
+          to: "/transportadvance",
+          image: require("../assets/ico5.svg").default,
         },
         {
           name: "Acknowledgement / POD",
@@ -64,11 +82,6 @@ export const messages = {
         {
           name: "Transport Crossing Payment",
           to: "/tcp",
-          image: require("../assets/ico5.svg").default,
-        },
-        {
-          name: "Transport Advance",
-          to: "/transportadvance",
           image: require("../assets/ico5.svg").default,
         },
         {

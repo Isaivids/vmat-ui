@@ -35,7 +35,7 @@ const AdvVmat = () => {
     const newData: any = data.map((row: any) => {
       if (row._id === id) {
         const updatedRow = { ...row, [field]: value };
-        if (!["remarks","rtgsnumber"].includes(field)) {
+        if (!["remarks", "rtgsnumber"].includes(field)) {
           updatedRow.total =
             Number(updatedRow.ats.truckadv) -
             Number(updatedRow.vmatcommision) +
@@ -71,8 +71,8 @@ const AdvVmat = () => {
       advanceamount: Number(rowData.advanceamount),
       total: Number(rowData.total),
       paymentreceiveddate: rowData.paymentreceiveddate,
-      modeofpayment : rowData.modeofpayment,
-      rtgsnumber : rowData.rtgsnumber,
+      modeofpayment: rowData.modeofpayment,
+      rtgsnumber: rowData.rtgsnumber,
       _id: rowData._id,
     };
     try {
@@ -159,8 +159,12 @@ const AdvVmat = () => {
   };
 
   const renderDropdown = (rowData: any, field: any) => {
+    const selectedValue = messages.modeofpayments.find(
+      (option: any) => option.code === rowData.modeofpayment
+    );
     return (
       <CommonDropdown
+        selectedValue={selectedValue}
         rowData={rowData}
         field={field}
         modeOfPayments={messages.modeofpayments}
@@ -196,17 +200,23 @@ const AdvVmat = () => {
     fetchDataAndLog();
   }, [fetchData]);
 
-  const rowClassName = (rowData:any) => {
-    if([null,'',undefined,'PENDING'].includes(rowData.modeofpayment)){
-      return 'red'
+  const rowClassName = (rowData: any) => {
+    if ([null, "", undefined, "PENDING"].includes(rowData.modeofpayment)) {
+      return "red";
     }
-    return 'green';
+    return "green";
   };
 
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
-      <DataTable value={data} showGridlines scrollable scrollHeight="80vh" rowClassName={rowClassName}>
+      <DataTable
+        value={data}
+        showGridlines
+        scrollable
+        scrollHeight="80vh"
+        rowClassName={rowClassName}
+      >
         <Column
           field="ats.sno"
           header="S.No"
@@ -248,7 +258,11 @@ const AdvVmat = () => {
           header="Mode Of Payment"
           body={renderDropdown}
         ></Column>
-        <Column field="rtgsnumber" header="RTGS Number" body={renderInput}></Column>
+        <Column
+          field="rtgsnumber"
+          header="RTGS Number"
+          body={renderInput}
+        ></Column>
         <Column
           header="Actions"
           body={renderButton}
