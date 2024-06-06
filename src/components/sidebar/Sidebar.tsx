@@ -40,7 +40,7 @@ const Sidebar = () => {
                 className={({ isActive }) => isActive ? 'active-link flex align-items-center' : 'non-active-link flex align-items-center'}
               >
                 <img src={x.image} alt="VMAT" />
-                <span>{x.name}</span>
+                <span className="uppercase">{x.name}</span>
               </NavLink>
             );
           })}

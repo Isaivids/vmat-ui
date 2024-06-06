@@ -32,7 +32,7 @@ $secondary : #DBA008;
 .p-component {
   font-family: "Montserrat" !important;
   font-size: 11px !important;
-  font-weight: 500;
+  font-weight: 600;
 }
 .p-calendar .p-inputtext {
   font-size: 11px !important;
@@ -43,12 +43,14 @@ $secondary : #DBA008;
   color: #fff;
   border-radius: 7px 7px 0 0;
   padding: 0.7rem !important;
+  text-transform: uppercase !important;
 }
 .p-datatable .p-column-header-content {
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
+  text-transform: uppercase !important;
 }
 
 .p-datatable table>tbody>tr>td,
