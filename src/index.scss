@@ -65,9 +65,10 @@ $secondary : #DBA008;
 }
 
 .active-link{
-  color: $secondary;
+  // color: $secondary;
   border-left: 4px solid $secondary;
   transition: all 0.3s ease-in-out;
+  background-color: #000000;
 }
 
 .non-active-link{
@@ -76,7 +77,8 @@ $secondary : #DBA008;
 }
 
 .non-active-link:hover{
-  color: $secondary;
+  // color: $secondary;
+  background-color: #000000;
   transition: all 0.3s ease-in-out;
 }
 
@@ -136,3 +138,4 @@ $secondary : #DBA008;
 .p-datatable .p-datatable-tbody > tr {
   background-color: #fff ;
 }
+

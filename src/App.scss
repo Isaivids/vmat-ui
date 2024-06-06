@@ -1,21 +1,31 @@
-$primary : #202932;
-$secondary : #DBA008;
+$primary: #202932;
+$secondary: #dba008;
 
-.bg-pmy{
-    background-color: $primary;
+.bg-pmy {
+  background-color: $primary;
 }
-.bg-scy{
-    background-color: $secondary;
-}
-
-.text-pmy{
-    color: $primary;
+.bg-scy {
+  background-color: $secondary;
 }
 
-.text-scy{
-    color: $secondary;
+.text-pmy {
+  color: $primary;
 }
 
-.logo-image{
-    width: 50%;
+.text-scy {
+  color: $secondary;
+}
+
+.logo-image {
+  width: 50%;
+}
+
+.whitemenu {
+  color: #ffffff;
+}
+.yellowMenu {
+  color: $secondary;
+}
+.redMenu {
+  color: red;
 }

@@ -49,57 +49,68 @@ export const messages = {
           name: "Daily Report & Truck detail",
           to: "/amt",
           image: require("../assets/ico1.svg").default,
+          color : "whitemenu"
         },
         {
           name: "Truck Advance",
           to: "/advance",
           image: require("../assets/ico3.svg").default,
+          color : "whitemenu"
         },
         {
           name: "Transport Advance",
           to: "/transportadvance",
           image: require("../assets/ico5.svg").default,
-        },
-        {
-          name: "Acknowledgement / POD",
-          to: "/ack",
-          image: require("../assets/ico2.svg").default,
-        },
-        {
-          name: "Transport Balance payment",
-          to: "/payment",
-          image: require("../assets/ico4.svg").default,
+          color : "yellowMenu"
         },
         {
           name: "By To Pay Advance",
           to: "/topay",
           image: require("../assets/ico5.svg").default,
+          color : "whitemenu"
+        },
+        {
+          name: "Acknowledgement / POD",
+          to: "/ack",
+          image: require("../assets/ico2.svg").default,
+          color : "whitemenu"
         },
         {
           name: "Commission Crossing Pending",
           to: "/ccpto",
           image: require("../assets/ico4.svg").default,
+          color : "whitemenu"
         },
         {
           name: "Transport Crossing Payment",
           to: "/tcp",
           image: require("../assets/ico5.svg").default,
+          color : "yellowMenu"
+        },
+        {
+          name: "Transport Balance payment",
+          to: "/payment",
+          image: require("../assets/ico4.svg").default,
+          color : "yellowMenu"
         },
         {
           name: "Transport Details",
           to: "/transport",
           image: require("../assets/ico5.svg").default,
+          color : "yellowMenu"
         },
         {
           name: "Truck Details",
           to: "/truck",
           image: require("../assets/ico5.svg").default,
+          color : "whitemenu"
         },
       ],
       menuListVmat : {
         name: "VMAT Account",
         to: "/vmataccount",
         image: require("../assets/ico5.svg").default,
+        color : "redMenu"
       }
 }
 

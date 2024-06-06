@@ -7,7 +7,10 @@ import { AppDispatch } from "../../store/store";
 import { Paginator } from "primereact/paginator";
 import { messages } from "../../api/constants";
 import { Toast } from "primereact/toast";
-import { getvmataccount, updatevmataccount } from "../../store/slice/vmataccount";
+import {
+  getvmataccount,
+  updatevmataccount,
+} from "../../store/slice/vmataccount";
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
 
 const VmatAccount = () => {
@@ -71,15 +74,15 @@ const VmatAccount = () => {
 
   const handleSave = async (rowData: any) => {
     const payload = {
-      vmatexpense : Number(rowData.vmatexpense),
-      reason : rowData.reason,
-      tdsdeduction : rowData.tdsdeduction,
+      vmatexpense: Number(rowData.vmatexpense),
+      reason: rowData.reason,
+      tdsdeduction: rowData.tdsdeduction,
       _id: rowData._id,
     };
     try {
       const response = await dispatch(updatevmataccount(payload));
       if (response.payload.data && !response.payload.error) {
-        const index = data.findIndex((item:any) => item._id === rowData._id);
+        const index = data.findIndex((item: any) => item._id === rowData._id);
         if (index !== -1) {
           data[index]._id = response.payload.data._id;
         }
@@ -121,15 +124,28 @@ const VmatAccount = () => {
   //   }));
   // }
 
+  // Compute totals for each column
+  const computeTotal = (field:any) => {
+    return data
+      .reduce((acc:any, item:any) => acc + (parseFloat(item[field]) || 0), 0)
+      .toFixed(2);
+  };
+
   const fetchData = useCallback(async () => {
     try {
-      const trcukData = await dispatch(getvmataccount({ limit: rows, offset: page * rows, search: searchQuery }));
+      const trcukData = await dispatch(
+        getvmataccount({
+          limit: rows,
+          offset: page * rows,
+          search: searchQuery,
+        })
+      );
       // const trcukData = await dispatch(getvmataccount({ limit: rows, offset: page * rows, search: searchQuery, date : dates }));
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
         setData(trcukData.payload.data);
         setTotalPage(trcukData.payload.pagination.totalDocuments);
       }
-      if(trcukData.payload.error){
+      if (trcukData.payload.error) {
         toast.current?.show({
           severity: "error",
           summary: messages.error,
@@ -184,23 +200,21 @@ const VmatAccount = () => {
         ></Column>
         <Column field="ats.transname" header="Transport Name"></Column>
         <Column field="ats.trucknumber" header="Truck Number"></Column>
-        <Column field="vmatcommision" header="VMAT Commission"></Column>
-        <Column field="vmatcrossing" header="VMAT Crossing"></Column>
+        <Column field="vmatcommision" header="VMAT Commission" footer={`${computeTotal('vmatcommision')}`}></Column>
+        <Column field="vmatcrossing" header="VMAT Crossing" footer={`${computeTotal('vmatcrossing')}`}></Column>
         <Column
           field="tdsdeduction"
           header="TDS Deduction"
           body={renderInput}
+          footer={`${computeTotal('tdsdeduction')}`}
         ></Column>
         <Column
           field="vmatexpense"
           header="Vmat Expense"
           body={renderInput}
+          footer={`${computeTotal('vmatexpense')}`}
         ></Column>
-        <Column
-          field="reason"
-          header="Reason"
-          body={renderInput}
-        ></Column>
+        <Column field="reason" header="Reason" body={renderInput}></Column>
         <Column
           header="Actions"
           body={renderButton}
@@ -208,11 +222,11 @@ const VmatAccount = () => {
         ></Column>
       </DataTable>
       <Paginator
-          first={first}
-          rows={rows}
-          totalRecords={totalPage}
-          onPageChange={onPageChange}
-        />
+        first={first}
+        rows={rows}
+        totalRecords={totalPage}
+        onPageChange={onPageChange}
+      />
     </div>
   );
 };
