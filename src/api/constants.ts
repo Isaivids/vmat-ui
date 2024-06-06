@@ -102,3 +102,7 @@ export const messages = {
         image: require("../assets/ico5.svg").default,
       }
 }
+
+export const getTotalCrossing = (data:any) =>{
+  return (Number(data.crossing) || 0) + (Number(data.vmatcrossing) || 0)
+}

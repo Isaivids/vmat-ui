@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Paginator } from "primereact/paginator";
-import { messages } from "../../api/constants";
+import { getTotalCrossing, messages } from "../../api/constants";
 import { Toast } from "primereact/toast";
 import { getccpto, updateccpto } from "../../store/slice/ccptoSlice";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
@@ -221,8 +221,9 @@ const Ccpto = () => {
         <Column field="ats.truckname" header="Truck name"></Column>
         <Column field="ats.trucknumber" header="Truck Number"></Column>
         <Column field="vmatcommision" header="VMAT Commission"></Column>
-        <Column field="vmatcrossing" header="VMAT Crossing"></Column>
-        <Column field="crossing" header="Crossing"></Column>
+        {/* <Column field="vmatcrossing" header="VMAT Crossing"></Column>
+        <Column field="crossing" header="Crossing"></Column> */}
+        <Column header="Total Crossing" body={getTotalCrossing}></Column>
         <Column field="ack.expense" header="Expense"></Column>
         <Column field="pending" header="Pending"></Column>
         <Column
