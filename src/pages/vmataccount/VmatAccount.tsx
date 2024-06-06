@@ -73,6 +73,7 @@ const VmatAccount = () => {
     const payload = {
       vmatexpense : Number(rowData.vmatexpense),
       reason : rowData.reason,
+      tdsdeduction : rowData.tdsdeduction,
       _id: rowData._id,
     };
     try {
@@ -185,6 +186,11 @@ const VmatAccount = () => {
         <Column field="ats.trucknumber" header="Truck Number"></Column>
         <Column field="vmatcommision" header="VMAT Commission"></Column>
         <Column field="vmatcrossing" header="VMAT Crossing"></Column>
+        <Column
+          field="tdsdeduction"
+          header="TDS Deduction"
+          body={renderInput}
+        ></Column>
         <Column
           field="vmatexpense"
           header="Vmat Expense"
