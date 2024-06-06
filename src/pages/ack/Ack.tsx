@@ -351,12 +351,12 @@ const Ack = () => {
         ></Column>
         <Column
           field="pendingamountfromtruckowner"
-          header="Final Total to Truck Owner"
+          header="Pending Amount From Truck Owner"
           style={{ minWidth: "200px" }}
         ></Column>
         <Column
           field="finaltotaltotruckowner"
-          header="Pending Amount From Truck Owner"
+          header="Final Total to Truck Owner"
           style={{ minWidth: "200px" }}
         ></Column>
         <Column
