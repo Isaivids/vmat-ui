@@ -274,7 +274,7 @@ const Payment = () => {
         ></Column>
         <Column
           field="tyrasporterpaidamt"
-          header="Transporter Paid Balance Amount"
+          header="Transporter to be Paid"
           style={{minWidth : '200px'}}
         ></Column>
         <Column

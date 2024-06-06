@@ -84,14 +84,10 @@ const Ack = () => {
     }
     if (updatedRow.ats.modeofadvance === 3) {
       updatedRow.pendingamountfromtruckowner = addThree;
-      updatedRow.finaltotaltotruckowner =
-        Number(updatedRow.ats.transbln) - Math.abs(expense);
+      updatedRow.finaltotaltotruckowner = Number(updatedRow.ats.transbln) - Math.abs(Number(updatedRow.expense) - Number(updatedRow.podcharge));
     } else {
-      updatedRow.pendingamountfromtruckowner =
-        Number(updatedRow.ats.truckbln) -
-        (Math.abs(addThree) + Math.abs(expense) + Math.abs(halting));
-      updatedRow.finaltotaltotruckowner =
-        updatedRow.ats.truckbln - Math.abs(addThree);
+      updatedRow.pendingamountfromtruckowner = Number(updatedRow.ats.truckbln) - (Math.abs(addThree) + Math.abs(expense) + Math.abs(halting));
+      updatedRow.finaltotaltotruckowner = updatedRow.ats.truckbln - Math.abs(addThree) - Number(updatedRow.podcharge);
     }
     return updatedRow;
   };
@@ -124,40 +120,7 @@ const Ack = () => {
     const newData: any = data.map((row: any) => {
       if (row._id === id) {
         const updatedRow = { ...row, [field]: value.code };
-        console.log(field, value.code);
-        let addThree = 0;
-        if ([1, 2].includes(updatedRow.modeofadvance)) {
-          if (updatedRow.hidevc) {
-            addThree += updatedRow.vmatcrossing;
-          }
-          if (updatedRow.hidevcm) {
-            addThree += updatedRow.vmatcommision;
-          }
-          if (updatedRow.hidetc) {
-            addThree += updatedRow.transcrossing;
-          }
-        } else {
-          if (updatedRow.hidetc) {
-            addThree += updatedRow.transcrossing;
-          }
-          if (updatedRow.hidevc) {
-            addThree += updatedRow.vmatcrossing;
-          }
-          if (updatedRow.hidevcm) {
-            addThree += updatedRow.vmatcommision;
-          }
-        }
-        if (field === "podcharge") {
-          if (updatedRow.ats.modeofadvance === 3) {
-            updatedRow.finaltotaltotruckowner =
-              Number(updatedRow.ats.transbln) -
-              Math.abs(Number(updatedRow.expense)- Number(updatedRow.podcharge));
-          } else {
-            updatedRow.finaltotaltotruckowner =
-              updatedRow.ats.truckbln - Math.abs(addThree) - Number(updatedRow.podcharge);
-          }
-        }
-        return updatedRow;
+        return calculateUpdatedRow(updatedRow);
       }
       return row;
     });
@@ -263,7 +226,7 @@ const Ack = () => {
 
     return (
       <CommonDropdown
-        selectedValue = {selectedValue}
+        selectedValue={selectedValue}
         rowData={rowData}
         field={field}
         modeOfPayments={dropValues}
@@ -387,12 +350,12 @@ const Ack = () => {
           style={{ minWidth: "200px" }}
         ></Column>
         <Column
-          field="finaltotaltotruckowner"
+          field="pendingamountfromtruckowner"
           header="Final Total to Truck Owner"
           style={{ minWidth: "200px" }}
         ></Column>
         <Column
-          field="pendingamountfromtruckowner"
+          field="finaltotaltotruckowner"
           header="Pending Amount From Truck Owner"
           style={{ minWidth: "200px" }}
         ></Column>

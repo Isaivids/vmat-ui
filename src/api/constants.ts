@@ -19,6 +19,7 @@ export const messages = {
         { name: "To Pay", code: "TOPAY" }
     ],
     podCharge : [
+      {name : 0, code : 0},
       {name : 100, code : 100},
       {name : 200, code : 200},
       {name : 300, code : 300},
