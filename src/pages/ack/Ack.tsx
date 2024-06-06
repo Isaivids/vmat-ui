@@ -61,7 +61,7 @@ const Ack = () => {
     const halting = Number(updatedRow.ats.halting);
     let addThree = 0;
 
-    if ([1, 2].includes(updatedRow.modeofadvance)) {
+    if ([2,3].includes(updatedRow.modeofadvance)) {
       if (updatedRow.hidevc) {
         addThree += updatedRow.vmatcrossing;
       }
@@ -82,7 +82,7 @@ const Ack = () => {
         addThree += 0;
       }
     }
-    if (updatedRow.ats.modeofadvance === 3) {
+    if ([3,4].includes(updatedRow.ats.modeofadvance)) {
       updatedRow.pendingamountfromtruckowner = addThree;
       updatedRow.finaltotaltotruckowner = Number(updatedRow.ats.transbln) + Number(updatedRow.expense) - Number(updatedRow.podcharge);
     } else {
