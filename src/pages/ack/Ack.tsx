@@ -83,7 +83,6 @@ const Ack = () => {
       }
     }
     if (updatedRow.ats.modeofadvance === 3) {
-      console.log(1)
       updatedRow.pendingamountfromtruckowner = addThree;
       updatedRow.finaltotaltotruckowner = Number(updatedRow.ats.transbln) + Number(updatedRow.expense) - Number(updatedRow.podcharge);
     } else {
