@@ -215,10 +215,17 @@ const AdvTrans = () => {
     fetchDataAndLog();
   }, [fetchData]);
 
+  const rowClassName = (rowData:any) => {
+    if([null,'',undefined,'PENDING'].includes(rowData.modeofpayment)){
+      return 'red'
+    }
+    return 'green';
+  };
+
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
-      <DataTable value={data} showGridlines scrollable scrollHeight="80vh">
+      <DataTable value={data} showGridlines scrollable scrollHeight="80vh" rowClassName={rowClassName}>
         <Column
           field="ats.sno"
           style={{ minWidth: "150px" }}

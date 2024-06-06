@@ -265,7 +265,7 @@ const onDateChange = (e: any, id: any, field: any) => {
 
   const rowClassName = (rowData: any) => {
     if (["PENDING",'',null,undefined].includes(rowData.modeofpayment)) {
-      return "";
+      return "red";
     }
     return "green";
   };
