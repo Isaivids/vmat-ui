@@ -27,20 +27,17 @@ const VmatAccount = () => {
     setFirst(event.first);
     setRows(event.rows);
   };
+  //customsearch
+  // const [dates, setDates]:any = useState({
+  //   startDate: null,
+  //   endDate: null
+  // });
 
   const onInputChange = (e: any, id: any, field: any) => {
     const { value } = e.target;
     const newData: any = data.map((row: any) => {
       if (row._id === id) {
         const updatedRow = { ...row, [field]: value };
-        // const currentPlusOrMinus = Number(row.plusorminus) || 0;
-        // const newPlusOrMinusValue = Number(value) || 0;
-  
-        // if (field === "plusorminus") {
-        //   updatedRow.loadunloadchar = Number(row.loadunloadchar) - Number(currentPlusOrMinus) + Number(newPlusOrMinusValue);
-        // }
-        // updatedRow.tyrasporterpaidamt = Number(updatedRow.ats.transbln) - Math.abs(Number(updatedRow.loadunloadchar));
-  
         return updatedRow;
       }
       return row;
@@ -48,29 +45,14 @@ const VmatAccount = () => {
     setData(newData);
   };
 
-  const onInputBlur = (id: any, field: any) => {
-    const newData: any = data.map((row: any) => {
-      if (row._id === id) {
-        if (field === "plusorminus") {
-          const updatedRow = { ...row, [field]: 0 };
-          return updatedRow;
-        }
-      }
-      return row;
-    });
-    setData(newData);
-  };
-  
-
   const renderInput = (rowData: any, field: any) => {
-    const isStringField = ["remarks","rtgsnumber"].includes(field.field);
+    const isStringField = ["reason"].includes(field.field);
     return (
       <InputText
         disabled={rowData._id !== selectedRowId}
         value={rowData[field.field]}
         onChange={(e) => onInputChange(e, rowData._id, field.field)}
         keyfilter={isStringField ? undefined : "num"}
-        onBlur={() => onInputBlur(rowData._id, field.field)}
       />
     );
   };
@@ -89,7 +71,7 @@ const VmatAccount = () => {
 
   const handleSave = async (rowData: any) => {
     const payload = {
-      expense : Number(rowData.expense),
+      vmatexpense : Number(rowData.vmatexpense),
       reason : rowData.reason,
       _id: rowData._id,
     };
@@ -131,10 +113,17 @@ const VmatAccount = () => {
     setSelectedRowId(null);
   };
 
+  // const onDateChange = (e:any,field:any) =>{
+  //   setDates((prevDates:any) => ({
+  //     ...prevDates,
+  //     [field]: e.value
+  //   }));
+  // }
+
   const fetchData = useCallback(async () => {
     try {
       const trcukData = await dispatch(getvmataccount({ limit: rows, offset: page * rows, search: searchQuery }));
-      console.log(trcukData)
+      // const trcukData = await dispatch(getvmataccount({ limit: rows, offset: page * rows, search: searchQuery, date : dates }));
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
         setData(trcukData.payload.data);
         setTotalPage(trcukData.payload.pagination.totalDocuments);
@@ -167,6 +156,20 @@ const VmatAccount = () => {
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
+      {/* <div className="flex gap-3 my-2">
+        <Calendar
+          value={dates.startDate}
+          onChange={(e) => onDateChange(e,'startDate')}
+          dateFormat="dd/mm/yy"
+          placeholder="Select Date"
+        />
+        <Calendar
+          value={dates.endDate}
+          onChange={(e) => onDateChange(e,'endDate')}
+          dateFormat="dd/mm/yy"
+          placeholder="Select Date"
+        />
+      </div> */}
       <DataTable value={data} showGridlines scrollable scrollHeight="80vh">
         <Column
           field="ats.sno"
