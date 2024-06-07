@@ -44,7 +44,7 @@ const AdvTrans = () => {
           const wages = Number(updatedRow.wages);
           const others = Number(updatedRow.others);
           const transAdv = Number(updatedRow.advanceamount);
-          updatedRow.transadvtotruck = transAdv - Math.abs(wages) - Math.abs(others);
+          updatedRow.transadvtotruck = transAdv + Number(wages) + Number(others);
         }
         return updatedRow;
       }
@@ -245,13 +245,13 @@ const AdvTrans = () => {
         <Column field="ats.transname" header="Transport Name"></Column>
         <Column field="ats.transf" header="Transport Freight"></Column>
         <Column field="advanceamount" header="Transport Advance"></Column>
+        <Column field="wages" header="Loading wages" body={renderInput}></Column>
+        <Column field="others" header="Others" body={renderInput}></Column>
         <Column
           field="transadvtotruck"
           style={{ minWidth: "150px" }}
           header="Transport Advance to Truck"
         ></Column>
-        <Column field="wages" header="Loading wages" body={renderInput}></Column>
-        <Column field="others" header="Others" body={renderInput}></Column>
         <Column field="remarks" header="Remarks" body={renderInput}></Column>
         <Column
           field="paymentreceiveddate"

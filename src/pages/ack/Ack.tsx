@@ -57,11 +57,11 @@ const Ack = () => {
   };
 
   const calculateUpdatedRow = (updatedRow: any) => {
-    const expense = Number(updatedRow.expense);
-    const halting = Number(updatedRow.ats.halting);
+    // const expense = Number(updatedRow.expense);
+    // const halting = Number(updatedRow.ats.halting);
     let addThree = 0;
 
-    if ([3,4].includes(updatedRow.ats.modeofadvance)) {
+    if ([2,3,4].includes(updatedRow.ats.modeofadvance)) {
       if (updatedRow.hidevc) {
         addThree += updatedRow.vmatcrossing;
       }
@@ -83,10 +83,11 @@ const Ack = () => {
       }
     }
     if ([3,4].includes(updatedRow.ats.modeofadvance)) {
-      updatedRow.pendingamountfromtruckowner = addThree;
+      updatedRow.pendingamountfromtruckowner = addThree + Number(updatedRow.expense);
       updatedRow.finaltotaltotruckowner = Number(updatedRow.ats.transbln) + Number(updatedRow.expense) - Number(updatedRow.podcharge);
     } else {
-      updatedRow.pendingamountfromtruckowner = Number(updatedRow.ats.truckbln) + (Number(addThree) + Number(expense) + Number(halting));
+      updatedRow.pendingamountfromtruckowner = 0;
+      // updatedRow.pendingamountfromtruckowner = Number(updatedRow.ats.truckbln) + (Number(addThree) + Number(expense) + Number(halting));
       updatedRow.finaltotaltotruckowner = updatedRow.ats.truckbln + Number(addThree) - Number(updatedRow.podcharge);
     }
     return updatedRow;
