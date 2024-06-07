@@ -61,7 +61,7 @@ const Ack = () => {
     const halting = Number(updatedRow.ats.halting);
     let addThree = 0;
 
-    if ([2,3].includes(updatedRow.modeofadvance)) {
+    if ([3,4].includes(updatedRow.ats.modeofadvance)) {
       if (updatedRow.hidevc) {
         addThree += updatedRow.vmatcrossing;
       }
