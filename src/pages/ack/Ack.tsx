@@ -88,7 +88,7 @@ const Ack = () => {
     } else {
       updatedRow.pendingamountfromtruckowner = 0;
       // updatedRow.pendingamountfromtruckowner = Number(updatedRow.ats.truckbln) + (Number(addThree) + Number(expense) + Number(halting));
-      updatedRow.finaltotaltotruckowner = updatedRow.ats.truckbln + Number(addThree) - Number(updatedRow.podcharge);
+      updatedRow.finaltotaltotruckowner = updatedRow.ats.truckbln - Number(addThree) - Number(updatedRow.podcharge);
     }
     return updatedRow;
   };
