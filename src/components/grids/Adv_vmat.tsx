@@ -6,11 +6,13 @@ import { getByVmat, updateByVmat } from "../../store/slice/byvmatSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Paginator } from "primereact/paginator";
-import { messages } from "../../api/constants";
+import { getVMAT, messages } from "../../api/constants";
 import { Toast } from "primereact/toast";
 import CommonDatePicker from "../calender/CommonDatePicker";
 import CommonDropdown from "../dropdown/CommonDropdown";
 import CustomButtonComponent from "../button/CustomButtonComponent";
+import { Button } from "primereact/button";
+import { downloadPDF } from "../../pages/tcp/document";
 
 const AdvVmat = () => {
   const searchQuery = useSelector((state: any) => state.search.query);
@@ -19,6 +21,7 @@ const AdvVmat = () => {
   const [data, setData]: any = useState([]);
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
+  const [selectedProducts, setSelectedProducts] = useState([]);
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
@@ -210,13 +213,23 @@ const AdvVmat = () => {
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
+      <Button
+        className="mb-1"
+        label="Download"
+        severity="secondary"
+        onClick={() => downloadPDF(selectedProducts,getVMAT())}
+        disabled={selectedProducts.length <= 0}
+      />
       <DataTable
         value={data}
         showGridlines
         scrollable
-        scrollHeight="80vh"
+        scrollHeight="70vh"
         rowClassName={rowClassName}
+        selection={selectedProducts}
+        onSelectionChange={(e: any) => setSelectedProducts(e.value)}
       >
+        <Column selectionMode="multiple"></Column>
         <Column
           field="ats.sno"
           header="S.No"

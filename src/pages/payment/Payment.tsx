@@ -2,15 +2,20 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { InputText } from "primereact/inputtext";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { getTransCrossing, updateTransAdvance } from "../../store/slice/transSlice";
+import {
+  getTransCrossing,
+  updateTransAdvance,
+} from "../../store/slice/transSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Paginator } from "primereact/paginator";
-import { messages } from "../../api/constants";
+import { getTBP, messages } from "../../api/constants";
 import { Toast } from "primereact/toast";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import CommonDropdown from "../../components/dropdown/CommonDropdown";
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
+import { Button } from "primereact/button";
+import { downloadPDF } from "../tcp/document";
 const Payment = () => {
   const dispatch = useDispatch<AppDispatch>();
   const toast = useRef<Toast>(null);
@@ -19,6 +24,8 @@ const Payment = () => {
   const [data, setData]: any = useState([]);
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
+  const [selectedProducts, setSelectedProducts] = useState([]);
+
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
@@ -37,12 +44,19 @@ const Payment = () => {
         const updatedRow = { ...row, [field]: value };
         const currentPlusOrMinus = Number(row.plusorminus) || 0;
         const newPlusOrMinusValue = Number(value) || 0;
-  
+
         if (field === "plusorminus") {
-          updatedRow.loadunloadchar = Number(row.loadunloadchar) - Number(currentPlusOrMinus) + Number(newPlusOrMinusValue);
+          updatedRow.loadunloadchar =
+            Number(row.loadunloadchar) -
+            Number(currentPlusOrMinus) +
+            Number(newPlusOrMinusValue);
         }
-        updatedRow.tyrasporterpaidamt = Number(updatedRow.ats.transbln) + Number(updatedRow.loadunloadchar) + Number(updatedRow.loadingwagespending) + Number(updatedRow.extraloadingwagespaidbydriver);
-  
+        updatedRow.tyrasporterpaidamt =
+          Number(updatedRow.ats.transbln) +
+          Number(updatedRow.loadunloadchar) +
+          Number(updatedRow.loadingwagespending) +
+          Number(updatedRow.extraloadingwagespaidbydriver);
+
         return updatedRow;
       }
       return row;
@@ -62,10 +76,9 @@ const Payment = () => {
     });
     setData(newData);
   };
-  
 
   const renderInput = (rowData: any, field: any) => {
-    const isStringField = ["remarks","rtgsnumber"].includes(field.field);
+    const isStringField = ["remarks", "rtgsnumber"].includes(field.field);
     return (
       <InputText
         disabled={rowData._id !== selectedRowId}
@@ -109,17 +122,19 @@ const Payment = () => {
       tyrasporterpaidamt: Number(rowData.tyrasporterpaidamt),
       modeofpayment: rowData.modeofpayment,
       paymentreceiveddate: getFormattedDate(rowData.paymentreceiveddate),
-      remarks : rowData.remarks,
-      extraloadingwagespaidbydriver : Number(rowData.extraloadingwagespaidbydriver),
-      loadingwagespending : Number(rowData.loadingwagespending),
-      rtgsnumber : rowData.rtgsnumber,
+      remarks: rowData.remarks,
+      extraloadingwagespaidbydriver: Number(
+        rowData.extraloadingwagespaidbydriver
+      ),
+      loadingwagespending: Number(rowData.loadingwagespending),
+      rtgsnumber: rowData.rtgsnumber,
       _id: rowData._id,
-      atsid : rowData.ats._id
+      atsid: rowData.ats._id,
     };
     try {
       const response = await dispatch(updateTransAdvance(payload));
       if (response.payload.data && !response.payload.error) {
-        const index = data.findIndex((item:any) => item._id === rowData._id);
+        const index = data.findIndex((item: any) => item._id === rowData._id);
         if (index !== -1) {
           data[index]._id = response.payload.data._id;
         }
@@ -205,7 +220,13 @@ const Payment = () => {
 
   const fetchData = useCallback(async () => {
     try {
-      const trcukData = await dispatch(getTransCrossing({ limit: rows, offset: page * rows, search: searchQuery }));
+      const trcukData = await dispatch(
+        getTransCrossing({
+          limit: rows,
+          offset: page * rows,
+          search: searchQuery,
+        })
+      );
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
         setData(trcukData.payload.data);
         setTotalPage(trcukData.payload.pagination.totalDocuments);
@@ -227,17 +248,36 @@ const Payment = () => {
     fetchDataAndLog();
   }, [fetchData]);
 
-  const rowClassName = (rowData:any) => {
-    if([null,'',undefined].includes(rowData.paymentreceiveddate) || [null,'',undefined].includes(rowData.modeofpayment)){
-      return 'red'
+  const rowClassName = (rowData: any) => {
+    if (
+      [null, "", undefined].includes(rowData.paymentreceiveddate) ||
+      [null, "", undefined].includes(rowData.modeofpayment)
+    ) {
+      return "red";
     }
-    return 'green';
+    return "green";
   };
 
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
-      <DataTable value={data} showGridlines scrollable scrollHeight="80vh" rowClassName={rowClassName}>
+      <Button
+        label="Download"
+        severity="secondary"
+        onClick={() => downloadPDF(selectedProducts, getTBP())}
+        disabled={selectedProducts.length <= 0}
+        className="mb-2"
+      />
+      <DataTable
+        value={data}
+        showGridlines
+        scrollable
+        scrollHeight="80vh"
+        rowClassName={rowClassName}
+        selection={selectedProducts}
+        onSelectionChange={(e: any) => setSelectedProducts(e.value)}
+      >
+        <Column selectionMode="multiple"></Column>
         <Column
           field="ats.sno"
           header="S.No"
@@ -251,7 +291,6 @@ const Payment = () => {
         <Column field="ats.truckname" header="Truck Name"></Column>
         <Column field="ats.trucknumber" header="Truck Number"></Column>
         <Column field="ats.transbln" header="Transport balance"></Column>
-        {/* <Column field="ats.transadv" header="Transport Advance"></Column> */}
         <Column
           field="loadingwagespending"
           header="Loading Wages Pending"
@@ -275,13 +314,9 @@ const Payment = () => {
         <Column
           field="tyrasporterpaidamt"
           header="Transporter to be Paid"
-          style={{minWidth : '200px'}}
+          style={{ minWidth: "200px" }}
         ></Column>
-        <Column
-          field="remarks"
-          header="Remarks"
-          body={renderInput}
-        ></Column>
+        <Column field="remarks" header="Remarks" body={renderInput}></Column>
         <Column
           field="paymentreceiveddate"
           header="Payment Received Date"
@@ -292,7 +327,11 @@ const Payment = () => {
           header="Mode Of Payment"
           body={renderDropdown}
         ></Column>
-        <Column field="rtgsnumber" header="RTGS Number" body={renderInput}></Column>
+        <Column
+          field="rtgsnumber"
+          header="RTGS Number"
+          body={renderInput}
+        ></Column>
         <Column
           header="Actions"
           body={renderButton}
@@ -300,11 +339,11 @@ const Payment = () => {
         ></Column>
       </DataTable>
       <Paginator
-          first={first}
-          rows={rows}
-          totalRecords={totalPage}
-          onPageChange={onPageChange}
-        />
+        first={first}
+        rows={rows}
+        totalRecords={totalPage}
+        onPageChange={onPageChange}
+      />
     </div>
   );
 };

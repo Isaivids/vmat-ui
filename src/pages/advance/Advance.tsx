@@ -8,7 +8,7 @@ const Advance = () => {
 
   const RadioSelection = () =>{
     return(
-      <div className="flex my-3">
+      <div className="flex my-1">
             <div className="flex flex-wrap gap-3">
                 <div className="flex align-items-center">
                     <RadioButton inputId="vmat" value="1" onChange={(e: RadioButtonChangeEvent) => setSelection(e.value)} checked={selection === '1'} />

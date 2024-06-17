@@ -6,7 +6,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Button } from "primereact/button";
-import { messages } from "../../api/constants";
+import { getTCPDoc, messages } from "../../api/constants";
 import { InputText } from "primereact/inputtext";
 import { gettcp, updatetcp } from "../../store/slice/tcpSlice";
 import { downloadPDF } from "./document";
@@ -20,7 +20,6 @@ const Tcp = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
-
   //seection
   const [selectedProducts, setSelectedProducts] = useState([]);
   //eo selection
@@ -155,7 +154,7 @@ const Tcp = () => {
         label="Download"
         severity="secondary"
         className="my-3 text-bold"
-        onClick={() => downloadPDF(selectedProducts)}
+        onClick={() => downloadPDF(selectedProducts,getTCPDoc())}
         disabled={selectedProducts.length <= 0}
       />
       <DataTable value={data} showGridlines scrollable scrollHeight="70vh"  selection={selectedProducts} onSelectionChange={(e:any) => setSelectedProducts(e.value)}>

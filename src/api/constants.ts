@@ -34,7 +34,7 @@ export const messages = {
     modeOfAdvance: [
         { name: "By VMAT", code: 1 },
         { name: "By Transport", code: 2 },
-        { name: "By Transporter / To pay", code: 3 },
+        { name: "By Advance / To pay", code: 3 },
         { name: "By To pay", code: 3 },
     ],
     transportAdvanceTypes  :[
@@ -117,3 +117,135 @@ export const messages = {
 export const getTotalCrossing = (data:any) =>{
   return (Number(data.crossing) || 0) + (Number(data.vmatcrossing) || 0)
 }
+
+export const getTCPDoc = () =>{
+  return [
+    { field: "ats.date", header: "Date" },
+    { field: "ats.transname", header: "Transport Name" },
+    { field: "ats.trucknumber", header: "Truck Number" },
+    { field: "ats.transcrossing", header: "Trans Crossing" },
+    { field: "others", header: "Others" },
+    { field: "remarks", header: "Remarks" },
+    { field: "total", header: "Total" },
+  ];
+}
+
+export const getTruckDetails = () => {
+  return [
+    // { field: "truckname", header: "Truck Name" },
+    // { field: "address", header: "Address" },
+    // { field: "phonenumber", header: "Phone Number" },
+    { field: "accountnumber", header: "Account Number" },
+    { field: "pannumber", header: "PAN Number" },
+    // { field: "loadingaddress", header: "Loading Address" },
+    // { field: "unloadingaddress", header: "Unloading Address" },
+    // { field: "location", header: "Location" },
+  ];
+}
+
+export const getCCPTODetails = () => {
+  return [
+    { field: "ats.date", header: "Date" },
+    { field: "ats.transname", header: "Transport Name" },
+    { field: "ats.truckname", header: "Truck name" },
+    { field: "ats.trucknumber", header: "Truck Number" },
+    { field: "vmatcommision", header: "VMAT Commission" },
+    { field: "totalcrossing", header: "Total Crossing" },
+    { field: "ack.expense", header: "Expense" },
+    { field: "pending", header: "Pending" },
+    { field: "rtgsnumber", header: "RTGS Number"},
+  ];
+};
+
+export const getTwoPayDetails = () => {
+  return [
+    { field: "ats.date", header: "Date"},
+    { field: "ats.truckname", header: "Truck Name"},
+    { field: "ats.trucknumber", header: "Truck Number" },
+    { field: "ats.transname", header: "Transport Name" },
+    { field: "ats.transf", header: "Transport Freight" },
+    { field: "ats.transaddvtype", header: "Transporter advance type to Truck"},
+    { field: "advanceamount", header: "Transport Advance" },
+    { field: "luxwages", header: "Loading/Unloading Extra Wages" },
+    { field: "total", header: "Advance Amount Paid to Truck" },
+    { field: "paymentreceiveddate", header: "Payment Received Date" },
+    { field: "modeofpayment", header: "Mode Of Payment"},
+    { field: "rtgsnumber", header: "RTGS Number" },
+  ];
+};
+
+export const getVMAT = () => {
+  return [
+    { field: "ats.date", header: "Date" },
+    { field: "ats.truckname", header: "Truck Name" },
+    { field: "ats.trucknumber", header: "Truck Number" },
+    { field: "advanceamount", header: "Advance" },
+    { field: "vmatcommision", header: "VMAT Commision" },
+    { field: "pendinglabourwages", header: "Loading Wages Pending" },
+    { field: "extlabourwages", header: "Extra loading wages paid by driver" },
+    { field: "others", header: "Others" },
+    { field: "othersreason", header: "Reason" },
+    { field: "total", header: "Advance Payment Paid to truck" },
+    { field: "paymentreceiveddate", header: "Payment RTGS Date" },
+    { field: "modeofpayment", header: "Mode Of Payment" },
+    { field: "rtgsnumber", header: "RTGS Number" },
+  ];
+}
+
+export const getTransADV = () => {
+  return [
+    { field: "ats.date", header: "Date" },
+    { field: "ats.truckname", header: "Truck Name" },
+    { field: "ats.trucknumber", header: "Truck Number" },
+    { field: "ats.transname", header: "Transport Name" },
+    { field: "ats.transf", header: "Transport Freight" },
+    { field: "advanceamount", header: "Transport Advance" },
+    { field: "wages", header: "Loading wages" },
+    { field: "others", header: "Others" },
+    { field: "transadvtotruck", header: "Transport Advance to Truck" },
+    { field: "remarks", header: "Remarks" },
+    { field: "paymentreceiveddate", header: "Payment Received Date" },
+    { field: "modeofpayment", header: "Mode Of Payment" },
+    { field: "rtgsnumber", header: "RTGS Number" },
+  ];
+}
+export const getTBP = () => {
+  return [
+    { field: "ats.date", header: "Date" },
+    { field: "ats.truckname", header: "Truck Name" },
+    { field: "ats.trucknumber", header: "Truck Number" },
+    { field: "ats.transbln", header: "Transport balance" },
+    { field: "loadingwagespending", header: "Loading Wages Pending" },
+    { field: "extraloadingwagespaidbydriver", header: "Extra loading wages paid by driver" },
+    { field: "loadunloadchar", header: "Unloading Wages" },
+    { field: "plusorminus", header: "Unloading Charge" },
+    { field: "tyrasporterpaidamt", header: "Transporter to be Paid" },
+    { field: "remarks", header: "Remarks" },
+    { field: "paymentreceiveddate", header: "Payment Received Date" },
+    { field: "modeofpayment", header: "Mode Of Payment" },
+    { field: "rtgsnumber", header: "RTGS Number" },
+  ];
+}
+export const getACK = () => {
+  return [
+    { field: "ats.date", header: "Date" },
+    { field: "acknowledgementReceivedDate", header: "Ack.Rec Date" },
+    { field: "ats.truckname", header: "Truck Name" },
+    { field: "ats.trucknumber", header: "Truck Number" },
+    { field: "ats.transname", header: "Transport Name" },
+    { field: "ats.truckbln", header: "Truck Balance" },
+    { field: "ats.lateday", header: "Late Delivery" },
+    { field: "ats.halting", header: "Halting" },
+    { field: "expense", header: "Expense" },
+    { field: "podcharge", header: "POD Charge" },
+    { field: "vmatcrossing", header: "VMAT Crossing" },
+    { field: "vmatcommision", header: "VMAT Commission" },
+    { field: "transcrossing", header: "Transport Crossing" },
+    { field: "ats.twopay", header: "By To Pay Transport Balance." },
+    { field: "finaltotaltotruckowner", header: "Final Total to Truck Owner" },
+    { field: "paymentReceivedDate", header: "Payment transfer to truck owner" },
+    { field: "modeofpayment", header: "Mode Of Payment" },
+    { field: "rtgsnumber", header: "RTGS Number" },
+  ];
+}
+

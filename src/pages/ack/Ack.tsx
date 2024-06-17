@@ -7,11 +7,13 @@ import { AppDispatch } from "../../store/store";
 import { getAck, updateAck } from "../../store/slice/ackSlice";
 import { Paginator } from "primereact/paginator";
 import { Toast } from "primereact/toast";
-import { messages } from "../../api/constants";
+import { getACK, messages } from "../../api/constants";
 import { Checkbox } from "primereact/checkbox";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import CommonDropdown from "../../components/dropdown/CommonDropdown";
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
+import { Button } from "primereact/button";
+import { downloadPDF } from "../tcp/document";
 const Ack = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [data, setData]: any = useState([]);
@@ -19,6 +21,7 @@ const Ack = () => {
   const [backupData, setBackupData]: any = useState(null);
   const searchQuery = useSelector((state: any) => state.search.query);
   const toast = useRef<Toast>(null);
+  const [selectedProducts, setSelectedProducts] = useState([]);
 
   //pagination
   const [first, setFirst] = useState(0);
@@ -290,13 +293,23 @@ const Ack = () => {
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
+      <Button
+        label="Download"
+        severity="secondary"
+        onClick={() => downloadPDF(selectedProducts, getACK())}
+        disabled={selectedProducts.length <= 0}
+        className="mb-2"
+      />
       <DataTable
         value={data}
         showGridlines
         scrollable
         scrollHeight="70vh"
         rowClassName={rowClassName}
+        selection={selectedProducts}
+        onSelectionChange={(e: any) => setSelectedProducts(e.value)}
       >
+        <Column selectionMode="multiple"></Column>
         <Column
           field="ats.sno"
           header="S.No"

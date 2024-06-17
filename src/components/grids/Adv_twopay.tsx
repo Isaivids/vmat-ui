@@ -7,10 +7,12 @@ import { AppDispatch } from "../../store/store";
 import { getbytwopay, updateByTwoPay } from "../../store/slice/bytwopaySlice";
 import { Paginator } from "primereact/paginator";
 import { Toast } from "primereact/toast";
-import { messages } from "../../api/constants";
+import { getTwoPayDetails, messages } from "../../api/constants";
 import CommonDatePicker from "../calender/CommonDatePicker";
 import CommonDropdown from "../dropdown/CommonDropdown";
 import CustomButtonComponent from "../button/CustomButtonComponent";
+import { Button } from "primereact/button";
+import { downloadPDF } from "../../pages/tcp/document";
 
 const AdvTwopay = () => {
   const searchQuery = useSelector((state: any) => state.search.query);
@@ -20,6 +22,8 @@ const AdvTwopay = () => {
   const [data, setData]: any = useState([]);
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
+    //seection
+    const [selectedProducts, setSelectedProducts] = useState([]);
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
@@ -221,13 +225,22 @@ const AdvTwopay = () => {
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
+      <Button
+        label="Download"
+        severity="secondary"
+        className="my-3 text-bold"
+        onClick={() => downloadPDF(selectedProducts,getTwoPayDetails())}
+        disabled={selectedProducts.length <= 0}
+      />
       <DataTable
         value={data}
         showGridlines
         scrollable
         scrollHeight="80vh"
         rowClassName={rowClassName}
+        selection={selectedProducts} onSelectionChange={(e:any) => setSelectedProducts(e.value)}
       >
+        <Column selectionMode="multiple"></Column>
         <Column
           field="ats.sno"
           header="S.No"

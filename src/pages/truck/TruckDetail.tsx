@@ -11,8 +11,9 @@ import { AppDispatch } from "../../store/store";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Paginator } from "primereact/paginator";
 import { Toast } from "primereact/toast";
-import { messages } from "../../api/constants";
+import { getTruckDetails, messages } from "../../api/constants";
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
+import { downloadPDF } from "../tcp/document";
 
 const TruckDetail = () => {
   const searchQuery = useSelector((state: any) => state.search.query);
@@ -21,6 +22,8 @@ const TruckDetail = () => {
   const dispatch: any = useDispatch<AppDispatch>();
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
+  //seection
+  const [selectedProducts, setSelectedProducts] = useState([]);
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
@@ -170,13 +173,21 @@ const TruckDetail = () => {
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
+      <div className="flex my-2 gap-2">
       <Button
         label="Add New Row"
         severity="info"
-        className="mb-2"
         onClick={handleAddNewRow}
       />
-      <DataTable value={data} scrollable scrollHeight="80vh" showGridlines>
+      <Button
+        label="Download"
+        severity="secondary"
+        onClick={() => downloadPDF(selectedProducts,getTruckDetails())}
+        disabled={selectedProducts.length <= 0}
+      />
+      </div>
+      <DataTable value={data} scrollable scrollHeight="80vh" showGridlines selection={selectedProducts} onSelectionChange={(e:any) => setSelectedProducts(e.value)}>
+        <Column selectionMode="multiple"></Column>
         <Column
           field="truckname"
           header="Truck Name"

@@ -4,13 +4,15 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Paginator } from "primereact/paginator";
-import { getTotalCrossing, messages } from "../../api/constants";
+import { getCCPTODetails, messages } from "../../api/constants";
 import { Toast } from "primereact/toast";
 import { getccpto, updateccpto } from "../../store/slice/ccptoSlice";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import CommonDropdown from "../../components/dropdown/CommonDropdown";
 import { InputText } from "primereact/inputtext";
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
+import { Button } from "primereact/button";
+import { downloadPDF } from "../tcp/document";
 
 const Ccpto = () => {
   const searchQuery = useSelector((state: any) => state.search.query);
@@ -20,6 +22,8 @@ const Ccpto = () => {
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
   const modeOfPayments = messages.modeofpayments;
+  //seection
+  const [selectedProducts, setSelectedProducts] = useState([]);
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
@@ -208,13 +212,23 @@ const Ccpto = () => {
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
+      <Button
+        label="Download"
+        severity="secondary"
+        className="my-3 text-bold"
+        onClick={() => downloadPDF(selectedProducts, getCCPTODetails())}
+        disabled={selectedProducts.length <= 0}
+      />
       <DataTable
         value={data}
         showGridlines
         scrollable
         scrollHeight="80vh"
         rowClassName={rowClassName}
+        selection={selectedProducts}
+        onSelectionChange={(e: any) => setSelectedProducts(e.value)}
       >
+        <Column selectionMode="multiple"></Column>
         <Column field="ats.sno" header="S.No"></Column>
         <Column field="ats.date" header="Date"></Column>
         <Column field="ats.transname" header="Transport Name"></Column>
@@ -223,7 +237,7 @@ const Ccpto = () => {
         <Column field="vmatcommision" header="VMAT Commission"></Column>
         {/* <Column field="vmatcrossing" header="VMAT Crossing"></Column>
         <Column field="crossing" header="Crossing"></Column> */}
-        <Column header="Total Crossing" body={getTotalCrossing}></Column>
+        <Column header="Total Crossing" field="totalcrossing"></Column>
         <Column field="ack.expense" header="Expense"></Column>
         <Column field="pending" header="Pending"></Column>
         <Column

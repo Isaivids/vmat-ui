@@ -10,15 +10,18 @@ import {
 } from "../../store/slice/bytransSlice";
 import { Paginator } from "primereact/paginator";
 import { Toast } from "primereact/toast";
-import { messages } from "../../api/constants";
+import { getTransADV, messages } from "../../api/constants";
 import CommonDatePicker from "../calender/CommonDatePicker";
 import CommonDropdown from "../dropdown/CommonDropdown";
 import CustomButtonComponent from "../button/CustomButtonComponent";
+import { Button } from "primereact/button";
+import { downloadPDF } from "../../pages/tcp/document";
 
 const AdvTrans = () => {
   const searchQuery = useSelector((state: any) => state.search.query);
   const toast = useRef<Toast>(null);
   const modeOfPayments = messages.modeofpayments;
+  const [selectedProducts, setSelectedProducts] = useState([]);
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
@@ -44,7 +47,8 @@ const AdvTrans = () => {
           const wages = Number(updatedRow.wages);
           const others = Number(updatedRow.others);
           const transAdv = Number(updatedRow.advanceamount);
-          updatedRow.transadvtotruck = transAdv + Number(wages) + Number(others);
+          updatedRow.transadvtotruck =
+            transAdv + Number(wages) + Number(others);
         }
         return updatedRow;
       }
@@ -54,7 +58,7 @@ const AdvTrans = () => {
   };
 
   const renderInput = (rowData: any, field: any) => {
-    const isStringField = ["remarks","rtgsnumber"].includes(field.field);
+    const isStringField = ["remarks", "rtgsnumber"].includes(field.field);
     return (
       <InputText
         disabled={rowData._id !== selectedRowId}
@@ -87,7 +91,7 @@ const AdvTrans = () => {
       remarks: rowData.remarks,
       modeofpayment: rowData.modeofpayment,
       paymentreceiveddate: getFormattedDate(rowData.paymentreceiveddate),
-      rtgsnumber : rowData.rtgsnumber,
+      rtgsnumber: rowData.rtgsnumber,
       _id: rowData._id,
     };
     try {
@@ -219,17 +223,33 @@ const AdvTrans = () => {
     fetchDataAndLog();
   }, [fetchData]);
 
-  const rowClassName = (rowData:any) => {
-    if([null,'',undefined,'PENDING'].includes(rowData.modeofpayment)){
-      return 'red'
+  const rowClassName = (rowData: any) => {
+    if ([null, "", undefined, "PENDING"].includes(rowData.modeofpayment)) {
+      return "red";
     }
-    return 'green';
+    return "green";
   };
 
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
-      <DataTable value={data} showGridlines scrollable scrollHeight="80vh" rowClassName={rowClassName}>
+      <Button
+        label="Download"
+        severity="secondary"
+        onClick={() => downloadPDF(selectedProducts, getTransADV())}
+        disabled={selectedProducts.length <= 0}
+        className="mb-2"
+      />
+      <DataTable
+        value={data}
+        showGridlines
+        scrollable
+        scrollHeight="80vh"
+        rowClassName={rowClassName}
+        selection={selectedProducts}
+        onSelectionChange={(e: any) => setSelectedProducts(e.value)}
+      >
+        <Column selectionMode="multiple"></Column>
         <Column
           field="ats.sno"
           style={{ minWidth: "150px" }}
@@ -245,7 +265,11 @@ const AdvTrans = () => {
         <Column field="ats.transname" header="Transport Name"></Column>
         <Column field="ats.transf" header="Transport Freight"></Column>
         <Column field="advanceamount" header="Transport Advance"></Column>
-        <Column field="wages" header="Loading wages" body={renderInput}></Column>
+        <Column
+          field="wages"
+          header="Loading wages"
+          body={renderInput}
+        ></Column>
         <Column field="others" header="Others" body={renderInput}></Column>
         <Column
           field="transadvtotruck"
@@ -263,7 +287,11 @@ const AdvTrans = () => {
           header="Mode Of Payment"
           body={renderDropdown}
         ></Column>
-        <Column field="rtgsnumber" header="RTGS Number" body={renderInput}></Column>
+        <Column
+          field="rtgsnumber"
+          header="RTGS Number"
+          body={renderInput}
+        ></Column>
         <Column
           header="Actions"
           body={renderButton}
