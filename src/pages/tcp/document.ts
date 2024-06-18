@@ -79,7 +79,8 @@ export const downloadPDF = (data: any, columns: any) => {
       tableHeader: {
         bold: true,
         fontSize: 10,
-        color: "black",
+        color: "white",
+        fillColor: '#202932',
       },
       details : {
         fontSize : 8
