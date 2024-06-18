@@ -21,7 +21,7 @@ const Amt = () => {
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [originalData, setOriginalData] = useState({});
   const [newRowAdded, setNewRowAdded] = useState(false);
-  const searchQuery = useSelector((state: any) => state.search.query);
+  const searchQuery = useSelector((state: any) => state.search);
   const [visible, setVisible] = useState<boolean>(false);
   const [selectedData, setSelectedData]: any = useState({});
   //pagination
@@ -429,7 +429,7 @@ const Amt = () => {
         setVisible={setVisible}
         selectedData={selectedData}
       />
-      <div className="p-2" style={{ overflowX: "auto" }}>
+      <div className="p-2" style={{ overflowX: "auto"}}>
         <Button
           label="New"
           severity="success"
@@ -566,6 +566,7 @@ const Amt = () => {
           rows={rows}
           totalRecords={totalPage}
           onPageChange={onPageChange}
+          rowsPerPageOptions={[10, 20, 30]}
         />
       </div>
     </>

@@ -13,7 +13,7 @@ const initialState = {
 }
 
 export const getAts = createAsyncThunk('getats', async (filters:any) => {
-    const response:any = await apiCall.get(`/getats?limit=${filters.limit}&offset=${filters.offset}&search=${filters.search}`);
+    const response:any = await apiCall.get(`/getats?limit=${filters.limit}&offset=${filters.offset}&search=${filters.search.query}&fromDate=${filters.search.fromDate}&toDate=${filters.search.toDate}`);
     if (response.data.error) {
         throw new Error("Error message");
     }

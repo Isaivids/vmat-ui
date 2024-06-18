@@ -8,15 +8,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { setSearchQuery } from "../../store/slice/searchSlice";
 import { AppDispatch } from "../../store/store";
 import { getUserInfo } from "../../store/slice/userSlice";
+import { Calendar } from "primereact/calendar";
 const logo = require("../../assets/logo.svg").default;
 
 const Navbar = () => {
-  const searchQuery = useSelector((state: any) => state.search.query);
+  const searchQuery = useSelector((state: any) => state.search);
   const userDetails = useSelector((state: any) => state.user);
   const [details, setDetails]: any = useState({});
   const dispatch = useDispatch<AppDispatch>();
   const [search, setSearch] = useState("");
-
+  const [fromDate, setFromdate] = useState(null);
+  const [toDate, setTodate] = useState(null);
   const getUserInfoDetails = useCallback(async () => {
     const result: any = await dispatch(getUserInfo());
     try {
@@ -30,12 +32,24 @@ const Navbar = () => {
     setSearch(event.target.value);
   };
 
+  const formatDate = (date: any) => {
+    return date ? date.toISOString().split("T")[0] : "";
+  };
+
   const handleSearch = () => {
-    dispatch(setSearchQuery(search));
+    dispatch(
+      setSearchQuery({
+        search: search,
+        fromDate: formatDate(fromDate),
+        toDate: formatDate(toDate),
+      })
+    );
   };
 
   useEffect(() => {
-    setSearch(searchQuery);
+    setSearch(searchQuery.query);
+    setFromdate(searchQuery.fromdate);
+    setTodate(searchQuery.toDate);
   }, [searchQuery]);
 
   useEffect(() => {
@@ -51,7 +65,14 @@ const Navbar = () => {
       <div className="logo flex gap-1 align-items-center">
         <img src={logo} alt="VMAT" />
       </div>
-      <div className="dd">
+      <div
+        className="dd flex align-items-center gap-2"
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            handleSearch();
+          }
+        }}
+      >
         <IconField iconPosition="left">
           <InputIcon className="pi pi-search"> </InputIcon>
           <InputText
@@ -61,17 +82,28 @@ const Navbar = () => {
             onChange={handleSearchChange}
             className="form-control ip"
             style={{ width: "300px" }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                handleSearch();
-              }
-            }}
           />
         </IconField>
+        <Calendar
+          placeholder="From Date"
+          value={fromDate}
+          onChange={(e: any) => setFromdate(e.value)}
+        />
+        <Calendar
+          placeholder="To Date"
+          value={toDate}
+          onChange={(e: any) => setTodate(e.value)}
+        />
       </div>
       <div className="flex align-items-center gap-2">
-        <span className="text-scy font-semibold	uppercase">{details?.username}</span>
-        <Avatar label={details?.username?.substring(0,1)} size="normal" shape="circle"/>
+        <span className="text-scy font-semibold	uppercase">
+          {details?.username}
+        </span>
+        <Avatar
+          label={details?.username?.substring(0, 1)}
+          size="normal"
+          shape="circle"
+        />
       </div>
     </div>
   );
