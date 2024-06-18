@@ -7,7 +7,7 @@ import { AppDispatch } from "../../store/store";
 import { getbytwopay, updateByTwoPay } from "../../store/slice/bytwopaySlice";
 import { Paginator } from "primereact/paginator";
 import { Toast } from "primereact/toast";
-import { getTwoPayDetails, messages } from "../../api/constants";
+import { formatDate, getTwoPayDetails, messages } from "../../api/constants";
 import CommonDatePicker from "../calender/CommonDatePicker";
 import CommonDropdown from "../dropdown/CommonDropdown";
 import CustomButtonComponent from "../button/CustomButtonComponent";
@@ -15,7 +15,7 @@ import { Button } from "primereact/button";
 import { downloadPDF } from "../../pages/tcp/document";
 
 const AdvTwopay = () => {
-  const searchQuery = useSelector((state: any) => state.search.query);
+  const searchQuery = useSelector((state: any) => state.search);
   const toast = useRef<Toast>(null);
   const dispatch = useDispatch<AppDispatch>();
   const modeOfPayments = messages.modeofpayments;
@@ -249,6 +249,7 @@ const AdvTwopay = () => {
         <Column
           field="ats.date"
           header="Date"
+          body={(rowData:any) => formatDate(rowData.ats.date)}
           style={{ minWidth: "100px" }}
         ></Column>
         <Column

@@ -6,7 +6,7 @@ import { getByVmat, updateByVmat } from "../../store/slice/byvmatSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Paginator } from "primereact/paginator";
-import { getVMAT, messages } from "../../api/constants";
+import { formatDate, getVMAT, messages } from "../../api/constants";
 import { Toast } from "primereact/toast";
 import CommonDatePicker from "../calender/CommonDatePicker";
 import CommonDropdown from "../dropdown/CommonDropdown";
@@ -15,7 +15,7 @@ import { Button } from "primereact/button";
 import { downloadPDF } from "../../pages/tcp/document";
 
 const AdvVmat = () => {
-  const searchQuery = useSelector((state: any) => state.search.query);
+  const searchQuery = useSelector((state: any) => state.search);
   const toast = useRef<Toast>(null);
   const dispatch = useDispatch<AppDispatch>();
   const [data, setData]: any = useState([]);
@@ -238,6 +238,7 @@ const AdvVmat = () => {
         <Column
           field="ats.date"
           header="Date"
+          body={(rowData:any) => formatDate(rowData.ats.date)}
           style={{ minWidth: "150px" }}
         ></Column>
         <Column field="ats.truckname" header="Truck Name"></Column>

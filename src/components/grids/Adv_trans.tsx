@@ -10,7 +10,7 @@ import {
 } from "../../store/slice/bytransSlice";
 import { Paginator } from "primereact/paginator";
 import { Toast } from "primereact/toast";
-import { getTransADV, messages } from "../../api/constants";
+import { formatDate, getTransADV, messages } from "../../api/constants";
 import CommonDatePicker from "../calender/CommonDatePicker";
 import CommonDropdown from "../dropdown/CommonDropdown";
 import CustomButtonComponent from "../button/CustomButtonComponent";
@@ -18,7 +18,7 @@ import { Button } from "primereact/button";
 import { downloadPDF } from "../../pages/tcp/document";
 
 const AdvTrans = () => {
-  const searchQuery = useSelector((state: any) => state.search.query);
+  const searchQuery = useSelector((state: any) => state.search);
   const toast = useRef<Toast>(null);
   const modeOfPayments = messages.modeofpayments;
   const [selectedProducts, setSelectedProducts] = useState([]);
@@ -254,6 +254,7 @@ const AdvTrans = () => {
           field="ats.sno"
           style={{ minWidth: "150px" }}
           header="S.No"
+          body={(rowData:any) => formatDate(rowData.ats.date)}
         ></Column>
         <Column
           field="ats.date"

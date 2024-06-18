@@ -13,7 +13,7 @@ const initialState = {
 }
 
 export const getccpto = createAsyncThunk('getccpto', async (payload:any) => {
-    const response:any = await apiCall.get(`/getccpto?limit=${payload.limit}&offset=${payload.offset}&search=${payload.search}`);
+    const response:any = await apiCall.get(`/getccpto?limit=${payload.limit}&offset=${payload.offset}&search=${payload.search.query}&fromDate=${payload.search.fromDate}&toDate=${payload.search.toDate}`);
     if (response.data.error) {
         throw new Error("Error message");
     }

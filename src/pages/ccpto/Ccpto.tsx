@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Paginator } from "primereact/paginator";
-import { getCCPTODetails, messages } from "../../api/constants";
+import { formatDate, getCCPTODetails, messages } from "../../api/constants";
 import { Toast } from "primereact/toast";
 import { getccpto, updateccpto } from "../../store/slice/ccptoSlice";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
@@ -15,7 +15,7 @@ import { Button } from "primereact/button";
 import { downloadPDF } from "../tcp/document";
 
 const Ccpto = () => {
-  const searchQuery = useSelector((state: any) => state.search.query);
+  const searchQuery = useSelector((state: any) => state.search);
   const toast = useRef<Toast>(null);
   const dispatch = useDispatch<AppDispatch>();
   const [data, setData]: any = useState([]);
@@ -230,7 +230,7 @@ const Ccpto = () => {
       >
         <Column selectionMode="multiple"></Column>
         <Column field="ats.sno" header="S.No"></Column>
-        <Column field="ats.date" header="Date"></Column>
+        <Column field="ats.date" header="Date" body={(rowData:any) => formatDate(rowData.ats.date)}></Column>
         <Column field="ats.transname" header="Transport Name"></Column>
         <Column field="ats.truckname" header="Truck name"></Column>
         <Column field="ats.trucknumber" header="Truck Number"></Column>

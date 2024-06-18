@@ -6,7 +6,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Button } from "primereact/button";
-import { getTCPDoc, messages } from "../../api/constants";
+import { formatDate, getTCPDoc, messages } from "../../api/constants";
 import { InputText } from "primereact/inputtext";
 import { gettcp, updatetcp } from "../../store/slice/tcpSlice";
 import { downloadPDF } from "./document";
@@ -14,7 +14,7 @@ import CustomButtonComponent from "../../components/button/CustomButtonComponent
 
 
 const Tcp = () => {
-  const searchQuery = useSelector((state: any) => state.search.query);
+  const searchQuery = useSelector((state: any) => state.search);
   const toast = useRef<Toast>(null);
   const [data, setData]: any = useState([]);
   const dispatch = useDispatch<AppDispatch>();
@@ -160,7 +160,7 @@ const Tcp = () => {
       <DataTable value={data} showGridlines scrollable scrollHeight="70vh"  selection={selectedProducts} onSelectionChange={(e:any) => setSelectedProducts(e.value)}>
         <Column selectionMode="multiple"></Column>
         <Column field="ats.sno" header="S.No"></Column>
-        <Column field="ats.date" header="Date"></Column>
+        <Column field="ats.date" header="Date" body={(rowData:any) => formatDate(rowData.ats.date)}></Column>
         <Column field="ats.transname" header="Transport Name"></Column>
         <Column field="ats.trucknumber" header="Truck Number"></Column>
         <Column field="transcrossing" header="Trans Crossing"></Column>

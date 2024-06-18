@@ -13,7 +13,7 @@ const initialState = {
 }
 
 export const getbytransporter = createAsyncThunk('getbytransporter', async (payload:any) => {
-    const response:any = await apiCall.get(`/getbytransporter?limit=${payload.limit}&offset=${payload.offset}&search=${payload.search}`);
+    const response:any = await apiCall.get(`/getbytransporter?limit=${payload.limit}&offset=${payload.offset}&search=${payload.search.query}&fromDate=${payload.search.fromDate}&toDate=${payload.search.toDate}`);
     if (response.error) {
         throw new Error("Error message");
     }

@@ -114,6 +114,10 @@ export const messages = {
       }
 }
 
+export const formatDate = (date: any) => {
+  return date ? new Date(date).toLocaleDateString() : "";
+};
+
 export const getTotalCrossing = (data:any) =>{
   return (Number(data.crossing) || 0) + (Number(data.vmatcrossing) || 0)
 }

@@ -7,7 +7,7 @@ import { AppDispatch } from "../../store/store";
 import { getAck, updateAck } from "../../store/slice/ackSlice";
 import { Paginator } from "primereact/paginator";
 import { Toast } from "primereact/toast";
-import { getACK, messages } from "../../api/constants";
+import { formatDate, getACK, messages } from "../../api/constants";
 import { Checkbox } from "primereact/checkbox";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import CommonDropdown from "../../components/dropdown/CommonDropdown";
@@ -19,7 +19,7 @@ const Ack = () => {
   const [data, setData]: any = useState([]);
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
-  const searchQuery = useSelector((state: any) => state.search.query);
+  const searchQuery = useSelector((state: any) => state.search);
   const toast = useRef<Toast>(null);
   const [selectedProducts, setSelectedProducts] = useState([]);
 
@@ -318,6 +318,7 @@ const Ack = () => {
         <Column
           field="ats.date"
           header="Date"
+          body={(rowData:any) => formatDate(rowData.ats.date)}
           style={{ minWidth: "100px" }}
         ></Column>
         <Column

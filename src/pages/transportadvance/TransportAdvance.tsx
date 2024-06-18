@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Paginator } from "primereact/paginator";
-import { messages } from "../../api/constants";
+import { formatDate, messages } from "../../api/constants";
 import { Toast } from "primereact/toast";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import CommonDropdown from "../../components/dropdown/CommonDropdown";
@@ -18,7 +18,7 @@ import CustomButtonComponent from "../../components/button/CustomButtonComponent
 const TransportAdvance = () => {
   const dispatch = useDispatch<AppDispatch>();
   const toast = useRef<Toast>(null);
-  const searchQuery = useSelector((state: any) => state.search.query);
+  const searchQuery = useSelector((state: any) => state.search);
   const modeOfPayments = messages.modeofpayments;
   const [data, setData]: any = useState([]);
   const [selectedRowId, setSelectedRowId]: any = useState(null);
@@ -237,6 +237,7 @@ const TransportAdvance = () => {
         <Column
           field="ats.date"
           header="Date"
+          body={(rowData:any) => formatDate(rowData.ats.date)}
           style={{ minWidth: "100px" }}
         ></Column>
         <Column field="ats.transname" header="Transport Name"></Column>

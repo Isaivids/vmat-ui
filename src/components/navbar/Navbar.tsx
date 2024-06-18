@@ -17,8 +17,8 @@ const Navbar = () => {
   const [details, setDetails]: any = useState({});
   const dispatch = useDispatch<AppDispatch>();
   const [search, setSearch] = useState("");
-  const [fromDate, setFromdate] = useState(null);
-  const [toDate, setTodate] = useState(null);
+  const [fromDate, setFromdate]:any = useState(null);
+  const [toDate, setTodate]:any = useState(null);
   const getUserInfoDetails = useCallback(async () => {
     const result: any = await dispatch(getUserInfo());
     try {
@@ -48,7 +48,7 @@ const Navbar = () => {
 
   useEffect(() => {
     setSearch(searchQuery.query);
-    setFromdate(searchQuery.fromdate);
+    setFromdate(searchQuery.fromDate);
     setTodate(searchQuery.toDate);
   }, [searchQuery]);
 
@@ -86,12 +86,12 @@ const Navbar = () => {
         </IconField>
         <Calendar
           placeholder="From Date"
-          value={fromDate}
+          value={fromDate ? new Date(fromDate) : null}
           onChange={(e: any) => setFromdate(e.value)}
         />
         <Calendar
           placeholder="To Date"
-          value={toDate}
+          value={toDate ? new Date(toDate) : null}
           onChange={(e: any) => setTodate(e.value)}
         />
       </div>
