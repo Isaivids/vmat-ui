@@ -296,7 +296,7 @@ const Ack = () => {
       <Button
         label="Download"
         severity="secondary"
-        onClick={() => downloadPDF(selectedProducts, getACK())}
+        onClick={() => downloadPDF(selectedProducts, getACK(),searchQuery,4)}
         disabled={selectedProducts.length <= 0}
         className="mb-2"
       />

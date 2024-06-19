@@ -1,22 +1,22 @@
 import { messages } from "../../api/constants";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
-
+import { pageName } from '../../api/constants'
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 const getNestedValue = (obj: any, path: any) => {
   if (path.startsWith("ats.transaddvtype")) {
     const value = path
-    .split(".")
-    .reduce((acc: any, part: any) => acc && acc[part], obj);
-    const type = messages.transportAdvanceTypes.find((type:any) => type.code === value);
+      .split(".")
+      .reduce((acc: any, part: any) => acc && acc[part], obj);
+    const type = messages.transportAdvanceTypes.find((type: any) => type.code === value);
     // return type ? type.name : undefined;
     return type ? type.name : ''
   }
-  if(path.startsWith("paymentreceiveddate") || path.startsWith("ats.date")){
-    if(obj.paymentreceiveddate){
+  if (path.startsWith("paymentreceiveddate") || path.startsWith("ats.date")) {
+    if (obj.paymentreceiveddate) {
       return new Date(obj.paymentreceiveddate).toLocaleDateString();
     }
-    if(obj.ats.date){
+    if (obj.ats.date) {
       return new Date(obj.ats.date).toLocaleDateString();
     }
     return ''
@@ -26,7 +26,26 @@ const getNestedValue = (obj: any, path: any) => {
     .reduce((acc: any, part: any) => acc && acc[part], obj);
 };
 
-export const downloadPDF = (data: any, columns: any) => {
+const getSearch = (searchQuery: any) => {
+  let returnValue = '';
+  if (searchQuery.query) {
+    returnValue = returnValue + searchQuery.query
+  }
+  if (searchQuery.fromDate) {
+    returnValue = ' ' + returnValue + 'From ' + searchQuery.fromDate + ' '
+  }
+  if (searchQuery.toDate) {
+    returnValue = ' ' + returnValue + 'To ' + searchQuery.toDate
+  }
+  return returnValue
+}
+
+const getNameByType = (type:number) => {
+  const page = pageName.find(page => page.type === type);
+  return page ? page.name : null;
+};
+
+export const downloadPDF = (data: any, columns: any, searchQuery: any, type: number) => {
   const tableHeaders = columns.map((col: any) => ({
     text: col.header,
     style: "tableHeader",
@@ -58,6 +77,16 @@ export const downloadPDF = (data: any, columns: any) => {
         alignment: "center",
       },
       {
+        text: getNameByType(type),
+        style: "subheader",
+        alignment: "center",
+      },
+      {
+        text: getSearch(searchQuery),
+        style: "subheader",
+        alignment: "center",
+      },
+      {
         table: {
           headerRows: 1,
           widths: columns.map(() => 'auto'),
@@ -82,8 +111,8 @@ export const downloadPDF = (data: any, columns: any) => {
         color: "white",
         fillColor: '#202932',
       },
-      details : {
-        fontSize : 8
+      details: {
+        fontSize: 8
       }
     },
   };

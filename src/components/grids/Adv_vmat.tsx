@@ -217,7 +217,7 @@ const AdvVmat = () => {
         className="mb-1"
         label="Download"
         severity="secondary"
-        onClick={() => downloadPDF(selectedProducts,getVMAT())}
+        onClick={() => downloadPDF(selectedProducts,getVMAT(),searchQuery,1)}
         disabled={selectedProducts.length <= 0}
       />
       <DataTable

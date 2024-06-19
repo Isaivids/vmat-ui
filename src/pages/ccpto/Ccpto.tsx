@@ -216,7 +216,7 @@ const Ccpto = () => {
         label="Download"
         severity="secondary"
         className="my-3 text-bold"
-        onClick={() => downloadPDF(selectedProducts, getCCPTODetails())}
+        onClick={() => downloadPDF(selectedProducts, getCCPTODetails(),searchQuery,5)}
         disabled={selectedProducts.length <= 0}
       />
       <DataTable

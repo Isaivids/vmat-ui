@@ -154,7 +154,7 @@ const Tcp = () => {
         label="Download"
         severity="secondary"
         className="my-3 text-bold"
-        onClick={() => downloadPDF(selectedProducts,getTCPDoc())}
+        onClick={() => downloadPDF(selectedProducts,getTCPDoc(),searchQuery,6)}
         disabled={selectedProducts.length <= 0}
       />
       <DataTable value={data} showGridlines scrollable scrollHeight="70vh"  selection={selectedProducts} onSelectionChange={(e:any) => setSelectedProducts(e.value)}>

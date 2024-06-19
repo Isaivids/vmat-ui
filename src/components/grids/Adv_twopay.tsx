@@ -229,7 +229,7 @@ const AdvTwopay = () => {
         label="Download"
         severity="secondary"
         className="my-3 text-bold"
-        onClick={() => downloadPDF(selectedProducts,getTwoPayDetails())}
+        onClick={() => downloadPDF(selectedProducts,getTwoPayDetails(),searchQuery,3)}
         disabled={selectedProducts.length <= 0}
       />
       <DataTable

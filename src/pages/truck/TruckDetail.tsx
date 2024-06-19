@@ -182,7 +182,7 @@ const TruckDetail = () => {
       <Button
         label="Download"
         severity="secondary"
-        onClick={() => downloadPDF(selectedProducts,getTruckDetails())}
+        onClick={() => downloadPDF(selectedProducts,getTruckDetails(),searchQuery,8)}
         disabled={selectedProducts.length <= 0}
       />
       </div>

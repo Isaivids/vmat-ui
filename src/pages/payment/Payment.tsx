@@ -264,7 +264,7 @@ const Payment = () => {
       <Button
         label="Download"
         severity="secondary"
-        onClick={() => downloadPDF(selectedProducts, getTBP())}
+        onClick={() => downloadPDF(selectedProducts, getTBP(),searchQuery,7)}
         disabled={selectedProducts.length <= 0}
         className="mb-2"
       />

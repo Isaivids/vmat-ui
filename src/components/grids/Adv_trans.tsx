@@ -236,7 +236,7 @@ const AdvTrans = () => {
       <Button
         label="Download"
         severity="secondary"
-        onClick={() => downloadPDF(selectedProducts, getTransADV())}
+        onClick={() => downloadPDF(selectedProducts, getTransADV(),searchQuery,2)}
         disabled={selectedProducts.length <= 0}
         className="mb-2"
       />
