@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import "./Navbar.scss";
 import { Avatar } from "primereact/avatar";
 import { IconField } from "primereact/iconfield";
@@ -7,8 +7,14 @@ import { InputText } from "primereact/inputtext";
 import { useDispatch, useSelector } from "react-redux";
 import { setSearchQuery } from "../../store/slice/searchSlice";
 import { AppDispatch } from "../../store/store";
-import { getUserInfo } from "../../store/slice/userSlice";
+import { changePassword, clearUser, getUserInfo } from "../../store/slice/userSlice";
 import { Calendar } from "primereact/calendar";
+import Changepassword from "../changePassword/Changepassword";
+import { Dialog } from "primereact/dialog";
+import { Button } from "primereact/button";
+import { useNavigate } from "react-router-dom";
+import { Toast } from "primereact/toast";
+import { messages } from "../../api/constants";
 const logo = require("../../assets/logo.svg").default;
 
 const Navbar = () => {
@@ -17,8 +23,13 @@ const Navbar = () => {
   const [details, setDetails]: any = useState({});
   const dispatch = useDispatch<AppDispatch>();
   const [search, setSearch] = useState("");
-  const [fromDate, setFromdate]:any = useState(null);
-  const [toDate, setTodate]:any = useState(null);
+  const [fromDate, setFromdate]: any = useState(null);
+  const [toDate, setTodate]: any = useState(null);
+  const [visible, setVisible] = useState(false);
+  const [data, setData]:any = useState({currentPassword : '' , newPassword : ''});
+  const navigate = useNavigate();
+  const toast = useRef<Toast>(null);
+
   const getUserInfoDetails = useCallback(async () => {
     const result: any = await dispatch(getUserInfo());
     try {
@@ -45,6 +56,49 @@ const Navbar = () => {
       })
     );
   };
+
+  const handleChangePassword = async () =>{
+    try {
+      const response = await dispatch(changePassword(data));
+      if(!response.payload.error){
+        setVisible(false);
+        sessionStorage.removeItem('idToken');
+        dispatch(clearUser());
+        navigate('/');
+      }else{
+        toast.current?.show({
+          severity: "error",
+          summary: messages.error,
+          detail: response.payload.message,
+          life: 3000,
+        });
+      }
+    } catch (error) {
+      toast.current?.show({
+        severity: "error",
+        summary: messages.error,
+        detail: messages.loadfailure,
+        life: 3000,
+      });
+    }
+  }
+
+  const footerContent = (
+    <div>
+      <Button
+        label="No"
+        icon="pi pi-times"
+        onClick={() => setVisible(false)}
+        className="p-button-text"
+      />
+      <Button
+        label="Yes"
+        icon="pi pi-check"
+        onClick={handleChangePassword}
+        autoFocus
+      />
+    </div>
+  );
 
   useEffect(() => {
     setSearch(searchQuery.query);
@@ -103,7 +157,20 @@ const Navbar = () => {
           label={details?.username?.substring(0, 1)}
           size="normal"
           shape="circle"
+          onClick={() => setVisible(true)}
         />
+        <Dialog
+          header="Change Password"
+          visible={visible}
+          onHide={() => {
+            if (!visible) return;
+            setVisible(false);
+          }}
+          footer={footerContent}
+        >
+          <Toast ref={toast} />
+          <Changepassword data={data} setData={setData}/>
+        </Dialog>
       </div>
     </div>
   );

@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Paginator } from "primereact/paginator";
-import { messages } from "../../api/constants";
+import { formatDate, messages } from "../../api/constants";
 import { Toast } from "primereact/toast";
 import {
   getvmataccount,
@@ -16,7 +16,7 @@ import CustomButtonComponent from "../../components/button/CustomButtonComponent
 const VmatAccount = () => {
   const dispatch = useDispatch<AppDispatch>();
   const toast = useRef<Toast>(null);
-  const searchQuery = useSelector((state: any) => state.search.query);
+  const searchQuery = useSelector((state: any) => state.search);
   const [data, setData]: any = useState([]);
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
@@ -30,11 +30,6 @@ const VmatAccount = () => {
     setFirst(event.first);
     setRows(event.rows);
   };
-  //customsearch
-  // const [dates, setDates]:any = useState({
-  //   startDate: null,
-  //   endDate: null
-  // });
 
   const onInputChange = (e: any, id: any, field: any) => {
     const { value } = e.target;
@@ -116,14 +111,6 @@ const VmatAccount = () => {
     }
     setSelectedRowId(null);
   };
-
-  // const onDateChange = (e:any,field:any) =>{
-  //   setDates((prevDates:any) => ({
-  //     ...prevDates,
-  //     [field]: e.value
-  //   }));
-  // }
-
   // Compute totals for each column
   const computeTotal = (field:any) => {
     return data
@@ -140,7 +127,6 @@ const VmatAccount = () => {
           search: searchQuery,
         })
       );
-      // const trcukData = await dispatch(getvmataccount({ limit: rows, offset: page * rows, search: searchQuery, date : dates }));
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
         setData(trcukData.payload.data);
         setTotalPage(trcukData.payload.pagination.totalDocuments);
@@ -173,20 +159,6 @@ const VmatAccount = () => {
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
-      {/* <div className="flex gap-3 my-2">
-        <Calendar
-          value={dates.startDate}
-          onChange={(e) => onDateChange(e,'startDate')}
-          dateFormat="dd/mm/yy"
-          placeholder="Select Date"
-        />
-        <Calendar
-          value={dates.endDate}
-          onChange={(e) => onDateChange(e,'endDate')}
-          dateFormat="dd/mm/yy"
-          placeholder="Select Date"
-        />
-      </div> */}
       <DataTable value={data} showGridlines scrollable scrollHeight="80vh">
         <Column
           field="ats.sno"
@@ -196,6 +168,7 @@ const VmatAccount = () => {
         <Column
           field="ats.date"
           header="Date"
+          body={(rowData:any) => formatDate(rowData.ats.date)}
           style={{ minWidth: "100px" }}
         ></Column>
         <Column field="ats.transname" header="Transport Name"></Column>

@@ -28,6 +28,14 @@ export const getUserInfo = createAsyncThunk('/getUserInfo', async () => {
     return response.data;
 })
 
+export const changePassword = createAsyncThunk('/changepassword', async (body:any) => {
+    const response:any = await apiCall.post(`/changepassword`,body);
+    // if (response.data.error) {
+    //     throw new Error(response.data.message);
+    // }
+    return response.data;
+})
+
 const userSlice = createSlice({
     initialState,
     name: 'USER',
@@ -54,6 +62,15 @@ const userSlice = createSlice({
             return { ...state, loading: false, error: false, body: payload }
         })
         builder.addCase(getUserInfo.rejected, (state, { error }) => {
+            return { ...state, loading: false, error: true, }
+        })
+        builder.addCase(changePassword.pending, (state, _payload) => {
+            return { ...state, loading: true }
+        })
+        builder.addCase(changePassword.fulfilled, (state, { payload }) => {
+            return { ...state, loading: false, error: false }
+        })
+        builder.addCase(changePassword.rejected, (state, { error }) => {
             return { ...state, loading: false, error: true, }
         })
     }
