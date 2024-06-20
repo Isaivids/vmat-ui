@@ -13,7 +13,7 @@ import { downloadPDF } from "./document";
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import CommonDropdown from "../../components/dropdown/CommonDropdown";
-
+import { Checkbox } from "primereact/checkbox";
 
 const Tcp = () => {
   const searchQuery = useSelector((state: any) => state.search);
@@ -22,6 +22,10 @@ const Tcp = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
+  // chekcbox
+  const [showPending, setShowPending] = useState(true);
+  const [showCompleted, setShowCompleted] = useState(true);
+  const [filteredData, setFilteredData]: any = useState([]);
   //seection
   const [selectedProducts, setSelectedProducts] = useState([]);
   //eo selection
@@ -51,7 +55,7 @@ const Tcp = () => {
   };
 
   const renderInput = (rowData: any, field: any) => {
-  const isStringField = ['remarks','rtgsnumber'].includes(field.field)
+    const isStringField = ["remarks", "rtgsnumber"].includes(field.field);
     return (
       <div className="flex align-items-center rel">
         <InputText
@@ -186,7 +190,7 @@ const Tcp = () => {
       return row;
     });
     setData(newData);
-  };  
+  };
   const fetchData = useCallback(async () => {
     try {
       const trcukData = await dispatch(
@@ -213,7 +217,6 @@ const Tcp = () => {
     fetchDataAndLog();
   }, [fetchData]);
 
-  
   const rowClassName = (rowData: any) => {
     if (["PENDING"].includes(rowData.modeofpayment)) {
       return "red";
@@ -221,20 +224,96 @@ const Tcp = () => {
     return "green";
   };
 
+  useEffect(() => {
+    filterDataFunction(data, showPending, showCompleted);
+  }, [data, showPending, showCompleted]);
+
+  const filterDataFunction = (
+    data: any,
+    showPending: boolean,
+    showCompleted: boolean
+  ) => {
+    const filtered = data.filter((row: any) => {
+      if (
+        showPending &&
+        [null, "", undefined, "PENDING"].includes(row.modeofpayment)
+      ) {
+        return true;
+      }
+      if (
+        showCompleted &&
+        ![null, "", undefined, "PENDING"].includes(row.modeofpayment)
+      ) {
+        return true;
+      }
+      return false;
+    });
+    setFilteredData(filtered);
+  };
+
+  const handleCheckboxChange = (e: any) => {
+    const { name, checked } = e.target;
+    if (name === "pending") {
+      setShowPending(checked);
+      filterDataFunction(data, checked, showCompleted);
+    } else if (name === "completed") {
+      setShowCompleted(checked);
+      filterDataFunction(data, showPending, checked);
+    }
+  };
+
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
-      <Button
-        label="Download"
-        severity="secondary"
-        className="my-3 text-bold"
-        onClick={() => downloadPDF(selectedProducts,getTCPDoc(),searchQuery,6)}
-        disabled={selectedProducts.length <= 0}
-      />
-      <DataTable rowClassName={rowClassName} value={data} showGridlines scrollable scrollHeight="70vh"  selection={selectedProducts} onSelectionChange={(e:any) => setSelectedProducts(e.value)}>
+      <div className="flex justify-content-between">
+        <Button
+          label="Download"
+          severity="secondary"
+          className="my-3 text-bold"
+          onClick={() =>
+            downloadPDF(selectedProducts, getTCPDoc(), searchQuery, 6)
+          }
+          disabled={selectedProducts.length <= 0}
+        />
+        <div className="flex align-items-center my-3">
+          <Checkbox
+            inputId="pending"
+            name="pending"
+            checked={showPending}
+            onChange={handleCheckboxChange}
+            className="mr-2"
+          />
+          <label htmlFor="pending" className="mr-4">
+            Pending
+          </label>
+          <Checkbox
+            inputId="completed"
+            name="completed"
+            checked={showCompleted}
+            onChange={handleCheckboxChange}
+            className="mr-2"
+          />
+          <label htmlFor="completed" className="mr-4">
+            Completed
+          </label>
+        </div>
+      </div>
+      <DataTable
+        rowClassName={rowClassName}
+        value={filteredData}
+        showGridlines
+        scrollable
+        scrollHeight="70vh"
+        selection={selectedProducts}
+        onSelectionChange={(e: any) => setSelectedProducts(e.value)}
+      >
         <Column selectionMode="multiple"></Column>
         <Column field="ats.sno" header="S.No"></Column>
-        <Column field="ats.date" header="Date" body={(rowData:any) => formatDate(rowData.ats.date)}></Column>
+        <Column
+          field="ats.date"
+          header="Date"
+          body={(rowData: any) => formatDate(rowData.ats.date)}
+        ></Column>
         <Column field="ats.transname" header="Transport Name"></Column>
         <Column field="ats.trucknumber" header="Truck Number"></Column>
         <Column field="transcrossing" header="Trans Crossing"></Column>
