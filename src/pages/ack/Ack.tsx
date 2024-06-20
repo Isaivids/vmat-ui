@@ -157,7 +157,9 @@ const Ack = () => {
       modeofpayment: rowData.modeofpayment,
       podcharge: rowData.podcharge,
       rtgsnumber: rowData.rtgsnumber,
+      tdsack: Number(rowData.tdsack),
       _id: rowData._id,
+      ats : rowData.ats
     };
     try {
       const response = await dispatch(updateAck(payload));
@@ -334,6 +336,7 @@ const Ack = () => {
         <Column field="ats.trucknumber" header="Truck Number"></Column>
         <Column field="ats.transname" header="Transport Name"></Column>
         <Column field="ats.truckbln" header="Truck Balance"></Column>
+        <Column field="tdsack" header="TDS deduction 1%" body={renderInput}></Column>
         <Column field="ats.lateday" header="Late Delivery"></Column>
         <Column field="ats.halting" header="Halting"></Column>
         <Column field="expense" header="Expense" body={renderInput}></Column>

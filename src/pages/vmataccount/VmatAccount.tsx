@@ -178,7 +178,7 @@ const VmatAccount = () => {
         <Column
           field="tdsdeduction"
           header="TDS Deduction"
-          body={renderInput}
+          // body={renderInput}
           footer={`${computeTotal('tdsdeduction')}`}
         ></Column>
         <Column

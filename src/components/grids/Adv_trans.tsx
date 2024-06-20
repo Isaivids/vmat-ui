@@ -92,7 +92,9 @@ const AdvTrans = () => {
       modeofpayment: rowData.modeofpayment,
       paymentreceiveddate: getFormattedDate(rowData.paymentreceiveddate),
       rtgsnumber: rowData.rtgsnumber,
+      tdstka: Number(rowData.tdstka),
       _id: rowData._id,
+      ats : rowData.ats
     };
     try {
       const response = await dispatch(updateByTransporter(payload));
@@ -254,10 +256,10 @@ const AdvTrans = () => {
           field="ats.sno"
           style={{ minWidth: "150px" }}
           header="S.No"
-          body={(rowData:any) => formatDate(rowData.ats.date)}
         ></Column>
         <Column
           field="ats.date"
+          body={(rowData:any) => formatDate(rowData.ats.date)}
           style={{ minWidth: "150px" }}
           header="Date"
         ></Column>
@@ -266,6 +268,7 @@ const AdvTrans = () => {
         <Column field="ats.transname" header="Transport Name"></Column>
         <Column field="ats.transf" header="Transport Freight"></Column>
         <Column field="advanceamount" header="Transport Advance"></Column>
+        <Column field="tdstka" header="TDS deduction 1%" body={renderInput}></Column>
         <Column
           field="wages"
           header="Loading wages"

@@ -93,7 +93,9 @@ const TransportAdvance = () => {
       remarks: rowData.remarks,
       extraloadingwagespaidbydriver: Number(rowData.extraloadingwagespaidbydriver),
       rtgsnumber: rowData.rtgsnumber,
+      tdstta: Number(rowData.tdstta),
       _id: rowData._id,
+      ats : rowData.ats
     };
     try {
       const response = await dispatch(updateTransportAdvance(payload));
@@ -244,6 +246,7 @@ const TransportAdvance = () => {
         <Column field="ats.truckname" header="Truck Name"></Column>
         <Column field="ats.trucknumber" header="Truck Number"></Column>
         <Column field="ats.transadv" header="Transport Advance"></Column>
+        <Column field="tdstta" header="TDS deduction 1%" body={renderInput}></Column>
         <Column
           field="ats.loadingwages"
           header="Loading Wages"
