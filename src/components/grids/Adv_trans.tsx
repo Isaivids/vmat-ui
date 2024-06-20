@@ -16,12 +16,17 @@ import CommonDropdown from "../dropdown/CommonDropdown";
 import CustomButtonComponent from "../button/CustomButtonComponent";
 import { Button } from "primereact/button";
 import { downloadPDF } from "../../pages/tcp/document";
+import { Checkbox } from "primereact/checkbox";
 
 const AdvTrans = () => {
   const searchQuery = useSelector((state: any) => state.search);
   const toast = useRef<Toast>(null);
   const modeOfPayments = messages.modeofpayments;
   const [selectedProducts, setSelectedProducts] = useState([]);
+  // chekcbox
+  const [showPending, setShowPending] = useState(true);
+  const [showCompleted, setShowCompleted] = useState(true);
+  const [filteredData, setFilteredData]: any = useState([]);
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
@@ -94,7 +99,7 @@ const AdvTrans = () => {
       rtgsnumber: rowData.rtgsnumber,
       tdstka: Number(rowData.tdstka),
       _id: rowData._id,
-      ats : rowData.ats
+      ats: rowData.ats,
     };
     try {
       const response = await dispatch(updateByTransporter(payload));
@@ -232,18 +237,82 @@ const AdvTrans = () => {
     return "green";
   };
 
+  useEffect(() => {
+    filterDataFunction(data, showPending, showCompleted);
+  }, [data, showPending, showCompleted]);
+
+  const filterDataFunction = (
+    data: any,
+    showPending: boolean,
+    showCompleted: boolean
+  ) => {
+    const filtered = data.filter((row: any) => {
+      if (
+        showPending &&
+        [null, "", undefined, "PENDING"].includes(row.modeofpayment)
+      ) {
+        return true;
+      }
+      if (
+        showCompleted &&
+        ![null, "", undefined, "PENDING"].includes(row.modeofpayment)
+      ) {
+        return true;
+      }
+      return false;
+    });
+    setFilteredData(filtered);
+  };
+
+  const handleCheckboxChange = (e: any) => {
+    const { name, checked } = e.target;
+    if (name === "pending") {
+      setShowPending(checked);
+      filterDataFunction(data, checked, showCompleted);
+    } else if (name === "completed") {
+      setShowCompleted(checked);
+      filterDataFunction(data, showPending, checked);
+    }
+  };
+
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
-      <Button
-        label="Download"
-        severity="secondary"
-        onClick={() => downloadPDF(selectedProducts, getTransADV(),searchQuery,2)}
-        disabled={selectedProducts.length <= 0}
-        className="mb-2"
-      />
+      <div className="flex justify-content-between">
+        <Button
+          label="Download"
+          severity="secondary"
+          onClick={() =>
+            downloadPDF(selectedProducts, getTransADV(), searchQuery, 2)
+          }
+          disabled={selectedProducts.length <= 0}
+          className="mb-2"
+        />
+        <div className="flex align-items-center my-3">
+          <Checkbox
+            inputId="pending"
+            name="pending"
+            checked={showPending}
+            onChange={handleCheckboxChange}
+            className="mr-2"
+          />
+          <label htmlFor="pending" className="mr-4">
+            Pending
+          </label>
+          <Checkbox
+            inputId="completed"
+            name="completed"
+            checked={showCompleted}
+            onChange={handleCheckboxChange}
+            className="mr-2"
+          />
+          <label htmlFor="completed" className="mr-4">
+            Completed
+          </label>
+        </div>
+      </div>
       <DataTable
-        value={data}
+        value={filteredData}
         showGridlines
         scrollable
         scrollHeight="80vh"
@@ -259,7 +328,7 @@ const AdvTrans = () => {
         ></Column>
         <Column
           field="ats.date"
-          body={(rowData:any) => formatDate(rowData.ats.date)}
+          body={(rowData: any) => formatDate(rowData.ats.date)}
           style={{ minWidth: "150px" }}
           header="Date"
         ></Column>
@@ -268,7 +337,11 @@ const AdvTrans = () => {
         <Column field="ats.transname" header="Transport Name"></Column>
         <Column field="ats.transf" header="Transport Freight"></Column>
         <Column field="advanceamount" header="Transport Advance"></Column>
-        <Column field="tdstka" header="TDS deduction 1%" body={renderInput}></Column>
+        <Column
+          field="tdstka"
+          header="TDS deduction 1%"
+          body={renderInput}
+        ></Column>
         <Column
           field="wages"
           header="Loading wages"
