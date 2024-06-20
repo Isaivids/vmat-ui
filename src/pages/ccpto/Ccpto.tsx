@@ -266,6 +266,7 @@ const Ccpto = () => {
         rows={rows}
         totalRecords={totalPage}
         onPageChange={onPageChange}
+        rowsPerPageOptions={[10, 20, 30]}
       />
     </div>
   );
