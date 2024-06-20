@@ -35,7 +35,7 @@ export const messages = {
     { name: "By VMAT", code: 1 },
     { name: "By Transport", code: 2 },
     { name: "By Advance / To pay", code: 3 },
-    { name: "By To pay", code: 3 },
+    { name: "By To pay", code: 4 },
   ],
   transportAdvanceTypes: [
     { name: "To VMAT", code: 1 },
