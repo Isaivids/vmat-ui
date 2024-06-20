@@ -22,7 +22,6 @@ export const getAts = createAsyncThunk('getats', async (filters:any) => {
 
 export const addAts = createAsyncThunk('addats', async (payload:any) => {
     const response:any = await apiCall.post(`/addats`,payload);
-    console.log(response)
     if (response.data.error) {
         throw new Error("Error message");
     }

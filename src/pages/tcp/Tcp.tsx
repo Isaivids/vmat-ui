@@ -11,6 +11,8 @@ import { InputText } from "primereact/inputtext";
 import { gettcp, updatetcp } from "../../store/slice/tcpSlice";
 import { downloadPDF } from "./document";
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
+import CommonDatePicker from "../../components/calender/CommonDatePicker";
+import CommonDropdown from "../../components/dropdown/CommonDropdown";
 
 
 const Tcp = () => {
@@ -49,7 +51,7 @@ const Tcp = () => {
   };
 
   const renderInput = (rowData: any, field: any) => {
-    const isStringField = ['remarks'].includes(field.field)
+    const isStringField = ['remarks','rtgsnumber'].includes(field.field)
     return (
       <div className="flex align-items-center rel">
         <InputText
@@ -76,11 +78,28 @@ const Tcp = () => {
     setBackupData([...data]);
   };
 
+  const getFormattedDate = (inputDate: any) => {
+    if (["", null, undefined].includes(inputDate)) {
+      return "";
+    } else {
+      const date = new Date(inputDate);
+      const localDate = new Date(
+        date.getTime() - date.getTimezoneOffset() * 60000
+      )
+        .toISOString()
+        .split("T")[0];
+      return localDate;
+    }
+  };
+
   const handleSave = async (rowData: any) => {
     const payload = {
       total: rowData.total,
       others: rowData.others,
       remarks: rowData.remarks,
+      paymentReceivedDate: getFormattedDate(rowData.paymentReceivedDate),
+      modeofpayment: rowData.modeofpayment,
+      rtgsnumber: rowData.rtgsnumber,
       _id: rowData._id,
     };
     try {
@@ -120,7 +139,54 @@ const Tcp = () => {
     );
   };
 
+  const onDropdownChange = (e: any, id: any, field: any) => {
+    const { value } = e;
+    const newData: any = data.map((row: any) => {
+      if (row._id === id) {
+        return { ...row, [field]: value.code };
+      }
+      return row;
+    });
+    setData(newData);
+  };
 
+  const renderDropdown = (rowData: any, field: any) => {
+    const selectedValue = messages.modeofpayments.find(
+      (option: any) => option.code === rowData.modeofpayment
+    );
+    return (
+      <CommonDropdown
+        selectedValue={selectedValue}
+        rowData={rowData}
+        field={field}
+        modeOfPayments={messages.modeofpayments}
+        selectedRowId={selectedRowId}
+        handleDropdownChange={onDropdownChange}
+      />
+    );
+  };
+
+  const renderDatePicker = (rowData: any, field: any) => {
+    return (
+      <CommonDatePicker
+        rowData={rowData}
+        field={field}
+        selectedRowId={selectedRowId}
+        onDateChange={onDateChange}
+      />
+    );
+  };
+
+  const onDateChange = (e: any, id: any, field: any) => {
+    const value = e.value;
+    const newData = data.map((row: any) => {
+      if (row._id === id) {
+        return { ...row, [field]: value };
+      }
+      return row;
+    });
+    setData(newData);
+  };  
   const fetchData = useCallback(async () => {
     try {
       const trcukData = await dispatch(
@@ -167,6 +233,21 @@ const Tcp = () => {
         <Column field="others" body={renderInput} header="Others"></Column>
         <Column field="remarks" body={renderInput} header="Remarks"></Column>
         <Column field="total" header="Total"></Column>
+        <Column
+          field="paymentReceivedDate"
+          header="Payment Received Date"
+          body={renderDatePicker}
+        ></Column>
+        <Column
+          field="modeofpayment"
+          header="Mode Of Payment"
+          body={renderDropdown}
+        ></Column>
+        <Column
+          field="rtgsnumber"
+          header="RTGS Number"
+          body={renderInput}
+        ></Column>
         <Column
           header="Actions"
           body={renderButton}
