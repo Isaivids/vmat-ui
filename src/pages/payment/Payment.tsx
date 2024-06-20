@@ -16,6 +16,7 @@ import CommonDropdown from "../../components/dropdown/CommonDropdown";
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
 import { Button } from "primereact/button";
 import { downloadPDF } from "../tcp/document";
+import { Checkbox } from "primereact/checkbox";
 const Payment = () => {
   const dispatch = useDispatch<AppDispatch>();
   const toast = useRef<Toast>(null);
@@ -25,7 +26,10 @@ const Payment = () => {
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
   const [selectedProducts, setSelectedProducts] = useState([]);
-
+  // chekcbox
+  const [showPending, setShowPending] = useState(true);
+  const [showCompleted, setShowCompleted] = useState(true);
+  const [filteredData, setFilteredData]:any = useState([]);
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
@@ -258,9 +262,48 @@ const Payment = () => {
     return "green";
   };
 
+  useEffect(() => {
+    filterDataFunction(data, showPending, showCompleted);
+  }, [data, showPending, showCompleted]);
+
+  const filterDataFunction = (
+    data: any,
+    showPending: boolean,
+    showCompleted: boolean
+  ) => {
+    const filtered = data.filter((row: any) => {
+      if (
+        showPending &&
+        [null, "", undefined, "PENDING"].includes(row.modeofpayment)
+      ) {
+        return true;
+      }
+      if (
+        showCompleted &&
+        ![null, "", undefined, "PENDING"].includes(row.modeofpayment)
+      ) {
+        return true;
+      }
+      return false;
+    });
+    setFilteredData(filtered);
+  };
+
+  const handleCheckboxChange = (e: any) => {
+    const { name, checked } = e.target;
+    if (name === "pending") {
+      setShowPending(checked);
+      filterDataFunction(data, checked, showCompleted);
+    } else if (name === "completed") {
+      setShowCompleted(checked);
+      filterDataFunction(data, showPending, checked);
+    }
+  };
+
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
+      <div className="flex justify-content-between">
       <Button
         label="Download"
         severity="secondary"
@@ -268,8 +311,31 @@ const Payment = () => {
         disabled={selectedProducts.length <= 0}
         className="mb-2"
       />
+              <div className="flex align-items-center my-3">
+          <Checkbox
+            inputId="pending"
+            name="pending"
+            checked={showPending}
+            onChange={handleCheckboxChange}
+            className="mr-2"
+          />
+          <label htmlFor="pending" className="mr-4">
+            Pending
+          </label>
+          <Checkbox
+            inputId="completed"
+            name="completed"
+            checked={showCompleted}
+            onChange={handleCheckboxChange}
+            className="mr-2"
+          />
+          <label htmlFor="completed" className="mr-4">
+            Completed
+          </label>
+        </div>
+      </div>
       <DataTable
-        value={data}
+        value={filteredData}
         showGridlines
         scrollable
         scrollHeight="80vh"
