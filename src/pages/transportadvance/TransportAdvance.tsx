@@ -14,6 +14,7 @@ import {
   updateTransportAdvance,
 } from "../../store/slice/transportadvance";
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
+import { Checkbox } from "primereact/checkbox";
 
 const TransportAdvance = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -23,6 +24,10 @@ const TransportAdvance = () => {
   const [data, setData]: any = useState([]);
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
+  // chekcbox
+  const [showPending, setShowPending] = useState(true);
+  const [showCompleted, setShowCompleted] = useState(true);
+  const [filteredData, setFilteredData]: any = useState([]);
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
@@ -39,7 +44,10 @@ const TransportAdvance = () => {
     const newData: any = data.map((row: any) => {
       if (row._id === id) {
         const updatedRow = { ...row, [field]: value };
-        updatedRow.transporterpaidadvanceamount = Number(updatedRow.ats.transadv) - (Number(updatedRow.ats.loadingwages) + Number(updatedRow.extraloadingwagespaidbydriver));
+        updatedRow.transporterpaidadvanceamount =
+          Number(updatedRow.ats.transadv) -
+          (Number(updatedRow.ats.loadingwages) +
+            Number(updatedRow.extraloadingwagespaidbydriver));
         return updatedRow;
       }
       return row;
@@ -87,15 +95,19 @@ const TransportAdvance = () => {
 
   const handleSave = async (rowData: any) => {
     const payload = {
-      transporterpaidadvanceamount: Number(rowData.transporterpaidadvanceamount),
+      transporterpaidadvanceamount: Number(
+        rowData.transporterpaidadvanceamount
+      ),
       modeofpayment: rowData.modeofpayment,
       dateofadvancepayment: getFormattedDate(rowData.paymentreceiveddate),
       remarks: rowData.remarks,
-      extraloadingwagespaidbydriver: Number(rowData.extraloadingwagespaidbydriver),
+      extraloadingwagespaidbydriver: Number(
+        rowData.extraloadingwagespaidbydriver
+      ),
       rtgsnumber: rowData.rtgsnumber,
       tdstta: Number(rowData.tdstta),
       _id: rowData._id,
-      ats : rowData.ats
+      ats: rowData.ats,
     };
     try {
       const response = await dispatch(updateTransportAdvance(payload));
@@ -221,11 +233,71 @@ const TransportAdvance = () => {
     return "green";
   };
 
+  useEffect(() => {
+    filterDataFunction(data, showPending, showCompleted);
+  }, [data, showPending, showCompleted]);
+
+  const filterDataFunction = (
+    data: any,
+    showPending: boolean,
+    showCompleted: boolean
+  ) => {
+    const filtered = data.filter((row: any) => {
+      if (
+        showPending &&
+        [null, "", undefined, "PENDING"].includes(row.modeofpayment)
+      ) {
+        return true;
+      }
+      if (
+        showCompleted &&
+        ![null, "", undefined, "PENDING"].includes(row.modeofpayment)
+      ) {
+        return true;
+      }
+      return false;
+    });
+    setFilteredData(filtered);
+  };
+
+  const handleCheckboxChange = (e: any) => {
+    const { name, checked } = e.target;
+    if (name === "pending") {
+      setShowPending(checked);
+      filterDataFunction(data, checked, showCompleted);
+    } else if (name === "completed") {
+      setShowCompleted(checked);
+      filterDataFunction(data, showPending, checked);
+    }
+  };
+
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
+      <div className="flex align-items-center my-3">
+        <Checkbox
+          inputId="pending"
+          name="pending"
+          checked={showPending}
+          onChange={handleCheckboxChange}
+          className="mr-2"
+        />
+        <label htmlFor="pending" className="mr-4">
+          Pending
+        </label>
+        <Checkbox
+          inputId="completed"
+          name="completed"
+          checked={showCompleted}
+          onChange={handleCheckboxChange}
+          className="mr-2"
+        />
+        <label htmlFor="completed" className="mr-4">
+          Completed
+        </label>
+      </div>
       <DataTable
-        value={data}
+        value={filteredData}
         showGridlines
         scrollable
         scrollHeight="80vh"
@@ -239,18 +311,19 @@ const TransportAdvance = () => {
         <Column
           field="ats.date"
           header="Date"
-          body={(rowData:any) => formatDate(rowData.ats.date)}
+          body={(rowData: any) => formatDate(rowData.ats.date)}
           style={{ minWidth: "100px" }}
         ></Column>
         <Column field="ats.transname" header="Transport Name"></Column>
         <Column field="ats.truckname" header="Truck Name"></Column>
         <Column field="ats.trucknumber" header="Truck Number"></Column>
         <Column field="ats.transadv" header="Transport Advance"></Column>
-        <Column field="tdstta" header="TDS deduction 1%" body={renderInput}></Column>
         <Column
-          field="ats.loadingwages"
-          header="Loading Wages"
+          field="tdstta"
+          header="TDS deduction 1%"
+          body={renderInput}
         ></Column>
+        <Column field="ats.loadingwages" header="Loading Wages"></Column>
         <Column
           field="extraloadingwagespaidbydriver"
           header="Extra loading wages paid by driver"
