@@ -22,7 +22,10 @@ const Ack = () => {
   const searchQuery = useSelector((state: any) => state.search);
   const toast = useRef<Toast>(null);
   const [selectedProducts, setSelectedProducts] = useState([]);
-
+  // chekcbox
+  const [showPending, setShowPending] = useState(true);
+  const [showCompleted, setShowCompleted] = useState(true);
+  const [filteredData, setFilteredData]: any = useState([]);
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
@@ -64,7 +67,7 @@ const Ack = () => {
     // const halting = Number(updatedRow.ats.halting);
     let addThree = 0;
 
-    if ([2,3,4].includes(updatedRow.ats.modeofadvance)) {
+    if ([2, 3, 4].includes(updatedRow.ats.modeofadvance)) {
       if (updatedRow.hidevc) {
         addThree += updatedRow.vmatcrossing;
       }
@@ -85,13 +88,20 @@ const Ack = () => {
         addThree += 0;
       }
     }
-    if ([3,4].includes(updatedRow.ats.modeofadvance)) {
-      updatedRow.pendingamountfromtruckowner = addThree + Number(updatedRow.expense);
-      updatedRow.finaltotaltotruckowner = Number(updatedRow.ats.transbln) + Number(updatedRow.expense) - Number(updatedRow.podcharge);
+    if ([3, 4].includes(updatedRow.ats.modeofadvance)) {
+      updatedRow.pendingamountfromtruckowner =
+        addThree + Number(updatedRow.expense);
+      updatedRow.finaltotaltotruckowner =
+        Number(updatedRow.ats.transbln) +
+        Number(updatedRow.expense) -
+        Number(updatedRow.podcharge);
     } else {
       updatedRow.pendingamountfromtruckowner = 0;
       // updatedRow.pendingamountfromtruckowner = Number(updatedRow.ats.truckbln) + (Number(addThree) + Number(expense) + Number(halting));
-      updatedRow.finaltotaltotruckowner = updatedRow.ats.truckbln - Number(addThree) - Number(updatedRow.podcharge);
+      updatedRow.finaltotaltotruckowner =
+        updatedRow.ats.truckbln -
+        Number(addThree) -
+        Number(updatedRow.podcharge);
     }
     return updatedRow;
   };
@@ -159,7 +169,7 @@ const Ack = () => {
       rtgsnumber: rowData.rtgsnumber,
       tdsack: Number(rowData.tdsack),
       _id: rowData._id,
-      ats : rowData.ats
+      ats: rowData.ats,
     };
     try {
       const response = await dispatch(updateAck(payload));
@@ -292,18 +302,82 @@ const Ack = () => {
     return "green";
   };
 
+  useEffect(() => {
+    filterDataFunction(data, showPending, showCompleted);
+  }, [data, showPending, showCompleted]);
+
+  const filterDataFunction = (
+    data: any,
+    showPending: boolean,
+    showCompleted: boolean
+  ) => {
+    const filtered = data.filter((row: any) => {
+      if (
+        showPending &&
+        [null, "", undefined, "PENDING"].includes(row.modeofpayment)
+      ) {
+        return true;
+      }
+      if (
+        showCompleted &&
+        ![null, "", undefined, "PENDING"].includes(row.modeofpayment)
+      ) {
+        return true;
+      }
+      return false;
+    });
+    setFilteredData(filtered);
+  };
+
+  const handleCheckboxChange2 = (e: any) => {
+    const { name, checked } = e.target;
+    if (name === "pending") {
+      setShowPending(checked);
+      filterDataFunction(data, checked, showCompleted);
+    } else if (name === "completed") {
+      setShowCompleted(checked);
+      filterDataFunction(data, showPending, checked);
+    }
+  };
+
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
-      <Button
-        label="Download"
-        severity="secondary"
-        onClick={() => downloadPDF(selectedProducts, getACK(),searchQuery,4)}
-        disabled={selectedProducts.length <= 0}
-        className="mb-2"
-      />
+      <div className="flex justify-content-between">
+        <Button
+          label="Download"
+          severity="secondary"
+          onClick={() =>
+            downloadPDF(selectedProducts, getACK(), searchQuery, 4)
+          }
+          disabled={selectedProducts.length <= 0}
+          className="mb-2"
+        />
+        <div className="flex align-items-center my-3">
+          <Checkbox
+            inputId="pending"
+            name="pending"
+            checked={showPending}
+            onChange={handleCheckboxChange2}
+            className="mr-2"
+          />
+          <label htmlFor="pending" className="mr-4">
+            Pending
+          </label>
+          <Checkbox
+            inputId="completed"
+            name="completed"
+            checked={showCompleted}
+            onChange={handleCheckboxChange2}
+            className="mr-2"
+          />
+          <label htmlFor="completed" className="mr-4">
+            Completed
+          </label>
+        </div>
+      </div>
       <DataTable
-        value={data}
+        value={filteredData}
         showGridlines
         scrollable
         scrollHeight="70vh"
@@ -320,7 +394,7 @@ const Ack = () => {
         <Column
           field="ats.date"
           header="Date"
-          body={(rowData:any) => formatDate(rowData.ats.date)}
+          body={(rowData: any) => formatDate(rowData.ats.date)}
           style={{ minWidth: "100px" }}
         ></Column>
         <Column
@@ -336,7 +410,11 @@ const Ack = () => {
         <Column field="ats.trucknumber" header="Truck Number"></Column>
         <Column field="ats.transname" header="Transport Name"></Column>
         <Column field="ats.truckbln" header="Truck Balance"></Column>
-        <Column field="tdsack" header="TDS deduction 1%" body={renderInput}></Column>
+        <Column
+          field="tdsack"
+          header="TDS deduction 1%"
+          body={renderInput}
+        ></Column>
         <Column field="ats.lateday" header="Late Delivery"></Column>
         <Column field="ats.halting" header="Halting"></Column>
         <Column field="expense" header="Expense" body={renderInput}></Column>
