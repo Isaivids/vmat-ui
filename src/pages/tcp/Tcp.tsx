@@ -51,7 +51,7 @@ const Tcp = () => {
   };
 
   const renderInput = (rowData: any, field: any) => {
-    const isStringField = ['remarks','rtgsnumber'].includes(field.field)
+  const isStringField = ['remarks','rtgsnumber'].includes(field.field)
     return (
       <div className="flex align-items-center rel">
         <InputText
@@ -213,6 +213,14 @@ const Tcp = () => {
     fetchDataAndLog();
   }, [fetchData]);
 
+  
+  const rowClassName = (rowData: any) => {
+    if (["PENDING"].includes(rowData.modeofpayment)) {
+      return "red";
+    }
+    return "green";
+  };
+
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
@@ -223,7 +231,7 @@ const Tcp = () => {
         onClick={() => downloadPDF(selectedProducts,getTCPDoc(),searchQuery,6)}
         disabled={selectedProducts.length <= 0}
       />
-      <DataTable value={data} showGridlines scrollable scrollHeight="70vh"  selection={selectedProducts} onSelectionChange={(e:any) => setSelectedProducts(e.value)}>
+      <DataTable rowClassName={rowClassName} value={data} showGridlines scrollable scrollHeight="70vh"  selection={selectedProducts} onSelectionChange={(e:any) => setSelectedProducts(e.value)}>
         <Column selectionMode="multiple"></Column>
         <Column field="ats.sno" header="S.No"></Column>
         <Column field="ats.date" header="Date" body={(rowData:any) => formatDate(rowData.ats.date)}></Column>
