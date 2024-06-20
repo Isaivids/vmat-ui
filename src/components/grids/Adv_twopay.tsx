@@ -220,16 +220,16 @@ const AdvTwopay = () => {
     fetchDataAndLog();
   }, [fetchData]);
 
-  useEffect(() => {
-    filterDataFunction(data, showPending, showCompleted);
-  }, [data, showPending, showCompleted]);
-
   const rowClassName = (rowData: any) => {
     if ([null, "", undefined, "PENDING"].includes(rowData.modeofpayment)) {
       return "red";
     }
     return "green";
   };
+
+  useEffect(() => {
+    filterDataFunction(data, showPending, showCompleted);
+  }, [data, showPending, showCompleted]);
 
   const filterDataFunction = (
     data: any,
