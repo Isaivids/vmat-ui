@@ -263,3 +263,5 @@ export const pageName = [
   { type: 7, name: 'Transport Balance Payment' },
   { type: 8, name: 'Truck Details' },
 ]
+
+export const totalColumns = ['total','transadvtotruck','advanceamount','finaltotaltotruckowner','pending','tyrasporterpaidamt']
