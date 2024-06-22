@@ -69,16 +69,18 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
     ),
   ];
 
-  // Identify the amount column and calculate the total for it
-  const amountColumn = columns.find((col: any) => totalColumns.includes(col.field));
-  const totalAmount = amountColumn ? calculateColumnTotal(data, amountColumn.field) : 0;
+  // Calculate totals for the specified columns
+  const totals: { [key: string]: number } = {};
+  totalColumns.forEach((column) => {
+    totals[column] = calculateColumnTotal(data, column);
+  });
 
-  // Create a total row with the total amount
+  // Create a total row with the totals for the specified columns
   const totalRow = columns.map((col: any) => {
     if (totalColumns.includes(col.field)) {
-      return { text: totalAmount.toString(), alignment: "center", bold: true };
+      return { text: totals[col.field].toString(), alignment: "center", bold: true };
     }
-    return { text: "", alignment: "center", bold: true,fillColor: '#c4c4c4' };
+    return { text: "", alignment: "center", bold: true, fillColor: '#c4c4c4' };
   });
 
   tableBody.push(totalRow);
