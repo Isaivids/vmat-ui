@@ -45,9 +45,10 @@ const TransportAdvance = () => {
       if (row._id === id) {
         const updatedRow = { ...row, [field]: value };
         updatedRow.transporterpaidadvanceamount =
-          Number(updatedRow.ats.transadv) -
-          (Number(updatedRow.ats.loadingwages) +
-            Number(updatedRow.extraloadingwagespaidbydriver));
+          Number(updatedRow.ats.transadv)
+          - Number(updatedRow.tdstta) -
+          Number(updatedRow.ats.loadingwages) +
+            Number(updatedRow.extraloadingwagespaidbydriver);
         return updatedRow;
       }
       return row;
