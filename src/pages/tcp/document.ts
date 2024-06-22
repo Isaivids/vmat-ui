@@ -103,12 +103,12 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
       },
       {
         text: getNameByType(type),
-        style: "subheader",
+        style: "subheader2",
         alignment: "center",
       },
       {
         text: getSearch(searchQuery),
-        style: "subheader",
+        style: "subheader3",
         alignment: "center",
       },
       {
@@ -128,6 +128,16 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
       subheader: {
         fontSize: 10,
         bold: true,
+      },
+      subheader2: {
+        fontSize: 18,
+        bold: true,
+        margin : [10,10,10,10]
+      },
+      subheader3: {
+        fontSize: 15,
+        bold: true,
+        margin : [5,5,5,5]
       },
       tableHeader: {
         bold: true,
