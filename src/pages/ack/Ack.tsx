@@ -92,7 +92,7 @@ const Ack = () => {
       updatedRow.pendingamountfromtruckowner =
         addThree + Number(updatedRow.expense);
       updatedRow.finaltotaltotruckowner =
-        Number(updatedRow.ats.transbln) +
+        Number(updatedRow.ats.transbln) - Number(updatedRow.tdsack) +
         Number(updatedRow.expense) -
         Number(updatedRow.podcharge);
     } else {
@@ -100,6 +100,7 @@ const Ack = () => {
       // updatedRow.pendingamountfromtruckowner = Number(updatedRow.ats.truckbln) + (Number(addThree) + Number(expense) + Number(halting));
       updatedRow.finaltotaltotruckowner =
         updatedRow.ats.truckbln -
+        Number(updatedRow.tdsack) - 
         Number(addThree) -
         Number(updatedRow.podcharge);
     }
@@ -340,6 +341,13 @@ const Ack = () => {
     }
   };
 
+  // Compute totals for each column
+  const computeTotal = (field:any) => {
+    return data
+      .reduce((acc:any, item:any) => acc + (parseFloat(item[field]) || 0), 0)
+      .toFixed(2);
+  };
+
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
@@ -454,6 +462,7 @@ const Ack = () => {
           field="finaltotaltotruckowner"
           header="Final Total to Truck Owner"
           style={{ minWidth: "200px" }}
+          footer={`${computeTotal('finaltotaltotruckowner')}`}
         ></Column>
         <Column
           field="paymentReceivedDate"

@@ -262,6 +262,13 @@ const Tcp = () => {
     }
   };
 
+  // Compute totals for each column
+  const computeTotal = (field:any) => {
+    return data
+      .reduce((acc:any, item:any) => acc + (parseFloat(item[field]) || 0), 0)
+      .toFixed(2);
+  };
+
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
@@ -319,7 +326,7 @@ const Tcp = () => {
         <Column field="transcrossing" header="Trans Crossing"></Column>
         <Column field="others" body={renderInput} header="Others"></Column>
         <Column field="remarks" body={renderInput} header="Remarks"></Column>
-        <Column field="total" header="Total"></Column>
+        <Column field="total" header="Total" footer={`${computeTotal('total')}`}></Column>
         <Column
           field="paymentReceivedDate"
           header="Payment Received Date"

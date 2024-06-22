@@ -48,12 +48,12 @@ const AdvTrans = () => {
     const newData: any = data.map((row: any) => {
       if (row._id === id) {
         const updatedRow = { ...row, [field]: value };
-        if (["wages", "others"].includes(field)) {
+        if (["wages", "others","tdstka"].includes(field)) {
           const wages = Number(updatedRow.wages);
           const others = Number(updatedRow.others);
           const transAdv = Number(updatedRow.advanceamount);
           updatedRow.transadvtotruck =
-            transAdv + Number(wages) + Number(others);
+            transAdv - Number(updatedRow.tdstka) + Number(wages) + Number(others);
         }
         return updatedRow;
       }
