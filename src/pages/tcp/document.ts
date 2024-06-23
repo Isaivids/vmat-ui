@@ -1,4 +1,4 @@
-import { messages, totalColumns } from "../../api/constants";
+import { formatDate, messages } from "../../api/constants";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { pageName } from '../../api/constants';
@@ -14,10 +14,10 @@ const getNestedValue = (obj: any, path: any) => {
   }
   if (path.startsWith("paymentreceiveddate") || path.startsWith("ats.date")) {
     if (obj.paymentreceiveddate) {
-      return new Date(obj.paymentreceiveddate).toLocaleDateString();
+      return formatDate(obj.paymentreceiveddate);
     }
     if (obj.ats.date) {
-      return new Date(obj.ats.date).toLocaleDateString();
+      return formatDate(obj.ats.date);
     }
     return '';
   }
@@ -63,30 +63,43 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
     tableHeaders,
     ...data.map((row: any) =>
       columns.map((col: any) => ({
-        text: getNestedValue(row, col.field),
+        text: getNestedValue(row, col.field) ?? '',
         alignment: "center",
       }))
     ),
   ];
 
-  // Calculate totals for the specified columns
+  // Calculate totals for the specified columns with error handling
   const totals: { [key: string]: number } = {};
-  totalColumns.forEach((column) => {
-    totals[column] = calculateColumnTotal(data, column);
-  });
-
-  // Create a total row with the totals for the specified columns
-  const totalRow = columns.map((col: any) => {
-    if (totalColumns.includes(col.field)) {
-      return { text: totals[col.field].toString(), alignment: "center", bold: true };
+  let totalColumns:any = []
+  if(type === 6){
+    totalColumns = ['total']
+  }else if(type === 4){
+    totalColumns = ['finaltotaltotruckowner']
+  }
+  totalColumns.forEach((column:any) => {
+    try {
+      totals[column] = calculateColumnTotal(data, column);
+    } catch (error) {
+      console.error(`Error calculating total for column ${column}`, error);
+      totals[column] = 0;
     }
-    return { text: "", alignment: "center", bold: true, fillColor: '#c4c4c4' };
   });
 
-  tableBody.push(totalRow);
+  // Create the grand total section as a separate content block
+  const grandTotalContent = {
+    text: 'Grand Total :' + totalColumns.map((column:any) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const columnName = columns.find((col: any) => col.field === column)?.header || column;
+      return `₹ ${totals[column].toFixed(2)}`;
+    }).join('\n'),
+    style: 'grandTotal',
+    alignment: 'right',
+    margin: [0, 10, 0, 0],
+  };
 
   const docDefinition: any = {
-    pageSize: tableHeaders.length < 14 ? 'A4' : 'A3',
+    pageSize: (tableHeaders.length < 14 || type === 6) ? 'A4' : 'A3',
     pageOrientation: 'landscape',
     pageMargins: [10, 10, 10, 10],
     content: [
@@ -114,11 +127,12 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
       {
         table: {
           headerRows: 1,
-          widths: columns.map(() => 'auto'),
+          widths: columns.map(() => [5,6].includes(type) ? '*' : 'auto'),
           body: tableBody,
           style: "details",
         },
       },
+      [4,6].includes(type) ? grandTotalContent : '',
     ],
     styles: {
       header: {
@@ -132,12 +146,12 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
       subheader2: {
         fontSize: 18,
         bold: true,
-        margin : [10,10,10,10]
+        margin: [10, 10, 10, 10]
       },
       subheader3: {
         fontSize: 15,
         bold: true,
-        margin : [5,5,5,5]
+        margin: [5, 5, 5, 5]
       },
       tableHeader: {
         bold: true,
@@ -147,7 +161,11 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
       },
       details: {
         fontSize: 8
-      }
+      },
+      grandTotal: {
+        fontSize: 20,
+        bold: true,
+      },
     },
   };
 

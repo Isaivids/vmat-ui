@@ -115,8 +115,16 @@ export const messages = {
 }
 
 export const formatDate = (date: any) => {
-  return date ? new Date(date).toLocaleDateString() : "";
+  if (!date) return "";
+  
+  const d = new Date(date);
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0'); // getMonth() returns 0-based month
+  const year = d.getFullYear();
+
+  return `${day}/${month}/${year}`;
 };
+
 
 export const getTotalCrossing = (data: any) => {
   return (Number(data.crossing) || 0) + (Number(data.vmatcrossing) || 0)
