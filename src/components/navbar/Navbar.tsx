@@ -44,8 +44,16 @@ const Navbar = () => {
   };
 
   const formatDate = (date: any) => {
-    return date ? date.toISOString().split("T")[0] : "";
+    if (!date) return "";
+  
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    const day = String(d.getDate()).padStart(2, '0');
+  
+    return `${year}-${month}-${day}`;
   };
+  
 
   const handleSearch = () => {
     dispatch(
@@ -140,11 +148,13 @@ const Navbar = () => {
         </IconField>
         <Calendar
           placeholder="From Date"
+          dateFormat="dd/mm/yy"
           value={fromDate ? new Date(fromDate) : null}
           onChange={(e: any) => setFromdate(e.value)}
         />
         <Calendar
           placeholder="To Date"
+          dateFormat="dd/mm/yy"
           value={toDate ? new Date(toDate) : null}
           onChange={(e: any) => setTodate(e.value)}
         />
