@@ -76,7 +76,17 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
     totalColumns = ['total']
   }else if(type === 4){
     totalColumns = ['finaltotaltotruckowner']
-  }
+  } else if(type === 1){
+    totalColumns = ['total']
+  } else if(type === 2){
+    totalColumns = ['transadvtotruck']
+  } else if(type === 3){
+    totalColumns = ['total']
+  } else if(type === 5){
+    totalColumns = ['pending']
+  } else if(type === 7){
+    totalColumns = ['tyrasporterpaidamt']
+  } 
   totalColumns.forEach((column:any) => {
     try {
       totals[column] = calculateColumnTotal(data, column);
@@ -127,12 +137,13 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
       {
         table: {
           headerRows: 1,
-          widths: columns.map(() => [5,6].includes(type) ? '*' : 'auto'),
+          widths: columns.map(() => [5,6,8].includes(type) ? '*' : 'auto'),
           body: tableBody,
           style: "details",
         },
       },
-      [4,6].includes(type) ? grandTotalContent : '',
+
+      [8].includes(type) ? '' : grandTotalContent,
     ],
     styles: {
       header: {
