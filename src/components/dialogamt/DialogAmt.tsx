@@ -28,7 +28,7 @@ const DialogAmt = ({ visible, setVisible, selectedData }: any) => {
       const mode = transportAdvanceTypes.find((mode) => mode.code === value);
       return mode ? mode.name : "";
     }
-    return value.toString();
+    return value ? value.toString() : '';
   };
 
   const renderPairs = (data: any) => {
