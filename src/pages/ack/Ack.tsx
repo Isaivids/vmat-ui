@@ -63,10 +63,7 @@ const Ack = () => {
   };
 
   const calculateUpdatedRow = (updatedRow: any) => {
-    // const expense = Number(updatedRow.expense);
-    // const halting = Number(updatedRow.ats.halting);
     let addThree = 0;
-
     if ([2, 3, 4].includes(updatedRow.ats.modeofadvance)) {
       if (updatedRow.hidevc) {
         addThree += updatedRow.vmatcrossing;
@@ -112,7 +109,7 @@ const Ack = () => {
     const newData: any = data.map((row: any) => {
       if (row._id === id) {
         const updatedRow = { ...row, [field]: value };
-        if(field !== 'rtgsnumber'){
+        if(field === 'rtgsnumber'){
           return updatedRow;
         }
         return calculateUpdatedRow(updatedRow);
@@ -212,7 +209,7 @@ const Ack = () => {
     return (
       <InputText
         disabled={rowData._id !== selectedRowId}
-        value={rowData[field.field]}
+        value={rowData[field.field] || ''}
         onChange={(e) => onInputChange(e, rowData._id, field.field)}
       />
     );
