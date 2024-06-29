@@ -1,32 +1,6 @@
 import { Dialog } from "primereact/dialog";
 import React from "react";
 
-const keyMapping: any = {
-  sno: "SNO",
-  date: "DATE",
-  truckname: "TRUCK NAME",
-  trucknumber: "TRUCK NUMBER",
-  transname: "TRANSPORT NAME",
-  from: "FROM",
-  to: "TO",
-  truckadv: "TRUCK ADVANCE",
-  transaddvtype: "TRANSPORT ADVANCE TYPE",
-  repdate: "REPORTING DATE",
-  unloaddate: "UNLOAD DATE",
-  lateday: "LATE DAY",
-  halting: "HALTING",
-  truckf: "TRUCK FREIGHT",
-  transf: "TRANSPORT FREIGHT",
-  vmatf: "VMAT FREIGHT",
-  modeofadvance: "MODE OF ADVANCE",
-  transadv: "TRANSPORT ADVANCE",
-  vmatadv: "VMAT ADVANCE",
-  truckbln: "TRUCK BALANCE",
-  transbln: "TRANSPORT BALANCE",
-  twopay: "BY TO PAY BALANCE",
-  truckloadwt: "TRUCK LOAD WEIGHT",
-};
-
 const modeOfAdvanceArr = [
   { name: "By VMAT", code: 1 },
   { name: "By Transport", code: 2 },
@@ -38,7 +12,8 @@ const transportAdvanceTypes = [
 ];
 
 const DialogAmt = ({ visible, setVisible, selectedData }: any) => {
-  const renderValue = (key:any,value: any) => {
+  // selectedData = getOrderedData(selectedData)
+  const renderValue = (key: any, value: any) => {
     if (value instanceof Date) {
       return value.toLocaleString();
     }
@@ -49,7 +24,7 @@ const DialogAmt = ({ visible, setVisible, selectedData }: any) => {
       const mode = modeOfAdvanceArr.find((mode) => mode.code === value);
       return mode ? mode.name : "";
     }
-    if(key === "transaddvtype"){
+    if (key === "transaddvtype") {
       const mode = transportAdvanceTypes.find((mode) => mode.code === value);
       return mode ? mode.name : "";
     }
@@ -57,34 +32,103 @@ const DialogAmt = ({ visible, setVisible, selectedData }: any) => {
   };
 
   const renderPairs = (data: any) => {
-    const keys = Object.keys(data).filter(
-      (key) => key !== "_id" && key !== "created_at" && key !== "updated_at" && key !== "__v" && key !== "ackmodeofpayment"
-    );
-    const pairs = [];
-    for (let i = 0; i < keys.length; i += 2) {
-      const key1 = keys[i];
-      const key2 = keys[i + 1];
-      pairs.push(
-        <div
-          key={key1}
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginBottom: "10px",
-          }}
-        >
-          <div style={{ width: "50%", textAlign: "left", textTransform : "uppercase" }}>
-            <strong>{keyMapping[key1] || key1}:</strong> {renderValue(key1,data[key1])}
-          </div>
-          {key2 && (
-            <div style={{ width: "50%", textAlign: "left", textTransform : "uppercase" }}>
-              <strong>{keyMapping[key2] || key2}:</strong> {renderValue(key2,data[key2])}
-            </div>
-          )}
+    return (
+      <div className="flex justify-content-between flex-wrap">
+        <div className="col-6 uppercase">
+          S.No<b> - {renderValue("sno", selectedData.sno)}</b>
         </div>
-      );
-    }
-    return pairs;
+        <div className="col-6 uppercase">
+          Transport name{" "}
+          <b> - {renderValue("transname", selectedData.transname)}</b>
+        </div>
+        <div className="col-6 uppercase">
+          Date <b> - {renderValue("date", selectedData.date)}</b>
+        </div>
+        <div className="col-6 uppercase">
+          Transport freight{" "}
+          <b> - {renderValue("transf", selectedData.transf)}</b>
+        </div>
+        <div className="col-6 uppercase">
+          Truck Name{" "}
+          <b> - {renderValue("truckname", selectedData.truckname)}</b>
+        </div>
+        <div className="col-6 uppercase">
+          Transport advance{" "}
+          <b> - {renderValue("transadv", selectedData.transadv)}</b>
+        </div>
+        <div className="col-6 uppercase">
+          Truck Number{" "}
+          <b> - {renderValue("trucknumber", selectedData.trucknumber)}</b>
+        </div>
+        <div className="col-6 uppercase">
+          Transport balance{" "}
+          <b> - {renderValue("transbln", selectedData.transbln)}</b>
+        </div>
+        <div className="col-6 uppercase">
+          From <b> - {renderValue("from", selectedData.from)}</b>
+        </div>
+        <div className="col-6 uppercase">
+          To Pay <b> - {renderValue("twopay", selectedData.twopay)}</b>
+        </div>
+        <div className="col-6 uppercase">
+          To <b> - {renderValue("to", selectedData.to)}</b>
+        </div>
+        <div className="col-6 uppercase">
+          Transport advance type{" "}
+          <b> - {renderValue("transaddvtype", selectedData.transaddvtype)}</b>
+        </div>
+        <div className="col-6 uppercase">
+          truck Freight <b> - {renderValue("truckf", selectedData.truckf)}</b>
+        </div>
+        <div className="col-6 uppercase">
+          Delivery Date{" "}
+          <b> - {renderValue("deliverydate", selectedData.deliverydate)}</b>
+        </div>
+        <div className="col-6 uppercase">
+          truck Advance{" "}
+          <b> - {renderValue("truckadv", selectedData.truckadv)}</b>
+        </div>
+        <div className="col-6 uppercase"></div>
+        <div className="col-6 uppercase">
+          Truck Balance{" "}
+          <b> - {renderValue("truckbln", selectedData.truckbln)}</b>
+        </div>
+        <div className="col-6 uppercase"></div>
+        <div className="col-6 uppercase">
+          Truck Balance Type{" "}
+          <b>
+            {" "}
+            - {renderValue("truckbalancetype", selectedData.truckbalancetype)}
+          </b>
+        </div>
+        <div className="col-6 uppercase"></div>
+        <div className="col-6 uppercase">
+          Halting <b> - {renderValue("halting", selectedData.halting)}</b>
+        </div>
+        <div className="col-6 uppercase"></div>
+        <div className="col-6 uppercase">
+          late Day <b> - {renderValue("lateday", selectedData.lateday)}</b>
+        </div>
+        <div className="col-6 uppercase"></div>
+        <div className="col-6 uppercase">
+          Mode of Advance{" "}
+          <b> - {renderValue("modeofadvance", selectedData.modeofadvance)}</b>
+        </div>
+        <div className="col-6 uppercase"></div>
+        <div className="col-6 uppercase">
+          Loading Wages{" "}
+          <b> - {renderValue("loadingwages", selectedData.loadingwages)}</b>
+        </div>
+        <div className="col-6 uppercase"></div>
+        <div className="col-6 uppercase">
+          Truck Load Weight{" "}
+          <b> - {renderValue("truckloadwt", selectedData.truckloadwt)}</b>
+        </div>
+        <div className="col-6 uppercase">
+          VMAT Freight <b> - {renderValue("vmatf", selectedData.vmatf)}</b>
+        </div>
+      </div>
+    );
   };
 
   return (
