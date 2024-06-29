@@ -63,28 +63,7 @@ const Ack = () => {
   };
 
   const calculateUpdatedRow = (updatedRow: any) => {
-    let addThree = 0;
-    if ([2, 3, 4].includes(updatedRow.ats.modeofadvance)) {
-      if (updatedRow.hidevc) {
-        addThree += updatedRow.vmatcrossing;
-      }
-      if (updatedRow.hidevcm) {
-        addThree += updatedRow.vmatcommision;
-      }
-      if (updatedRow.hidetc) {
-        addThree += updatedRow.transcrossing;
-      }
-    } else {
-      if (updatedRow.hidetc) {
-        addThree += updatedRow.transcrossing;
-      }
-      if (updatedRow.hidevc) {
-        addThree += 0;
-      }
-      if (updatedRow.hidevcm) {
-        addThree += 0;
-      }
-    }
+    let addThree = updatedRow.addThree;
     if ([3, 4].includes(updatedRow.ats.modeofadvance)) {
       updatedRow.pendingamountfromtruckowner =
         addThree + Number(updatedRow.expense);
