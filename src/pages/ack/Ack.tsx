@@ -112,6 +112,9 @@ const Ack = () => {
     const newData: any = data.map((row: any) => {
       if (row._id === id) {
         const updatedRow = { ...row, [field]: value };
+        if(field !== 'rtgsnumber'){
+          return updatedRow;
+        }
         return calculateUpdatedRow(updatedRow);
       }
       return row;

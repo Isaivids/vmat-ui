@@ -28,6 +28,14 @@ export const addAts = createAsyncThunk('addats', async (payload:any) => {
     return response.data;
 })
 
+export const deleteAts = createAsyncThunk('deleteats', async (payload:any) => {
+    const response:any = await apiCall.delete(`/deleteats/${payload}`);
+    if (response.data.error) {
+        throw new Error("Error message");
+    }
+    return response.data;
+})
+
 export const updateats = createAsyncThunk('updateats', async (payload:any) => {
     const response:any = await apiCall.put(`/updateats`,payload);
     if (response.data.error) {
@@ -66,6 +74,15 @@ const atsSlice = createSlice({
             return { ...state, error: false, loading: false }
         })
         builder.addCase(updateats.rejected, (state) => {
+            return { ...state, loading: false, error: true }
+        })
+        builder.addCase(deleteAts.pending, (state, _payload) => {
+            return { ...state, loading: true }
+        })
+        builder.addCase(deleteAts.fulfilled, (state, { payload }) => {
+            return { ...state, error: false, loading: false }
+        })
+        builder.addCase(deleteAts.rejected, (state) => {
             return { ...state, loading: false, error: true }
         })
     }

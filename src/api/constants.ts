@@ -34,7 +34,7 @@ export const messages = {
   modeOfAdvance: [
     { name: "By VMAT", code: 1 },
     { name: "By Transport", code: 2 },
-    { name: "By Advance / To pay", code: 3 },
+    { name: "By Transporter / To pay", code: 3 },
     { name: "By To pay", code: 4 },
   ],
   transportAdvanceTypes: [
@@ -70,7 +70,7 @@ export const messages = {
       color: "whitemenu"
     },
     {
-      name: "Acknowledgement / POD",
+      name: "Acknowledgement / Truck Balance",
       to: "/ack",
       image: require("../assets/ico2.svg").default,
       color: "whitemenu"

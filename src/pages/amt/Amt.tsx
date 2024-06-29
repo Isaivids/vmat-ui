@@ -3,7 +3,7 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
-import { addAts, getAts, updateats } from "../../store/slice/atsSlice";
+import { addAts, deleteAts, getAts, updateats } from "../../store/slice/atsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { validateFields } from "./validations";
@@ -13,6 +13,7 @@ import { Dropdown } from "primereact/dropdown";
 import { messages } from "../../api/constants";
 import DialogAmt from "../../components/dialogamt/DialogAmt";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
+import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
 
 const Amt = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -108,15 +109,51 @@ const Amt = () => {
     );
   };
 
+  const accept = async(id:any) => {
+    try {
+      const response = await dispatch(deleteAts(id));
+      if(response.payload.error === false){
+        toast.current?.show({
+          severity: "info",
+          summary: "Confirmed",
+          detail: response.payload.message,
+          life: 3000,
+        });
+        fetchData();
+      }
+    } catch (error) {
+      toast.current?.show({
+        severity: "error",
+        summary: "Error",
+        detail: 'Unable to do this operation now',
+        life: 3000,
+      });
+    }
+  };
+
+  const confirm2 = (event: any,id:any) => {
+    confirmPopup({
+      target: event.currentTarget,
+      message: "Do you want to delete this record?",
+      icon: "pi pi-info-circle",
+      defaultFocus: "reject",
+      acceptClassName: "p-button-danger",
+      accept : () => accept(id),
+    });
+  };
+
   const renderButton = (rowData: any) => {
     return (
       <div className="flex gap-2 justify-content-center">
         {!selectedRowId && (
-          <Button
-            label="Edit"
-            severity="warning"
-            onClick={() => handleEdit(rowData._id)}
-          />
+          <>
+            <Button
+              label="Edit"
+              severity="warning"
+              onClick={() => handleEdit(rowData._id)}
+            />
+            <Button label="Delete" severity="danger" onClick={(event:any) => confirm2(event,rowData._id)} />
+          </>
         )}
         {selectedRowId === rowData._id && (
           <>
@@ -169,8 +206,8 @@ const Amt = () => {
       transaddvtype: Number(inputObject.transaddvtype),
       repdate: getFormatteddate(inputObject.repdate),
       unloaddate: getFormatteddate(inputObject.unloaddate),
-      deliverydate : getFormatteddate(inputObject.deliverydate),
-      reportingdate : getFormatteddate(inputObject.reportingdate),
+      deliverydate: getFormatteddate(inputObject.deliverydate),
+      reportingdate: getFormatteddate(inputObject.reportingdate),
       lateday: inputObject.lateday,
       halting: inputObject.halting,
       truckf: Number(inputObject.truckf),
@@ -316,8 +353,8 @@ const Amt = () => {
       transbln: 0,
       twopay: 0,
       truckloadwt: 0,
-      deliverydate : '',
-      reportingdate : '',
+      deliverydate: "",
+      reportingdate: "",
     };
     setData([newRow, ...data]);
     setSelectedRowId(newRow._id);
@@ -424,12 +461,13 @@ const Amt = () => {
   return (
     <>
       <Toast ref={toast} />
+      <ConfirmPopup />
       <DialogAmt
         visible={visible}
         setVisible={setVisible}
         selectedData={selectedData}
       />
-      <div className="p-2" style={{ overflowX: "auto"}}>
+      <div className="p-2" style={{ overflowX: "auto" }}>
         <Button
           label="New"
           severity="success"
