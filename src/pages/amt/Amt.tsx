@@ -509,6 +509,16 @@ const Amt = () => {
             body={renderInput}
           ></Column>
           <Column
+            field="from"
+            header="From"
+            body={renderInput}
+          ></Column>
+          <Column
+            field="to"
+            header="To"
+            body={renderInput}
+          ></Column>
+          <Column
             field="reportingdate"
             header="Reporting Date"
             body={renderDatePicker}

@@ -318,6 +318,8 @@ const TransportAdvance = () => {
         <Column field="ats.transname" header="Transport Name"></Column>
         <Column field="ats.truckname" header="Truck Name"></Column>
         <Column field="ats.trucknumber" header="Truck Number"></Column>
+        <Column field="ats.from" header="From"></Column>
+        <Column field="ats.to" header="To"></Column>
         <Column field="ats.transadv" header="Transport Advance"></Column>
         <Column
           field="tdstta"

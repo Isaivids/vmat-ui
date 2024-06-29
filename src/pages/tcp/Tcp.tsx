@@ -323,6 +323,8 @@ const Tcp = () => {
         ></Column>
         <Column field="ats.transname" header="Transport Name"></Column>
         <Column field="ats.trucknumber" header="Truck Number"></Column>
+        <Column field="ats.from" header="From"></Column>
+        <Column field="ats.to" header="To"></Column>
         <Column field="transcrossing" header="Trans Crossing"></Column>
         <Column field="others" body={renderInput} header="Others"></Column>
         <Column field="remarks" body={renderInput} header="Remarks"></Column>
