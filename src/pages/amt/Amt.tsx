@@ -319,17 +319,18 @@ const Amt = () => {
 
   const addNewRow = () => {
     const currentDate = new Date();
-    const month = currentDate.getMonth() + 1;
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
     const year = currentDate.getFullYear();
     const nextSno =
       data.reduce((maxSno: any, row: any) => {
-        const sno = parseInt(row.sno);
+        const sno = parseInt(row.sno.split('-')[0]); // Adjusted to split by '-' and get the number part
         return sno > maxSno ? sno : maxSno;
       }, 0) + 1;
 
     const newRow = {
       _id: new Date().getDate().toString(),
-      sno: nextSno.toString() + `/` + month + year,
+      sno: `${nextSno}-${day}/${month}/${year}`,
       date: "",
       truckname: "",
       trucknumber: "",
