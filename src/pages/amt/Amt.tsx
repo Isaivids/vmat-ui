@@ -229,12 +229,14 @@ const Amt = () => {
     const payload = getNewdataPayload(data);
     try {
       const response = await dispatch(addAts(payload));
-      const index = data.findIndex(
-        (item: any) => item._id === response.payload.data._id
-      );
-      if (index !== -1) {
-        data[index]._id = response.payload.data._id;
-      }
+      // const index = data.findIndex(
+      //   (item: any) => item._id === response.payload.data._id
+      // );
+      data._id = response.payload.data._id;
+      // console.log(index)
+      // if (index !== -1) {
+      //   data[index]._id = response.payload.data._id;
+      // }
       setSelectedRowId(null);
       toast.current?.show({
         severity: "success",
@@ -317,6 +319,20 @@ const Amt = () => {
     setOriginalData({});
   };
 
+  function generateUniqueId() {
+    const now = new Date();
+    const datePart = now.getFullYear().toString() + 
+                     (now.getMonth() + 1).toString().padStart(2, '0') + 
+                     now.getDate().toString().padStart(2, '0') + 
+                     now.getHours().toString().padStart(2, '0') + 
+                     now.getMinutes().toString().padStart(2, '0') + 
+                     now.getSeconds().toString().padStart(2, '0') + 
+                     now.getMilliseconds().toString().padStart(3, '0');
+    const alphabets = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    const randomPart = Array.from({ length: 5 }, () => alphabets[Math.floor(Math.random() * alphabets.length)]).join('');
+    return datePart + randomPart;
+  }
+
   const addNewRow = () => {
     const currentDate = new Date();
     const month = String(currentDate.getMonth() + 1).padStart(2, '0');
@@ -331,7 +347,7 @@ const Amt = () => {
     }, 0) + 1;
 
     const newRow = {
-      _id: new Date().getDate().toString(),
+      _id : generateUniqueId(),
       sno: `${nextOrderNumber}-${month}`,      
       date: "",
       truckname: "",
