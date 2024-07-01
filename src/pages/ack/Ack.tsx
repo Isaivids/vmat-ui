@@ -54,7 +54,7 @@ const Ack = () => {
       <div className="flex gap-3 align-items-center">
         <Checkbox
           checked={rowData[field]}
-          disabled={rowData._id !== selectedRowId}
+            disabled={rowData._id !== selectedRowId || ![3, 4].includes(rowData.ats.modeofadvance)}
           onChange={() => handleCheckboxChange(rowData, field)}
         />
         <span>{rowData[parent]}</span>
@@ -65,7 +65,7 @@ const Ack = () => {
   const calculateUpdatedRow = (updatedRow: any) => {
     let addThree = 0;
 
-    if ([2, 3, 4].includes(updatedRow.ats.modeofadvance)) {
+    if ([3, 4].includes(updatedRow.ats.modeofadvance)) {
       if (updatedRow.hidevc) {
         addThree += updatedRow.vmatcrossing;
       }
@@ -77,7 +77,7 @@ const Ack = () => {
       }
     } else {
       if (updatedRow.hidetc) {
-        addThree += updatedRow.transcrossing;
+        addThree += 0;
       }
       if (updatedRow.hidevc) {
         addThree += 0;
@@ -428,7 +428,7 @@ const Ack = () => {
         ></Column>
         <Column field="ats.lateday" header="Late Delivery"></Column>
         <Column field="ats.halting" header="Halting"></Column>
-        <Column field="expense" header="Expense" body={renderInput}></Column>
+        <Column field="expense" header="Two Pay Expense" body={renderInput}></Column>
         <Column
           field="podcharge"
           header="POD Charge"
