@@ -120,7 +120,7 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
         alignment: "center",
       },
       {
-        text: "10/B, Highway City, Palathurai Main Rd, Madukkarai",
+        text: "10/B, Highway City, Palathurai Main Rd, Madukkarai, CBE",
         style: "subheader",
         alignment: "center",
       },
