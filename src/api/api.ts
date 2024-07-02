@@ -1,7 +1,9 @@
 import axios from 'axios';
 
 const apiCall = axios.create({
-    baseURL: `https://vmat-api.vercel.app/api`,
+    // baseURL: `https://vmatapi.netlify.app/api`,
+    // baseURL: `http://localhost:5000/api`,
+    baseURL: `https://vmat-api-prod.vercel.app/`,
 });
 
 apiCall.interceptors.request.use(config => {
