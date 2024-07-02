@@ -539,22 +539,6 @@ const Amt = () => {
             body={renderInput}
           ></Column>
           <Column
-            field="reportingdate"
-            header="Reporting Date"
-            body={renderDatePicker}
-          ></Column>
-          <Column
-            field="deliverydate"
-            header="Delivery Date"
-            body={renderDatePicker}
-          ></Column>
-          <Column
-            field="lateday"
-            header="Late delivery"
-            body={renderInput}
-          ></Column>
-          <Column field="halting" header="Halting" body={renderInput}></Column>
-          <Column
             field="truckf"
             header="Truck Freight"
             body={renderInput}
@@ -623,6 +607,22 @@ const Amt = () => {
             header="Truck Load Weight"
             body={renderInput}
           ></Column>
+          <Column
+            field="reportingdate"
+            header="Reporting Date"
+            body={renderDatePicker}
+          ></Column>
+          <Column
+            field="deliverydate"
+            header="Delivery Date"
+            body={renderDatePicker}
+          ></Column>
+          <Column
+            field="lateday"
+            header="Late delivery"
+            body={renderInput}
+          ></Column>
+          <Column field="halting" header="Halting" body={renderInput}></Column>
           <Column
             header="Actions"
             body={renderButton}
