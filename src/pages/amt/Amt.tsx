@@ -25,6 +25,8 @@ const Amt = () => {
   const searchQuery = useSelector((state: any) => state.search);
   const [visible, setVisible] = useState<boolean>(false);
   const [selectedData, setSelectedData]: any = useState({});
+  const userDetails = useSelector((state: any) => state.user);
+
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
@@ -387,6 +389,7 @@ const Amt = () => {
         field={field}
         selectedRowId={selectedRowId}
         onDateChange={onDateChange}
+        isAdmin={userDetails}
       />
     );
   };

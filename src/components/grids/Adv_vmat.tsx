@@ -27,6 +27,8 @@ const AdvVmat = () => {
   const [showPending, setShowPending] = useState(true);
   const [showCompleted, setShowCompleted] = useState(true);
   const [filteredData, setFilteredData]: any = useState([]);
+  const userDetails = useSelector((state: any) => state.user);
+
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
@@ -162,6 +164,7 @@ const AdvVmat = () => {
         field={field}
         selectedRowId={selectedRowId}
         onDateChange={onDateChange}
+        isAdmin={userDetails}
       />
     );
   };

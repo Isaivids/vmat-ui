@@ -23,6 +23,8 @@ const AdvTwopay = () => {
   const [data, setData]: any = useState([]);
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
+  const userDetails = useSelector((state: any) => state.user);
+
   // chekcbox
   const [showPending, setShowPending] = useState(true);
   const [showCompleted, setShowCompleted] = useState(true);
@@ -167,6 +169,7 @@ const AdvTwopay = () => {
         field={field}
         selectedRowId={selectedRowId}
         onDateChange={onDateChange}
+        isAdmin={userDetails}
       />
     );
   };
