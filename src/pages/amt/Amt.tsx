@@ -492,6 +492,7 @@ const Amt = () => {
           severity="success"
           onClick={addNewRow}
           className="mb-2"
+          disabled = {selectedRowId}
         />
         <DataTable
           value={data}
