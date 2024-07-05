@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Paginator } from "primereact/paginator";
-import { formatDate, messages } from "../../api/constants";
+import { messages } from "../../api/constants";
 import { Toast } from "primereact/toast";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import { InputText } from "primereact/inputtext";
@@ -224,10 +224,6 @@ const BankDetails = () => {
         getbankdetail({ limit: rows, offset: page * rows, search: searchQuery })
       );
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
-        const formattedData = trcukData.payload.data.map((item: any) => ({
-          ...item,
-          date: formatDate(item.date),
-        }));
         setData(trcukData.payload.data);
         setTotalPage(trcukData.payload.pagination.totalDocuments);
       }
