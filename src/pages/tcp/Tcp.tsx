@@ -22,6 +22,7 @@ const Tcp = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
+  const userDetails = useSelector((state: any) => state.user);
   // chekcbox
   const [showPending, setShowPending] = useState(true);
   const [showCompleted, setShowCompleted] = useState(true);
@@ -177,6 +178,7 @@ const Tcp = () => {
         field={field}
         selectedRowId={selectedRowId}
         onDateChange={onDateChange}
+        isAdmin={userDetails}
       />
     );
   };

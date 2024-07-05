@@ -23,6 +23,7 @@ const Ccpto = () => {
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
   const modeOfPayments = messages.modeofpayments;
+  const userDetails = useSelector((state: any) => state.user);
   // chekcbox
   const [showPending, setShowPending] = useState(true);
   const [showCompleted, setShowCompleted] = useState(true);
@@ -68,6 +69,7 @@ const Ccpto = () => {
         field={field}
         selectedRowId={selectedRowId}
         onDateChange={onDateChange}
+        isAdmin={userDetails}
       />
     );
   };

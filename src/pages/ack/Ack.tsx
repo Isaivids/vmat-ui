@@ -22,6 +22,7 @@ const Ack = () => {
   const searchQuery = useSelector((state: any) => state.search);
   const toast = useRef<Toast>(null);
   const [selectedProducts, setSelectedProducts] = useState([]);
+  const userDetails = useSelector((state: any) => state.user);
   // chekcbox
   const [showPending, setShowPending] = useState(true);
   const [showCompleted, setShowCompleted] = useState(true);
@@ -223,6 +224,7 @@ const Ack = () => {
         field={field}
         selectedRowId={selectedRowId}
         onDateChange={onDateChange}
+        isAdmin={userDetails}
       />
     );
   };

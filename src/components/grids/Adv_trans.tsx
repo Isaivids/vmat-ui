@@ -42,6 +42,7 @@ const AdvTrans = () => {
   const [data, setData]: any = useState([]);
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
+  const userDetails = useSelector((state: any) => state.user);
 
   const onInputChange = (e: any, id: any, field: any) => {
     const { value } = e.target;
@@ -169,6 +170,7 @@ const AdvTrans = () => {
         field={field}
         selectedRowId={selectedRowId}
         onDateChange={onDateChange}
+        isAdmin = {userDetails}
       />
     );
   };

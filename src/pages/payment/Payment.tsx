@@ -26,6 +26,7 @@ const Payment = () => {
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
   const [selectedProducts, setSelectedProducts] = useState([]);
+  const userDetails = useSelector((state: any) => state.user);
   // chekcbox
   const [showPending, setShowPending] = useState(true);
   const [showCompleted, setShowCompleted] = useState(true);
@@ -202,6 +203,7 @@ const Payment = () => {
         field={field}
         selectedRowId={selectedRowId}
         onDateChange={onDateChange}
+        isAdmin={userDetails}
       />
     );
   };
