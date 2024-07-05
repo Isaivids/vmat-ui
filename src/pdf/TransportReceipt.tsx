@@ -1,16 +1,31 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import "./TransportReceipt.scss";
 import { formatDate, messages } from "../api/constants";
 import { Button } from "primereact/button";
 import ReactToPrint from "react-to-print";
 import { InputText } from "primereact/inputtext";
+import { InputNumber } from "primereact/inputnumber";
 
 const TransportReceipt = ({ data }: any) => {
   const componentRef: any = useRef();
+  const [mamol, setMamol] = useState({loading : 0, guide : 0})
   // Function to handle printing success
   const handlePrintSuccess = () => {
     console.log("Print successful!");
     // Add any actions you want to perform after successful printing
+  };
+
+  const getGrandTotal = () =>{
+    return mamol.loading + mamol.guide +  Number(calculateCommission(data) || 0)
+  }
+
+  const handleChangeMamol = (e:any) => {
+    const { name, value } = e.target;
+    setMamol((prevMamol) => ({
+      ...prevMamol,
+      [name]: value,
+    }));
+    getGrandTotal()
   };
 
   const calculateCommission = (row:any) =>{
@@ -120,17 +135,17 @@ const TransportReceipt = ({ data }: any) => {
               <td>Truck Advance Amount</td>
               <td>{data.truckadv}</td>
               <td>Loading Mamol</td>
-              <td><InputText keyfilter={"num"}/></td>
+              <td><InputNumber value={mamol.loading} name="loading" onValueChange={(e:any) => handleChangeMamol(e)} /></td>
             </tr>
             <tr>
               <td>Truck Balance/ To Pay</td>
               <td>{data.truckbln}</td>
               <td>Guide Mamol</td>
-              <td><InputText keyfilter={"num"}/></td>
+              <td><InputNumber value={mamol.guide} name="guide" onValueChange={(e:any) => handleChangeMamol(e)} /></td>
             </tr>
             <tr>
               <td className="text-right" colSpan={4}>
-                Total : 
+                Total : {getGrandTotal()}
               </td>
             </tr>
           </tbody>
