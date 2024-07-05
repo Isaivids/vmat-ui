@@ -1,0 +1,107 @@
+@import "../App.scss";
+.container {
+  border: 2px solid $primary;
+  border-radius: 10px;
+
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px;
+}
+
+.leftHeader {
+  flex: 0.3;
+}
+
+.rightHeader {
+  flex: 0.3;
+  text-align: right;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.companyInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.logo {
+  width: 100px;
+}
+
+.companyName {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.italic {
+  font-style: italic;
+  text-align: center;
+}
+
+.phoneNumbers {
+  text-align: right;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.rightAlign {
+  text-align: right;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 10px;
+}
+
+.table th,
+.table td {
+  border: 1px solid #000;
+  padding: 5px;
+  text-align: left;
+  font-weight: bold;
+  height: 50px;
+  width: 25%;
+}
+
+.sign {
+  height: 100px;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.note {
+  font-style: italic;
+  font-size: 8px;
+  border-top: 2px solid;
+}
+
+@media print {
+  input {
+    border: 0 !important;
+    outline: 0 !important;
+    color: #000;
+    padding: 0;
+  }
+  .table th,
+  .table td {
+    height: 70px;
+  }
+}

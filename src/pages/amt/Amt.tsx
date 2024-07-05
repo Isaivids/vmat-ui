@@ -10,10 +10,11 @@ import { validateFields } from "./validations";
 import { Toast } from "primereact/toast";
 import { Paginator } from "primereact/paginator";
 import { Dropdown } from "primereact/dropdown";
-import { messages } from "../../api/constants";
+import { dateSort, messages } from "../../api/constants";
 import DialogAmt from "../../components/dialogamt/DialogAmt";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
+import ReceiptDialog from "../../pdf/ReceiptDialog";
 
 const Amt = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -26,7 +27,8 @@ const Amt = () => {
   const [visible, setVisible] = useState<boolean>(false);
   const [selectedData, setSelectedData]: any = useState({});
   const userDetails = useSelector((state: any) => state.user);
-
+  const [receipt, setReceipt] = useState(false);
+  const [latestSerial, setLatestSerial] = useState('');
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
@@ -111,6 +113,11 @@ const Amt = () => {
     );
   };
 
+  const openReceiptDialog = (rowData: any) => {
+    setReceipt(true);
+    setSelectedData(rowData);
+  };
+
   const accept = async(id:any) => {
     try {
       const response = await dispatch(deleteAts(id));
@@ -154,7 +161,8 @@ const Amt = () => {
               severity="warning"
               onClick={() => handleEdit(rowData._id)}
             />
-            <Button label="Delete" severity="danger" onClick={(event:any) => confirm2(event,rowData._id)} />
+            <Button severity="danger" onClick={(event:any) => confirm2(event,rowData._id)}><i className="pi pi-trash"></i></Button>
+            <Button label="Bill" severity="secondary" onClick={() => openReceiptDialog(rowData)}/>
           </>
         )}
         {selectedRowId === rowData._id && (
@@ -227,19 +235,14 @@ const Amt = () => {
     return outputObject;
   };
 
-  const createNewdata = async (data: any) => {
-    const payload = getNewdataPayload(data);
+  const createNewdata = async (data1: any) => {
+    const payload = getNewdataPayload(data1);
     try {
       const response = await dispatch(addAts(payload));
-      // const index = data.findIndex(
-      //   (item: any) => item._id === response.payload.data._id
-      // );
-      data._id = response.payload.data._id;
-      // console.log(index)
-      // if (index !== -1) {
-      //   data[index]._id = response.payload.data._id;
-      // }
+      data1._id = response.payload.data._id;
       setSelectedRowId(null);
+      setLatestSerial(response.payload.latestSerial.sno);
+      setData(dateSort(data));
       toast.current?.show({
         severity: "success",
         summary: messages.success,
@@ -287,6 +290,9 @@ const Amt = () => {
             data[index]._id = response.payload.data._id;
           }
           setSelectedRowId(null);
+          setData(dateSort(data));
+          setLatestSerial(response.payload.latestSerial.sno);
+          // fetchData();
           toast.current?.show({
             severity: "success",
             summary: messages.success,
@@ -335,22 +341,26 @@ const Amt = () => {
     return datePart + randomPart;
   }
 
-  const addNewRow = () => {
-    const currentDate = new Date();
-    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-    const nextOrderNumber = data.reduce((maxOrderNo: number, row: any) => {
-      const [orderNo, datePart] = row.sno.split('-');
-      const rowMonth = datePart;
-      if (rowMonth === month) {
-        const orderNumber = parseInt(orderNo);
-        return orderNumber > maxOrderNo ? orderNumber : maxOrderNo;
-      }
-      return maxOrderNo;
-    }, 0) + 1;
+  const getNextSerialNumber = (sno:string) => {
+    const [currentSerialNumber, currentMonth] = sno.split('-').map(Number);
+    const date = new Date();
+    const currentMonthFromSystem = (date.getMonth() + 1).toString().padStart(2, '0');
+    let newSerialNumber,newMonth;
+    if (currentMonthFromSystem !== currentMonth.toString().padStart(2, '0')) {
+      newSerialNumber = 1;
+      newMonth = currentMonthFromSystem;
+    } else {
+      newSerialNumber = currentSerialNumber + 1;
+      newMonth = currentMonth.toString().padStart(2, '0');
+    }
+    const newSno = `${newSerialNumber.toString().padStart(2, '0')}-${newMonth}`;
+    return newSno;
+  }
 
+  const addNewRow = () => {
     const newRow = {
       _id : generateUniqueId(),
-      sno: `${nextOrderNumber}-${month}`,      
+      sno: getNextSerialNumber(latestSerial),      
       date: "",
       truckname: "",
       trucknumber: "",
@@ -461,6 +471,7 @@ const Amt = () => {
           unloaddate: item.unloaddate ? new Date(item.unloaddate) : null,
         }));
         setData(formattedData);
+        setLatestSerial(atsData.payload.latestSerial.sno);
         setTotalPage(atsData.payload.pagination.totalDocuments);
       }
     } catch (error) {
@@ -487,6 +498,11 @@ const Amt = () => {
       <DialogAmt
         visible={visible}
         setVisible={setVisible}
+        selectedData={selectedData}
+      />
+      <ReceiptDialog
+        receipt={receipt}
+        setReceipt={setReceipt}
         selectedData={selectedData}
       />
       <div className="p-2" style={{ overflowX: "auto" }}>
