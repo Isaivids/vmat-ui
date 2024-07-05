@@ -7,7 +7,6 @@ import { InputText } from "primereact/inputtext";
 
 const TransportReceipt = ({ data }: any) => {
   const componentRef: any = useRef();
-  console.log(data)
   // Function to handle printing success
   const handlePrintSuccess = () => {
     console.log("Print successful!");
