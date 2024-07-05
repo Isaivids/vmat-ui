@@ -105,7 +105,7 @@ const TransportReceipt = ({ data }: any) => {
               <td>quantity</td>
               <td>{data.truckloadwt}Tons</td>
             </tr>
-            <tr>
+            <tr style={{borderBottom : '3px solid'}}>
               <td>Owner Name</td>
               <td><InputText /></td>
               <td>Driver Name/ Dc.No</td>
