@@ -1,17 +1,31 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import "./TransportReceipt.scss";
 import { formatDate, messages } from "../api/constants";
 import { Button } from "primereact/button";
 import ReactToPrint from "react-to-print";
 import { InputText } from "primereact/inputtext";
+import { InputNumber } from "primereact/inputnumber";
 
 const TransportReceipt = ({ data }: any) => {
   const componentRef: any = useRef();
-  console.log(data)
+  const [mamol, setMamol] = useState({loading : 0, guide : 0})
   // Function to handle printing success
   const handlePrintSuccess = () => {
     console.log("Print successful!");
     // Add any actions you want to perform after successful printing
+  };
+
+  const getGrandTotal = () =>{
+    return mamol.loading + mamol.guide +  Number(calculateCommission(data) || 0)
+  }
+
+  const handleChangeMamol = (e:any) => {
+    const { name, value } = e.target;
+    setMamol((prevMamol) => ({
+      ...prevMamol,
+      [name]: value,
+    }));
+    getGrandTotal()
   };
 
   const calculateCommission = (row:any) =>{
@@ -105,7 +119,7 @@ const TransportReceipt = ({ data }: any) => {
               <td>quantity</td>
               <td>{data.truckloadwt}Tons</td>
             </tr>
-            <tr>
+            <tr style={{borderBottom : '3px solid'}}>
               <td>Owner Name</td>
               <td><InputText /></td>
               <td>Driver Name/ Dc.No</td>
@@ -121,17 +135,18 @@ const TransportReceipt = ({ data }: any) => {
               <td>Truck Advance Amount</td>
               <td>{data.truckadv}</td>
               <td>Loading Mamol</td>
-              <td><InputText keyfilter={"num"}/></td>
+              <td><InputNumber value={mamol.loading} name="loading" onValueChange={(e:any) => handleChangeMamol(e)} /></td>
             </tr>
             <tr>
               <td>Truck Balance/ To Pay</td>
               <td>{data.truckbln}</td>
               <td>Guide Mamol</td>
-              <td><InputText keyfilter={"num"}/></td>
+              <td><InputNumber value={mamol.guide} name="guide" onValueChange={(e:any) => handleChangeMamol(e)} /></td>
             </tr>
             <tr>
-              <td className="text-right" colSpan={4}>
-                Total : 
+              <td colSpan={2}></td>
+              <td className="text-left text-lg" colSpan={2}>
+                Total :{getGrandTotal()}
               </td>
             </tr>
           </tbody>

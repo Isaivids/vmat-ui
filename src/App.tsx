@@ -18,6 +18,7 @@ import AdvTwopay from "./components/grids/Adv_twopay";
 import TruckDetail from "./pages/truck/TruckDetail";
 import TransportAdvance from "./pages/transportadvance/TransportAdvance";
 import VmatAccount from "./pages/vmataccount/VmatAccount";
+import BankDetails from "./pages/bank/BankDetails";
 
 const App = () => {
   const atsState = useSelector((state: any) => state.ats);
@@ -33,6 +34,7 @@ const App = () => {
   const tcp = useSelector((state: any) => state.tcp);
   const transportadvance = useSelector((state: any) => state.transportadvance);
   const vmat = useSelector((state: any) => state.vmat);
+  const bank = useSelector((state: any) => state.bank);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -58,7 +60,7 @@ const App = () => {
             ccpto.loading ||
             tcp.loading ||
             transportState.loading ||
-            transportadvance.loading ||
+            transportadvance.loading || bank.loading ||
             vmat.loading) && <SpinnerWithLogo />}
           <Routes>
             <Route element={<WithOutNavBar />}>
@@ -108,6 +110,14 @@ const App = () => {
               <Route
                 path="/vmataccount"
                 element={<ProtectedRoute element={<VmatAccount />} />}
+              />
+              {/* <Route
+                path="/receipt"
+                element={<ProtectedRoute element={<TransportReceipt />} />}
+              /> */}
+              <Route
+                path="/bankdetails"
+                element={<ProtectedRoute element={<BankDetails />} />}
               />
             </Route>
           </Routes>

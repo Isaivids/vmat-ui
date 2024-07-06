@@ -10,7 +10,7 @@ import { validateFields } from "./validations";
 import { Toast } from "primereact/toast";
 import { Paginator } from "primereact/paginator";
 import { Dropdown } from "primereact/dropdown";
-import { dateSort, messages } from "../../api/constants";
+import { messages } from "../../api/constants";
 import DialogAmt from "../../components/dialogamt/DialogAmt";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
@@ -242,7 +242,7 @@ const Amt = () => {
       data1._id = response.payload.data._id;
       setSelectedRowId(null);
       setLatestSerial(response.payload.latestSerial.sno);
-      setData(dateSort(data));
+      // setData(dateSort(data));
       toast.current?.show({
         severity: "success",
         summary: messages.success,
@@ -290,7 +290,7 @@ const Amt = () => {
             data[index]._id = response.payload.data._id;
           }
           setSelectedRowId(null);
-          setData(dateSort(data));
+          // setData(dateSort(data));
           setLatestSerial(response.payload.latestSerial.sno);
           // fetchData();
           toast.current?.show({

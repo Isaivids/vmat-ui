@@ -13,6 +13,8 @@ import tcpSlice from "./slice/tcpSlice";
 import truckSlice from "./slice/truckSlice";
 import transportadvanceSlice from "./slice/transportadvance";
 import vmatAccountSLice from "./slice/vmataccount";
+import bankDetailSlice from "./slice/bankSlice";
+
 export const Store:any = configureStore({
     reducer: { 
         ats: atsSlice, 
@@ -28,7 +30,8 @@ export const Store:any = configureStore({
         ccpto : ccptoSlice,
         tcp : tcpSlice,
         transportadvance : transportadvanceSlice,
-        vmat : vmatAccountSLice
+        vmat : vmatAccountSLice,
+        bank : bankDetailSlice,
     }
 })
 
