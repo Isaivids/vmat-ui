@@ -29,6 +29,14 @@ export const updatebankdetail = createAsyncThunk('updatebankdetail', async (payl
     return response.data;
 });
 
+export const deletebankdetails = createAsyncThunk('deletebankdetails', async (payload: any) => {
+    const response:any = await apiCall.delete(`/deletebankdetails/${payload}`);
+    if (response.error) {
+        throw new Error("Error message");
+    }
+    return response.data;
+});
+
 const bankDetailSlice = createSlice({
     initialState,
     name: 'BANKDETAIL',
@@ -56,6 +64,18 @@ const bankDetailSlice = createSlice({
                 state.error = false;
             })
             .addCase(updatebankdetail.rejected, (state) => {
+                state.loading = false;
+                state.error = true;
+            })
+            .addCase(deletebankdetails.pending, (state) => {
+                state.loading = true;
+                state.error = false;
+            })
+            .addCase(deletebankdetails.fulfilled, (state) => {
+                state.loading = false;
+                state.error = false;
+            })
+            .addCase(deletebankdetails.rejected, (state) => {
                 state.loading = false;
                 state.error = true;
             });
