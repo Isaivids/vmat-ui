@@ -133,6 +133,7 @@ const BankDetails = () => {
       debitamount: Number(rowData.debitamount),
       creditamount: Number(rowData.creditamount),
       remarks: Number(rowData.remarks),
+      date2 : getFormattedDate(rowData.date2),
       _id: rowData._id,
     };
     try {
@@ -218,7 +219,7 @@ const BankDetails = () => {
           handleSave={handleSave}
           handleCancel={handleCancel}
         />
-        {!selectedRowId && <Button severity="danger" onClick={(event:any) => confirm2(event,rowData._id)}><i className="pi pi-trash"></i></Button>}
+        {!selectedRowId && <Button severity="danger" style={{height : '30px'}} onClick={(event:any) => confirm2(event,rowData._id)}><i className="pi pi-trash"></i></Button>}
       </div>
     );
   };
@@ -236,6 +237,7 @@ const BankDetails = () => {
       remarks: "",
       debitamount: 0,
       creditamount: 0,
+      date2: '',
     };
     setData([newRow, ...data]);
     setSelectedRowId(newRow._id);
@@ -316,6 +318,12 @@ const BankDetails = () => {
           field="rtgsnumber"
           header="RTGS Number"
           body={renderInput}
+        ></Column>
+        <Column style={{visibility : "hidden", width : '20px'}}></Column>
+        <Column
+          field="date2"
+          header="Date"
+          body={renderDatePicker}
         ></Column>
         <Column
           field="couriersendingname"
