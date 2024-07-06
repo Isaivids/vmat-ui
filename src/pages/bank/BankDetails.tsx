@@ -10,8 +10,9 @@ import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import { InputText } from "primereact/inputtext";
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
 import { Button } from "primereact/button";
-import { getbankdetail, updatebankdetail } from "../../store/slice/bankSlice";
+import { deletebankdetails, getbankdetail, updatebankdetail } from "../../store/slice/bankSlice";
 import { InputTextarea } from "primereact/inputtextarea";
+import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
 
 const BankDetails = () => {
   const searchQuery = useSelector((state: any) => state.search);
@@ -174,15 +175,51 @@ const BankDetails = () => {
     setBackupData([...data]);
   };
 
+  const accept = async(id:any) => {
+    try {
+      const response = await dispatch(deletebankdetails(id));
+      if(response.payload.error === false){
+        toast.current?.show({
+          severity: "info",
+          summary: "Confirmed",
+          detail: response.payload.message,
+          life: 3000,
+        });
+        fetchData();
+      }
+    } catch (error) {
+      toast.current?.show({
+        severity: "error",
+        summary: "Error",
+        detail: 'Unable to do this operation now',
+        life: 3000,
+      });
+    }
+  };
+
+  const confirm2 = (event: any,id:any) => {
+    confirmPopup({
+      target: event.currentTarget,
+      message: "Do you want to delete this record?",
+      icon: "pi pi-info-circle",
+      defaultFocus: "reject",
+      acceptClassName: "p-button-danger",
+      accept : () => accept(id),
+    });
+  };
+
   const renderButton = (rowData: any) => {
     return (
-      <CustomButtonComponent
-        rowData={rowData}
-        selectedRowId={selectedRowId}
-        handleEdit={handleEdit}
-        handleSave={handleSave}
-        handleCancel={handleCancel}
-      />
+      <div className="flex gap-2">
+        <CustomButtonComponent
+          rowData={rowData}
+          selectedRowId={selectedRowId}
+          handleEdit={handleEdit}
+          handleSave={handleSave}
+          handleCancel={handleCancel}
+        />
+        {!selectedRowId && <Button severity="danger" onClick={(event:any) => confirm2(event,rowData._id)}><i className="pi pi-trash"></i></Button>}
+      </div>
     );
   };
 
@@ -247,6 +284,7 @@ const BankDetails = () => {
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
+      <ConfirmPopup />
       <Button
         label="Add New Row"
         severity="info"
