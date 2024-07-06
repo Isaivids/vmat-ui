@@ -144,8 +144,9 @@ const TransportReceipt = ({ data }: any) => {
               <td><InputNumber value={mamol.guide} name="guide" onValueChange={(e:any) => handleChangeMamol(e)} /></td>
             </tr>
             <tr>
-              <td className="text-right" colSpan={4}>
-                Total : {getGrandTotal()}
+              <td colSpan={2}></td>
+              <td className="text-left text-lg" colSpan={2}>
+                Total :{getGrandTotal()}
               </td>
             </tr>
           </tbody>
