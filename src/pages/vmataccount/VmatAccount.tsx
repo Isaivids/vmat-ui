@@ -77,6 +77,8 @@ const VmatAccount = () => {
       vmatexpense: Number(rowData.vmatexpense),
       reason: rowData.reason,
       tdsdeduction: rowData.tdsdeduction,
+      income: rowData.income,
+      profit: rowData.profit,
       _id: rowData._id,
     };
     try {
