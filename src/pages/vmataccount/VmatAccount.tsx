@@ -35,8 +35,13 @@ const VmatAccount = () => {
     const { value } = e.target;
     const newData: any = data.map((row: any) => {
       if (row._id === id) {
-        const updatedRow = { ...row, [field]: value };
-        return updatedRow;
+        if(field === 'vmatexpense'){
+          const updatedRow = { ...row, [field]: value };
+          const result = updatedRow.vmatcrossing + updatedRow.vmatcommision;
+          updatedRow.income = result;
+          updatedRow.profit = result - Number(updatedRow.vmatexpense)
+          return updatedRow;
+        }
       }
       return row;
     });
@@ -188,6 +193,8 @@ const VmatAccount = () => {
           footer={`${computeTotal('vmatexpense')}`}
         ></Column>
         <Column field="reason" header="Reason" body={renderInput}></Column>
+        <Column field="income" header="VMAT Income"></Column>
+        <Column field="profit" header="VMAT Profit"></Column>
         <Column
           header="Actions"
           body={renderButton}
