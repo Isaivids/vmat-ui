@@ -158,6 +158,7 @@ const Navbar = () => {
           value={toDate ? new Date(toDate) : null}
           onChange={(e: any) => setTodate(e.value)}
         />
+        <Button label="Search" severity="warning" onClick={handleSearch}/>
       </div>
       <div className="flex align-items-center gap-2">
         <span className="text-scy font-semibold	uppercase">
