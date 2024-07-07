@@ -195,12 +195,13 @@ const VmatAccount = () => {
           footer={`${computeTotal('vmatexpense')}`}
         ></Column>
         <Column field="reason" header="Reason" body={renderInput}></Column>
-        <Column field="income" header="VMAT Income"></Column>
-        <Column field="profit" header="VMAT Profit"></Column>
+        <Column field="income" header="VMAT Income" footer={`${computeTotal('income')}`}></Column>
+        {/* <Column field="profit" header="VMAT Profit"></Column> */}
         <Column
           header="Actions"
           body={renderButton}
-          style={{ width: "200px", right: "0", position: "sticky" }}
+          style={{ minWidth: "200px", right: "0", position: "sticky" }}
+          footer={<span className="text-red-500 font-bold text-sm">{`PROFIT : ${computeTotal('profit')}`}</span>}
         ></Column>
       </DataTable>
       <Paginator
