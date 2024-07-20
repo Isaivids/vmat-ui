@@ -101,7 +101,7 @@ const TransportAdvance = () => {
         rowData.transporterpaidadvanceamount
       ),
       modeofpayment: rowData.modeofpayment,
-      dateofadvancepayment: getFormattedDate(rowData.paymentreceiveddate),
+      dateofadvancepayment: getFormattedDate(rowData.dateofadvancepayment),
       remarks: rowData.remarks,
       extraloadingwagespaidbydriver: Number(
         rowData.extraloadingwagespaidbydriver
