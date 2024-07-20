@@ -47,8 +47,8 @@ const TransportAdvance = () => {
         const updatedRow = { ...row, [field]: value };
         updatedRow.transporterpaidadvanceamount =
           Number(updatedRow.ats.transadv)
-          - Number(updatedRow.tdstta) -
-          Number(updatedRow.ats.loadingwages) +
+          - Math.abs(Number(updatedRow.tdstta)) +
+          Number(updatedRow.loadingwages) +
             Number(updatedRow.extraloadingwagespaidbydriver);
         return updatedRow;
       }
@@ -106,6 +106,7 @@ const TransportAdvance = () => {
       extraloadingwagespaidbydriver: Number(
         rowData.extraloadingwagespaidbydriver
       ),
+      loadingwages : Number(rowData.loadingwages),
       rtgsnumber: rowData.rtgsnumber,
       tdstta: Number(rowData.tdstta),
       _id: rowData._id,
@@ -328,7 +329,7 @@ const TransportAdvance = () => {
           header="TDS deduction 1%"
           body={renderInput}
         ></Column>
-        <Column field="ats.loadingwages" header="Loading Wages"></Column>
+        <Column field="loadingwages" body={renderInput} header="Loading Wages"></Column>
         <Column
           field="extraloadingwagespaidbydriver"
           header="Extra loading wages paid by driver"

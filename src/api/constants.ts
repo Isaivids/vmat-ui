@@ -65,7 +65,7 @@ export const messages = {
       color: "yellowMenu"
     },
     {
-      name: "By To Pay Advance",
+      name: "Transporter To Pay Advance",
       to: "/topay",
       image: require("../assets/ico5.svg").default,
       color: "whitemenu"
