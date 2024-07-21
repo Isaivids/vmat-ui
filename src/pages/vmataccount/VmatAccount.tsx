@@ -22,15 +22,15 @@ const VmatAccount = () => {
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
   //pagination
-  // const [first, setFirst] = useState(0);
-  // const [rows, setRows] = useState(10);
-  // const [totalPage, setTotalPage] = useState(0);
-  // const [page, setPage] = useState(0);
-  // const onPageChange = (event: any) => {
-  //   setPage(event.page);
-  //   setFirst(event.first);
-  //   setRows(event.rows);
-  // };
+  const [first, setFirst] = useState(0);
+  const [rows, setRows] = useState(10);
+  const [totalPage, setTotalPage] = useState(0);
+  const [page, setPage] = useState(0);
+  const onPageChange = (event: any) => {
+    setPage(event.page);
+    setFirst(event.first);
+    setRows(event.rows);
+  };
 
   const onInputChange = (e: any, id: any, field: any) => {
     const { value } = e.target;
@@ -130,14 +130,14 @@ const VmatAccount = () => {
     try {
       const trcukData = await dispatch(
         getvmataccount({
-          // limit: rows,
-          // offset: page * rows,
+          limit: rows,
+          offset: page * rows,
           search: searchQuery,
         })
       );
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
         setData(trcukData.payload.data);
-        // setTotalPage(trcukData.payload.pagination.totalDocuments);
+        setTotalPage(trcukData.payload.pagination.totalDocuments);
       }
       if (trcukData.payload.error) {
         toast.current?.show({
@@ -155,7 +155,7 @@ const VmatAccount = () => {
         life: 3000,
       });
     }
-  }, [dispatch, searchQuery]);
+  }, [dispatch, page, rows, searchQuery]);
 
   useEffect(() => {
     const fetchDataAndLog = async () => {
@@ -223,12 +223,12 @@ const VmatAccount = () => {
           }
         ></Column>
       </DataTable>
-      {/* <Paginator
+      <Paginator
         first={first}
         rows={rows}
         totalRecords={totalPage}
         onPageChange={onPageChange}
-      /> */}
+      />
     </div>
   );
 };

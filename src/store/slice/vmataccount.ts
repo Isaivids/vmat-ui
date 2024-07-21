@@ -13,7 +13,7 @@ const initialState = {
 }
 
 export const getvmataccount = createAsyncThunk('getvmataccount', async (payload:any) => {
-    const response:any = await apiCall.get(`/getvmataccount?search=${payload.search.query}&fromDate=${payload.search.fromDate}&toDate=${payload.search.toDate}`);
+    const response:any = await apiCall.get(`/getvmataccount?search=${payload.search.query}&fromDate=${payload.search.fromDate}&toDate=${payload.search.toDate}&limit=${payload.limit}&offset=${payload.offset}`);    
     if (response.error) {
         throw new Error("Error message");
     }

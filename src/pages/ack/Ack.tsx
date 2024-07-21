@@ -447,7 +447,7 @@ const Ack = () => {
         <Column field="ats.lateday" header="Late Delivery"></Column>
         <Column field="ats.halting" header="Halting"></Column>
         <Column field="remark" header="Remark" body={renderInput}></Column>
-        <Column field="expense" header="Two Pay Expense" body={renderInput}></Column>
+        <Column field="expense" header="Unloading Wages" body={renderInput}></Column>
         <Column
           field="podcharge"
           header="POD Charge"

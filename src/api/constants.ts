@@ -161,6 +161,7 @@ export const getTCPDoc = () => {
     { field: "others", header: "Others" },
     { field: "remarks", header: "Remarks" },
     { field: "total", header: "Total" },
+    { field: "rtgsnumber", header: "RTGS Number" },
   ];
 }
 
@@ -187,7 +188,7 @@ export const getCCPTODetails = () => {
     { field: "totalcrossing", header: "Total Crossing" },
     { field: "ack.expense", header: "Expense" },
     { field: "pending", header: "Pending" },
-    { field: "rtgsnumber", header: "RTGS Number" },
+    // { field: "rtgsnumber", header: "RTGS Number" },
   ];
 };
 
