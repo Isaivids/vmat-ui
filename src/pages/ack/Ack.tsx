@@ -23,6 +23,7 @@ const Ack = () => {
   const toast = useRef<Toast>(null);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const userDetails = useSelector((state: any) => state.user);
+  const [rowColor, setRowColor]:any = useState([])
   // chekcbox
   const [showPending, setShowPending] = useState(true);
   const [showCompleted, setShowCompleted] = useState(true);
@@ -93,7 +94,7 @@ const Ack = () => {
       updatedRow.finaltotaltotruckowner =
         Number(updatedRow.ats.transbln) - Number(updatedRow.tdsack) +
         Number(updatedRow.expense) -
-        Number(updatedRow.podcharge);
+        Number(updatedRow.podcharge)  - Math.abs(updatedRow.lateday) + Number(updatedRow.halting)
     } else {
       updatedRow.pendingamountfromtruckowner = 0;
       // updatedRow.pendingamountfromtruckowner = Number(updatedRow.ats.truckbln) + (Number(addThree) + Number(expense) + Number(halting));
@@ -101,7 +102,7 @@ const Ack = () => {
         updatedRow.ats.truckbln -
         Number(updatedRow.tdsack) - 
         Number(addThree) -
-        Number(updatedRow.podcharge);
+        Number(updatedRow.podcharge) - Math.abs(updatedRow.ats.lateday) + Number(updatedRow.ats.halting)
     }
     return updatedRow;
   };
@@ -111,7 +112,7 @@ const Ack = () => {
     const newData: any = data.map((row: any) => {
       if (row._id === id) {
         const updatedRow = { ...row, [field]: value };
-        if(field === 'rtgsnumber'){
+        if(['rtgsnumber','remark'].includes(field)){
           return updatedRow;
         }
         return calculateUpdatedRow(updatedRow);
@@ -173,6 +174,7 @@ const Ack = () => {
       tdsack: Number(rowData.tdsack),
       _id: rowData._id,
       ats: rowData.ats,
+      remark : rowData.remark
     };
     try {
       const response = await dispatch(updateAck(payload));
@@ -180,6 +182,13 @@ const Ack = () => {
         const index = data.findIndex((item: any) => item._id === rowData._id);
         if (index !== -1) {
           data[index]._id = response.payload.data._id;
+          const updatedRowColor = rowColor.map((item: any) => {
+            if (item._id === rowData._id) {
+              return { ...item, modeofpayment: response.payload.data.modeofpayment };
+            }
+            return item;
+          });   
+          setRowColor(updatedRowColor);
         }
         setSelectedRowId(null);
         toast.current?.show({
@@ -280,6 +289,7 @@ const Ack = () => {
       );
       if (Array.isArray(ackdata.payload.data) && !ackdata.payload.error) {
         setData(ackdata.payload.data);
+        setRowColor(ackdata.payload.data);
         setTotalPage(ackdata.payload.pagination.totalDocuments);
       }
     } catch (error) {
@@ -300,7 +310,8 @@ const Ack = () => {
   }, [fetchData]);
 
   const rowClassName = (rowData: any) => {
-    if (["PENDING", "", null, undefined].includes(rowData.modeofpayment)) {
+    const color:any = rowColor.filter((x:any) => x._id === rowData._id);
+    if (["PENDING", "", null, undefined].includes(color[0].modeofpayment)) {
       return "red";
     }
     return "green";
@@ -430,6 +441,7 @@ const Ack = () => {
         ></Column>
         <Column field="ats.lateday" header="Late Delivery"></Column>
         <Column field="ats.halting" header="Halting"></Column>
+        <Column field="remark" header="Remark" body={renderInput}></Column>
         <Column field="expense" header="Two Pay Expense" body={renderInput}></Column>
         <Column
           field="podcharge"

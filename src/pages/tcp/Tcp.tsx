@@ -35,6 +35,7 @@ const Tcp = () => {
   const [rows, setRows] = useState(10);
   const [totalPage, setTotalPage] = useState(0);
   const [page, setPage] = useState(0);
+  const [rowColor, setRowColor]:any = useState([])
   const onPageChange = (event: any) => {
     setPage(event.page);
     setFirst(event.first);
@@ -113,6 +114,13 @@ const Tcp = () => {
         const index = data.findIndex((item: any) => item._id === rowData._id);
         if (index !== -1) {
           data[index]._id = response.payload.data._id;
+          const updatedRowColor = rowColor.map((item: any) => {
+            if (item._id === rowData._id) {
+              return { ...item, modeofpayment: response.payload.data.modeofpayment };
+            }
+            return item;
+          });   
+          setRowColor(updatedRowColor);
         }
         setSelectedRowId(null);
         toast.current?.show({
@@ -200,6 +208,7 @@ const Tcp = () => {
       );
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
         setData(trcukData.payload.data);
+        setRowColor(trcukData.payload.data);
         setTotalPage(trcukData.payload.pagination.totalDocuments);
       }
     } catch (error) {
@@ -220,7 +229,8 @@ const Tcp = () => {
   }, [fetchData]);
 
   const rowClassName = (rowData: any) => {
-    if (["PENDING"].includes(rowData.modeofpayment)) {
+    const color:any = rowColor.filter((x:any) => x._id === rowData._id);
+    if (["PENDING"].includes(color[0].modeofpayment)) {
       return "red";
     }
     return "green";

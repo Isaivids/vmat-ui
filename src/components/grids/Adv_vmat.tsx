@@ -28,7 +28,7 @@ const AdvVmat = () => {
   const [showCompleted, setShowCompleted] = useState(true);
   const [filteredData, setFilteredData]: any = useState([]);
   const userDetails = useSelector((state: any) => state.user);
-
+  const [rowColor, setRowColor]:any = useState([])
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
@@ -91,6 +91,13 @@ const AdvVmat = () => {
         const index = data.findIndex((item: any) => item._id === rowData._id);
         if (index !== -1) {
           data[index]._id = response.payload.data._id;
+          const updatedRowColor = rowColor.map((item: any) => {
+            if (item._id === rowData._id) {
+              return { ...item, modeofpayment: response.payload.data.modeofpayment };
+            }
+            return item;
+          });   
+          setRowColor(updatedRowColor);
         }
         setSelectedRowId(null);
         toast.current?.show({
@@ -192,6 +199,7 @@ const AdvVmat = () => {
       );
       if (trcukData.payload.data.length && !trcukData.payload.error) {
         setData(trcukData.payload.data);
+        setRowColor(trcukData.payload.data);
         setTotalPage(trcukData.payload.pagination.totalDocuments);
       }
     } catch (error) {
@@ -212,7 +220,8 @@ const AdvVmat = () => {
   }, [fetchData]);
 
   const rowClassName = (rowData: any) => {
-    if ([null, "", undefined, "PENDING"].includes(rowData.modeofpayment)) {
+    const color:any = rowColor.filter((x:any) => x._id === rowData._id);
+    if ([null, "", undefined, "PENDING"].includes(color[0].modeofpayment)) {
       return "red";
     }
     return "green";

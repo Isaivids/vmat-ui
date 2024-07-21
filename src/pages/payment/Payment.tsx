@@ -27,6 +27,7 @@ const Payment = () => {
   const [backupData, setBackupData]: any = useState(null);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const userDetails = useSelector((state: any) => state.user);
+  const [rowColor, setRowColor]:any = useState([])
   // chekcbox
   const [showPending, setShowPending] = useState(true);
   const [showCompleted, setShowCompleted] = useState(true);
@@ -142,6 +143,13 @@ const Payment = () => {
         const index = data.findIndex((item: any) => item._id === rowData._id);
         if (index !== -1) {
           data[index]._id = response.payload.data._id;
+          const updatedRowColor = rowColor.map((item: any) => {
+            if (item._id === rowData._id) {
+              return { ...item, modeofpayment: response.payload.data.modeofpayment };
+            }
+            return item;
+          });   
+          setRowColor(updatedRowColor);
         }
         setSelectedRowId(null);
         toast.current?.show({
@@ -235,6 +243,7 @@ const Payment = () => {
       );
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
         setData(trcukData.payload.data);
+        setRowColor(trcukData.payload.data);
         setTotalPage(trcukData.payload.pagination.totalDocuments);
       }
     } catch (error) {
@@ -255,10 +264,8 @@ const Payment = () => {
   }, [fetchData]);
 
   const rowClassName = (rowData: any) => {
-    if (
-      [null, "", undefined].includes(rowData.paymentreceiveddate) ||
-      [null, "", undefined].includes(rowData.modeofpayment)
-    ) {
+    const color:any = rowColor.filter((x:any) => x._id === rowData._id);
+    if (["PENDING", "", null, undefined].includes(color[0].modeofpayment)) {
       return "red";
     }
     return "green";
