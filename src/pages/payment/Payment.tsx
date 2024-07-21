@@ -265,10 +265,12 @@ const Payment = () => {
 
   const rowClassName = (rowData: any) => {
     const color:any = rowColor.filter((x:any) => x._id === rowData._id);
-    if (["PENDING", "", null, undefined].includes(color[0].modeofpayment)) {
-      return "red";
+    if(color.length){
+      if (["PENDING", "", null, undefined].includes(color[0].modeofpayment)) {
+        return "red";
+      }
+      return "green";
     }
-    return "green";
   };
 
   useEffect(() => {

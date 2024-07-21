@@ -230,10 +230,12 @@ const Tcp = () => {
 
   const rowClassName = (rowData: any) => {
     const color:any = rowColor.filter((x:any) => x._id === rowData._id);
-    if (["PENDING"].includes(color[0].modeofpayment)) {
-      return "red";
+    if(color.length){
+      if (["PENDING"].includes(color[0].modeofpayment)) {
+        return "red";
+      }
+      return "green";
     }
-    return "green";
   };
 
   useEffect(() => {

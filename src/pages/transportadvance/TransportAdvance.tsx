@@ -241,10 +241,12 @@ const TransportAdvance = () => {
 
   const rowClassName = (rowData: any) => {
     const color:any = rowColor.filter((x:any) => x._id === rowData._id);
-    if ([null, "", undefined,'PENDING'].includes(color[0].modeofpayment)) {
-      return "red";
+    if(color.length){
+      if ([null, "", undefined,'PENDING'].includes(color[0].modeofpayment)) {
+        return "red";
+      }
+      return "green";
     }
-    return "green";
   };
 
   useEffect(() => {

@@ -78,6 +78,9 @@ const Ack = () => {
         addThree += updatedRow.transcrossing;
       }
     } else {
+      if([2].includes(updatedRow.ats.modeofadvance)){
+        addThree = updatedRow.vmatcommision;
+      }
       if (updatedRow.hidetc) {
         addThree += 0;
       }
@@ -311,10 +314,12 @@ const Ack = () => {
 
   const rowClassName = (rowData: any) => {
     const color:any = rowColor.filter((x:any) => x._id === rowData._id);
-    if (["PENDING", "", null, undefined].includes(color[0].modeofpayment)) {
-      return "red";
+    if(color.length){
+      if (["PENDING", "", null, undefined].includes(color[0].modeofpayment)) {
+        return "red";
+      }
+      return "green";
     }
-    return "green";
   };
 
   useEffect(() => {
