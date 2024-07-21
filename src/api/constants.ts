@@ -112,6 +112,12 @@ export const messages = {
       image: require("../assets/ico3.svg").default,
       color: "whitemenu"
     },
+    {
+      name: "Courier Details",
+      to: "/courierdetails",
+      image: require("../assets/ico3.svg").default,
+      color: "whitemenu"
+    },
   ],
   menuListVmat: {
     name: "VMAT Account",

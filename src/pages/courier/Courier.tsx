@@ -13,8 +13,9 @@ import { Button } from "primereact/button";
 import { deletebankdetails, getbankdetail, updatebankdetail } from "../../store/slice/bankSlice";
 import { InputTextarea } from "primereact/inputtextarea";
 import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
+import { deletecourierdetails, getcourierdetail, updatecourierdetails } from "../../store/slice/courierSlice";
 
-const BankDetails = () => {
+const Courier = () => {
   const searchQuery = useSelector((state: any) => state.search);
   const toast = useRef<Toast>(null);
   const dispatch = useDispatch<AppDispatch>();
@@ -74,7 +75,7 @@ const BankDetails = () => {
   };
 
   const renderInput = (rowData: any, field: any) => {
-    const stringFields = ['transportbranches','rtgsnumber'].includes(field.field)
+    const stringFields = ['remarks','couriersendingname','courierdetail'].includes(field.field)
     return (
       <InputText
         disabled={rowData._id !== selectedRowId}
@@ -122,16 +123,18 @@ const BankDetails = () => {
   };
 
   const handleSave = async (rowData: any) => {
+    console.log(rowData)
     const payload = {
-      paymentdate: getFormattedDate(rowData.paymentdate),
-      advanceamount: Number(rowData.advanceamount),
-      balanceamount: Number(rowData.balanceamount),
-      transportbranches: rowData.transportbranches,
-      rtgsnumber: rowData.rtgsnumber,
+      couriersendingname: rowData.couriersendingname,
+      courierdetail: rowData.courierdetail,
+      debitamount: Number(rowData.debitamount),
+      creditamount: Number(rowData.creditamount),
+      remarks: rowData.remarks,
+      date : getFormattedDate(rowData.date),
       _id: rowData._id,
     };
     try {
-        const response = await dispatch(updatebankdetail(payload));
+        const response = await dispatch(updatecourierdetails(payload));
         if (!response.payload.error) {
           const index = data.findIndex((item: any) => item._id === rowData._id);
           if (index !== -1) {
@@ -172,7 +175,7 @@ const BankDetails = () => {
 
   const accept = async(id:any) => {
     try {
-      const response = await dispatch(deletebankdetails(id));
+      const response = await dispatch(deletecourierdetails(id));
       if(response.payload.error === false){
         toast.current?.show({
           severity: "info",
@@ -221,20 +224,35 @@ const BankDetails = () => {
   const handleAddNewRow = () => {
     const newRow = {
       _id: new Date(),
-      paymentdate: "",
-      advanceamount: 0,
-      balanceamount: 0,
-      transportbranches: "",
-      rtgsnumber: "",
+      couriersendingname: "",
+      courierdetail: "",
+      remarks: "",
+      debitamount: 0,
+      creditamount: 0,
+      date: '',
     };
     setData([newRow, ...data]);
     setSelectedRowId(newRow._id);
   };
 
+    // Compute totals for each column
+    const computeTotal = (field:any) => {
+      return data
+        .reduce((acc:any, item:any) => acc + (Number(item[field]) || 0), 0)
+        .toFixed(2);
+    };
+    
+    const calculateNetTotal = () => {
+      const totalCredit = parseFloat(computeTotal('creditamount'));
+      const totalDebit = parseFloat(computeTotal('debitamount'));
+      const netTotal = totalCredit - totalDebit;
+      return netTotal.toFixed(2);
+    };
+
   const fetchData = useCallback(async () => {
     try {
       const trcukData = await dispatch(
-        getbankdetail({ limit: rows, offset: page * rows, search: searchQuery })
+        getcourierdetail({ limit: rows, offset: page * rows, search: searchQuery })
       );
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
         setData(trcukData.payload.data);
@@ -269,28 +287,35 @@ const BankDetails = () => {
       />
       <DataTable value={data} showGridlines scrollable scrollHeight="80vh">
         <Column
-          field="paymentdate"
-          header="Payment Date"
+          field="date"
+          header="Date"
           body={renderDatePicker}
         ></Column>
         <Column
-          field="advanceamount"
-          header="Advance Amount"
+          field="couriersendingname"
+          header="Courier Sending Name"
           body={renderInput}
         ></Column>
         <Column
-          field="balanceamount"
-          header="Balance Amount"
-          body={renderInput}
+          field="courierdetail"
+          header="Courier Name & Number"
+          body={renderTextarea}
+          style={{minWidth : '200px'}}
         ></Column>
         <Column
-          field="transportbranches"
-          header="Transport Branches"
+          field="remarks"
+          header="Remarks"
           body={renderTextarea}
         ></Column>
         <Column
-          field="rtgsnumber"
-          header="RTGS Number"
+          field="debitamount"
+          header="Debit Amount"
+          body={renderInput}
+          footer={`Balance : ${calculateNetTotal()}`}
+        ></Column>
+        <Column
+          field="creditamount"
+          header="Credit Amount"
           body={renderInput}
         ></Column>
         <Column
@@ -310,4 +335,4 @@ const BankDetails = () => {
   );
 };
 
-export default BankDetails;
+export default Courier;
