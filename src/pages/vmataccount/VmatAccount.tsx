@@ -12,6 +12,7 @@ import {
   updatevmataccount,
 } from "../../store/slice/vmataccount";
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
+import { setSearchQuery } from "../../store/slice/searchSlice";
 
 const VmatAccount = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -21,25 +22,25 @@ const VmatAccount = () => {
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
   //pagination
-  const [first, setFirst] = useState(0);
-  const [rows, setRows] = useState(10);
-  const [totalPage, setTotalPage] = useState(0);
-  const [page, setPage] = useState(0);
-  const onPageChange = (event: any) => {
-    setPage(event.page);
-    setFirst(event.first);
-    setRows(event.rows);
-  };
+  // const [first, setFirst] = useState(0);
+  // const [rows, setRows] = useState(10);
+  // const [totalPage, setTotalPage] = useState(0);
+  // const [page, setPage] = useState(0);
+  // const onPageChange = (event: any) => {
+  //   setPage(event.page);
+  //   setFirst(event.first);
+  //   setRows(event.rows);
+  // };
 
   const onInputChange = (e: any, id: any, field: any) => {
     const { value } = e.target;
     const newData: any = data.map((row: any) => {
       if (row._id === id) {
-        if(field === 'vmatexpense'){
+        if (field === "vmatexpense") {
           const updatedRow = { ...row, [field]: value };
           const result = updatedRow.vmatcrossing + updatedRow.vmatcommision;
           updatedRow.income = result;
-          updatedRow.profit = result - Number(updatedRow.vmatexpense)
+          updatedRow.profit = result - Number(updatedRow.vmatexpense);
           return updatedRow;
         }
       }
@@ -119,9 +120,9 @@ const VmatAccount = () => {
     setSelectedRowId(null);
   };
   // Compute totals for each column
-  const computeTotal = (field:any) => {
+  const computeTotal = (field: any) => {
     return data
-      .reduce((acc:any, item:any) => acc + (parseFloat(item[field]) || 0), 0)
+      .reduce((acc: any, item: any) => acc + (parseFloat(item[field]) || 0), 0)
       .toFixed(2);
   };
 
@@ -129,14 +130,14 @@ const VmatAccount = () => {
     try {
       const trcukData = await dispatch(
         getvmataccount({
-          limit: rows,
-          offset: page * rows,
+          // limit: rows,
+          // offset: page * rows,
           search: searchQuery,
         })
       );
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
         setData(trcukData.payload.data);
-        setTotalPage(trcukData.payload.pagination.totalDocuments);
+        // setTotalPage(trcukData.payload.pagination.totalDocuments);
       }
       if (trcukData.payload.error) {
         toast.current?.show({
@@ -154,14 +155,16 @@ const VmatAccount = () => {
         life: 3000,
       });
     }
-  }, [dispatch, page, rows, searchQuery]);
+  }, [dispatch, searchQuery]);
 
   useEffect(() => {
     const fetchDataAndLog = async () => {
+      // await setMonths()
       await fetchData();
     };
     fetchDataAndLog();
   }, [fetchData]);
+
 
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
@@ -175,42 +178,57 @@ const VmatAccount = () => {
         <Column
           field="ats.date"
           header="Date"
-          body={(rowData:any) => formatDate(rowData.ats.date)}
+          body={(rowData: any) => formatDate(rowData.ats.date)}
           style={{ minWidth: "100px" }}
         ></Column>
         <Column field="ats.transname" header="Transport Name"></Column>
         <Column field="ats.trucknumber" header="Truck Number"></Column>
-        <Column field="vmatcommision" header="VMAT Commission" footer={`${computeTotal('vmatcommision')}`}></Column>
-        <Column field="vmatcrossing" header="VMAT Crossing" footer={`${computeTotal('vmatcrossing')}`}></Column>
+        <Column
+          field="vmatcommision"
+          header="VMAT Commission"
+          footer={`${computeTotal("vmatcommision")}`}
+        ></Column>
+        <Column
+          field="vmatcrossing"
+          header="VMAT Crossing"
+          footer={`${computeTotal("vmatcrossing")}`}
+        ></Column>
         <Column
           field="tdsdeduction"
           header="TDS Deduction"
           // body={renderInput}
-          footer={`${computeTotal('tdsdeduction')}`}
+          footer={`${computeTotal("tdsdeduction")}`}
         ></Column>
         <Column
           field="vmatexpense"
           header="Vmat Expense"
           body={renderInput}
-          footer={`${computeTotal('vmatexpense')}`}
+          footer={`${computeTotal("vmatexpense")}`}
         ></Column>
         <Column field="reason" header="Reason" body={renderInput}></Column>
-        <Column field="income" header="VMAT Income" footer={`${computeTotal('income')}`}></Column>
+        <Column
+          field="income"
+          header="VMAT Income"
+          footer={`${computeTotal("income")}`}
+        ></Column>
         {/* <Column field="profit" header="VMAT Profit"></Column> */}
         <Column
           header="Actions"
           body={renderButton}
           style={{ minWidth: "200px", right: "0", position: "sticky" }}
-          footer={<span className="text-red-500 font-bold text-sm">{`PROFIT : ${computeTotal('profit')}`}</span>}
+          footer={
+            <span className="text-red-500 font-bold text-sm">{`PROFIT : ${computeTotal(
+              "profit"
+            )}`}</span>
+          }
         ></Column>
       </DataTable>
-      <Paginator
+      {/* <Paginator
         first={first}
         rows={rows}
         totalRecords={totalPage}
         onPageChange={onPageChange}
-        rowsPerPageOptions={[10, 20, 30]}
-      />
+      /> */}
     </div>
   );
 };
