@@ -96,7 +96,7 @@ const Ack = () => {
       updatedRow.finaltotaltotruckowner =
         Number(updatedRow.ats.transbln) - Number(updatedRow.tdsack) +
         Number(updatedRow.expense) -
-        Number(updatedRow.podcharge)  - Math.abs(updatedRow.lateday) + Number(updatedRow.halting)
+        Number(updatedRow.podcharge)  - Math.abs(updatedRow.ats.lateday) + Number(updatedRow.ats.halting);
     } else {
       updatedRow.pendingamountfromtruckowner = 0;
       // updatedRow.pendingamountfromtruckowner = Number(updatedRow.ats.truckbln) + (Number(addThree) + Number(expense) + Number(halting));
@@ -104,7 +104,7 @@ const Ack = () => {
         updatedRow.ats.truckbln -
         Number(updatedRow.tdsack) - 
         Number(addThree) -
-        Number(updatedRow.podcharge) - Math.abs(updatedRow.ats.lateday) + Number(updatedRow.ats.halting)
+        Number(updatedRow.podcharge) - Math.abs(updatedRow.ats.lateday) + Number(updatedRow.ats.halting) + Number(updatedRow.expense)
     }
     return updatedRow;
   };
