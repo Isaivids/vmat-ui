@@ -13,6 +13,7 @@ import {
   updatevmataccount,
 } from "../../store/slice/vmataccount";
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
+import { InputTextarea } from "primereact/inputtextarea";
 
 const VmatAccount = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -31,6 +32,34 @@ const VmatAccount = () => {
     setPage(event.page);
     setFirst(event.first);
     setRows(event.rows);
+  };
+
+  const onInputChange2 = (e: any, id: any, field: any) => {
+    const { value } = e.target;
+    const newData: any = data.map((row: any) => {
+      if (row._id === id) {
+        return { ...row, [field]: value };
+      }
+      return row;
+    });
+    setData(newData);
+  };
+
+  const renderInput2 = (rowData: any, field: any) => {
+    return (
+      <>
+        {rowData._id !== selectedRowId ? <span>{rowData[field.field] || ''}</span> : 
+          <InputTextarea
+            disabled={rowData._id !== selectedRowId}
+            value={rowData[field.field] || ''}
+            onChange={(e) => onInputChange2(e, rowData._id, field.field)}
+            rows={1} 
+            cols={27}
+            autoResize
+          />
+        }
+      </>
+    );
   };
 
   const onInputChange = (e: any, id: any, field: any) => {
@@ -55,7 +84,7 @@ const VmatAccount = () => {
     return (
       <InputText
         disabled={rowData._id !== selectedRowId}
-        value={rowData[field.field]}
+        value={rowData[field.field] || ''}
         onChange={(e) => onInputChange(e, rowData._id, field.field)}
         keyfilter={isStringField ? undefined : "num"}
       />
@@ -232,7 +261,7 @@ const VmatAccount = () => {
           body={renderInput}
           footer={totals?.totalVmatExpense || 0}
         ></Column>
-        <Column field="reason" header="Reason" body={renderInput}></Column>
+        <Column field="reason" header="Reason" body={renderInput2}></Column>
         <Column
           field="income"
           header="VMAT Income"

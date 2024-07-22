@@ -29,7 +29,7 @@ const CommonDatePicker: React.FC<CommonDatePickerProps> = ({
   const getLastMonthDate = () => {
     const today = new Date();
     const lastMonth = new Date(today);
-    lastMonth.setMonth(today.getMonth() - 1);
+    lastMonth.setMonth(today.getMonth() - 2);
     if (today.getDate() > new Date(today.getFullYear(), today.getMonth(), 0).getDate()) {
       lastMonth.setDate(new Date(today.getFullYear(), today.getMonth(), 0).getDate());
     } else {
