@@ -26,7 +26,6 @@ const Tcp = () => {
   // chekcbox
   const [showPending, setShowPending] = useState(true);
   const [showCompleted, setShowCompleted] = useState(true);
-  const [filteredData, setFilteredData]: any = useState([]);
   //seection
   const [selectedProducts, setSelectedProducts] = useState([]);
   //eo selection
@@ -201,10 +200,23 @@ const Tcp = () => {
     });
     setData(newData);
   };
+
+  const getType = useCallback(() => {
+    if (showPending && showCompleted) {
+        return 3;
+    } else if (showCompleted) {
+        return 2;
+    } else if (showPending) {
+        return 1;
+    } else {
+        return 0;
+    }
+  }, [showCompleted, showPending]);
+
   const fetchData = useCallback(async () => {
     try {
       const trcukData = await dispatch(
-        gettcp({ limit: rows, offset: page * rows, search: searchQuery })
+        gettcp({ limit: rows, offset: page * rows, search: searchQuery, ftype : getType()})
       );
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
         setData(trcukData.payload.data);
@@ -219,7 +231,7 @@ const Tcp = () => {
         life: 3000,
       });
     }
-  }, [dispatch, page, rows, searchQuery]);
+  }, [dispatch, getType, page, rows, searchQuery]);
 
   useEffect(() => {
     const fetchDataAndLog = async () => {
@@ -238,49 +250,13 @@ const Tcp = () => {
     }
   };
 
-  useEffect(() => {
-    filterDataFunction(data, showPending, showCompleted);
-  }, [data, showPending, showCompleted]);
-
-  const filterDataFunction = (
-    data: any,
-    showPending: boolean,
-    showCompleted: boolean
-  ) => {
-    const filtered = data.filter((row: any) => {
-      if (
-        showPending &&
-        [null, "", undefined, "PENDING"].includes(row.modeofpayment)
-      ) {
-        return true;
-      }
-      if (
-        showCompleted &&
-        ![null, "", undefined, "PENDING"].includes(row.modeofpayment)
-      ) {
-        return true;
-      }
-      return false;
-    });
-    setFilteredData(filtered);
-  };
-
   const handleCheckboxChange = (e: any) => {
     const { name, checked } = e.target;
     if (name === "pending") {
       setShowPending(checked);
-      filterDataFunction(data, checked, showCompleted);
     } else if (name === "completed") {
       setShowCompleted(checked);
-      filterDataFunction(data, showPending, checked);
     }
-  };
-
-  // Compute totals for each column
-  const computeTotal = (field:any) => {
-    return data
-      .reduce((acc:any, item:any) => acc + (parseFloat(item[field]) || 0), 0)
-      .toFixed(2);
   };
 
   return (
@@ -321,7 +297,7 @@ const Tcp = () => {
       </div>
       <DataTable
         rowClassName={rowClassName}
-        value={filteredData}
+        value={data}
         showGridlines
         scrollable
         scrollHeight="70vh"
@@ -342,7 +318,7 @@ const Tcp = () => {
         <Column field="transcrossing" header="Trans Crossing"></Column>
         <Column field="others" body={renderInput} header="Others"></Column>
         <Column field="remarks" body={renderInput} header="Remarks"></Column>
-        <Column field="total" header="Total" footer={`${computeTotal('total')}`}></Column>
+        <Column field="total" header="Total"></Column>
         <Column
           field="paymentReceivedDate"
           header="Payment Received Date"

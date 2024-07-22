@@ -84,7 +84,7 @@ const TransportReceipt = ({ data }: any) => {
             <p className="bold">
               Owner: 94421-20580
               <br />
-              9097905456
+              9087905456
             </p>
             <p className="bold">Staff: 8089056888</p>
           </div>

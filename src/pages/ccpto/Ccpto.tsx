@@ -28,7 +28,6 @@ const Ccpto = () => {
   // chekcbox
   const [showPending, setShowPending] = useState(true);
   const [showCompleted, setShowCompleted] = useState(true);
-  const [filteredData, setFilteredData]: any = useState([]);
   //seection
   const [selectedProducts, setSelectedProducts] = useState([]);
   //pagination
@@ -191,10 +190,23 @@ const Ccpto = () => {
     );
   };
 
+  const getType = useCallback(() => {
+    if (showPending && showCompleted) {
+        return 3;
+    } else if (showCompleted) {
+        return 2;
+    } else if (showPending) {
+        return 1;
+    } else {
+        return 0;
+    }
+}, [showCompleted, showPending]);
+
+
   const fetchData = useCallback(async () => {
     try {
       const trcukData = await dispatch(
-        getccpto({ limit: rows, offset: page * rows, search: searchQuery })
+        getccpto({ limit: rows, offset: page * rows, search: searchQuery,ftype : getType() })
       );
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
         setData(trcukData.payload.data);
@@ -209,7 +221,7 @@ const Ccpto = () => {
         life: 3000,
       });
     }
-  }, [dispatch, page, rows, searchQuery]);
+  }, [dispatch, getType, page, rows, searchQuery]);
 
   useEffect(() => {
     const fetchDataAndLog = async () => {
@@ -228,41 +240,12 @@ const Ccpto = () => {
     }
   };
 
-  useEffect(() => {
-    filterDataFunction(data, showPending, showCompleted);
-  }, [data, showPending, showCompleted]);
-
-  const filterDataFunction = (
-    data: any,
-    showPending: boolean,
-    showCompleted: boolean
-  ) => {
-    const filtered = data.filter((row: any) => {
-      if (
-        showPending &&
-        [null, "", undefined, "PENDING"].includes(row.modeofpayment)
-      ) {
-        return true;
-      }
-      if (
-        showCompleted &&
-        ![null, "", undefined, "PENDING"].includes(row.modeofpayment)
-      ) {
-        return true;
-      }
-      return false;
-    });
-    setFilteredData(filtered);
-  };
-
   const handleCheckboxChange = (e: any) => {
     const { name, checked } = e.target;
     if (name === "pending") {
       setShowPending(checked);
-      filterDataFunction(data, checked, showCompleted);
     } else if (name === "completed") {
       setShowCompleted(checked);
-      filterDataFunction(data, showPending, checked);
     }
   };
 
@@ -303,7 +286,7 @@ const Ccpto = () => {
         </div>
       </div>
       <DataTable
-        value={filteredData}
+        value={data}
         showGridlines
         scrollable
         scrollHeight="80vh"

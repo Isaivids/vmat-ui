@@ -5,11 +5,13 @@ export interface State {
     body: any,
     loading: boolean,
     error: boolean,
+    tLoading : boolean
 }
 const initialState = {
     body: [],
     loading: false,
     error: false,
+    tLoading : false
 }
 
 export const getvmataccount = createAsyncThunk('getvmataccount', async (payload:any) => {
@@ -22,6 +24,14 @@ export const getvmataccount = createAsyncThunk('getvmataccount', async (payload:
 
 export const updatevmataccount = createAsyncThunk('updatevmataccount', async (payload:any) => {
     const response:any = await apiCall.put(`/updatevmataccount`,payload);
+    if (response.error) {
+        throw new Error("Error message");
+    }
+    return response.data;
+})
+
+export const getVmatAccountTotals = createAsyncThunk('getVmatAccountTotals', async (payload:any) => {
+    const response:any = await apiCall.get(`/getVmatAccountTotals?fromDate=${payload.search.fromDate}&toDate=${payload.search.toDate}&search=${payload.search.query}`);
     if (response.error) {
         throw new Error("Error message");
     }
@@ -50,6 +60,15 @@ const vmatAccountSLice = createSlice({
         })
         builder.addCase(updatevmataccount.rejected, (state) => {
             return { ...state, loading: false, error: true }
+        })
+        builder.addCase(getVmatAccountTotals.pending, (state, _payload) => {
+            return { ...state, tLoading: true }
+        })
+        builder.addCase(getVmatAccountTotals.fulfilled, (state, { payload }) => {
+            return { ...state, error: false, tLoading: false }
+        })
+        builder.addCase(getVmatAccountTotals.rejected, (state) => {
+            return { ...state, tLoading: false, error: true }
         })
     }
 })

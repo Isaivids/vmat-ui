@@ -13,7 +13,7 @@ const initialState = {
 }
 
 export const gettcp = createAsyncThunk('gettcp', async (payload:any) => {
-    const response:any = await apiCall.get(`/gettcp?limit=${payload.limit}&offset=${payload.offset}&search=${payload.search.query}&fromDate=${payload.search.fromDate}&toDate=${payload.search.toDate}`);
+    const response:any = await apiCall.get(`/gettcp?limit=${payload.limit}&offset=${payload.offset}&search=${payload.search.query}&fromDate=${payload.search.fromDate}&toDate=${payload.search.toDate}&ftype=${payload.ftype}`);
     if (response.error) {
         throw new Error("Error message");
     }

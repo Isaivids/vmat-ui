@@ -63,7 +63,7 @@ const App = () => {
             tcp.loading ||
             transportState.loading ||
             transportadvance.loading || bank.loading ||
-            vmat.loading || courier.loading) && <SpinnerWithLogo />}
+            vmat.loading || vmat.tLoading || courier.loading) && <SpinnerWithLogo />}
           <Routes>
             <Route element={<WithOutNavBar />}>
               <Route path="/" element={<Login />} />

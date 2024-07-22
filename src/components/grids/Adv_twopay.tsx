@@ -63,7 +63,7 @@ const AdvTwopay = () => {
         disabled={rowData._id !== selectedRowId}
         value={rowData[field.field]}
         onChange={(e) => onInputChange(e, rowData._id, field.field)}
-        keyfilter={field.field === "rtgsnumber" ? undefined : "num"}
+        keyfilter={["rtgsnumber","remarks"].includes(field.field) ? undefined : "num"}
       />
     );
   };
@@ -100,6 +100,7 @@ const AdvTwopay = () => {
       modeofpayment: rowData.modeofpayment,
       paymentreceiveddate: getFormattedDate(rowData.paymentreceiveddate),
       rtgsnumber: rowData.rtgsnumber,
+      remarks: rowData.remarks,
       _id: rowData._id,
     };
     try {
@@ -204,10 +205,22 @@ const AdvTwopay = () => {
     return mode ? mode.name : "";
   };
 
+  const getType = useCallback(() => {
+    if (showPending && showCompleted) {
+        return 3;
+    } else if (showCompleted) {
+        return 2;
+    } else if (showPending) {
+        return 1;
+    } else {
+        return 0;
+    }
+}, [showCompleted, showPending]);
+
   const fetchData = useCallback(async () => {
     try {
       const trcukData = await dispatch(
-        getbytwopay({ limit: rows, offset: page * rows, search: searchQuery })
+        getbytwopay({ limit: rows, offset: page * rows, search: searchQuery,ftype: getType() })
       );
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
         setData(trcukData.payload.data);
@@ -222,7 +235,7 @@ const AdvTwopay = () => {
         life: 3000,
       });
     }
-  }, [dispatch, page, rows, searchQuery]);
+  }, [dispatch, getType, page, rows, searchQuery]);
 
   useEffect(() => {
     const fetchDataAndLog = async () => {
@@ -239,9 +252,9 @@ const AdvTwopay = () => {
     return "green";
   };
 
-  useEffect(() => {
-    filterDataFunction(data, showPending, showCompleted);
-  }, [data, showPending, showCompleted]);
+  // useEffect(() => {
+  //   filterDataFunction(data, showPending, showCompleted);
+  // }, [data, showPending, showCompleted]);
 
   const filterDataFunction = (
     data: any,
@@ -270,10 +283,10 @@ const AdvTwopay = () => {
     const { name, checked } = e.target;
     if (name === "pending") {
       setShowPending(checked);
-      filterDataFunction(data, checked, showCompleted);
+      // filterDataFunction(data, checked, showCompleted);
     } else if (name === "completed") {
       setShowCompleted(checked);
-      filterDataFunction(data, showPending, checked);
+      // filterDataFunction(data, showPending, checked);
     }
   };
 
@@ -314,7 +327,7 @@ const AdvTwopay = () => {
         </div>
       </div>
       <DataTable
-        value={filteredData}
+        value={data}
         showGridlines
         scrollable
         scrollHeight="80vh"
@@ -353,6 +366,11 @@ const AdvTwopay = () => {
         <Column
           field="luxwages"
           header="Loading/Unloading Extra Wages"
+          body={renderInput}
+        ></Column>
+        <Column
+          field="remarks"
+          header="Remarks"
           body={renderInput}
         ></Column>
         <Column field="total" header="Advance Amount Paid to Truck"></Column>

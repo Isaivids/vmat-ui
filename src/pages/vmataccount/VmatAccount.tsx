@@ -9,10 +9,10 @@ import { formatDate, messages } from "../../api/constants";
 import { Toast } from "primereact/toast";
 import {
   getvmataccount,
+  getVmatAccountTotals,
   updatevmataccount,
 } from "../../store/slice/vmataccount";
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
-import { setSearchQuery } from "../../store/slice/searchSlice";
 
 const VmatAccount = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -21,6 +21,7 @@ const VmatAccount = () => {
   const [data, setData]: any = useState([]);
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
+  const [totals, setTotals]:any = useState()
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
@@ -120,10 +121,8 @@ const VmatAccount = () => {
     setSelectedRowId(null);
   };
   // Compute totals for each column
-  const computeTotal = (field: any) => {
-    return data
-      .reduce((acc: any, item: any) => acc + (parseFloat(item[field]) || 0), 0)
-      .toFixed(2);
+  const computeTotal = () => {
+    return Number(totals.totalIncome || 0) - Number(totals.totalVmatExpense || 0)
   };
 
   const fetchData = useCallback(async () => {
@@ -157,13 +156,41 @@ const VmatAccount = () => {
     }
   }, [dispatch, page, rows, searchQuery]);
 
+  const fetchTotals = useCallback(async () => {
+    try {
+      const trcukData = await dispatch(
+        getVmatAccountTotals({
+          search: searchQuery,
+        })
+      );
+      if (trcukData.payload.data && !trcukData.payload.error) {
+        setTotals(trcukData.payload.data);
+      }
+      if (trcukData.payload.error) {
+        toast.current?.show({
+          severity: "error",
+          summary: messages.error,
+          detail: trcukData.payload.message || messages.loadfailure,
+          life: 3000,
+        });
+      }
+    } catch (error) {
+      toast.current?.show({
+        severity: "error",
+        summary: messages.error,
+        detail: messages.loadfailure,
+        life: 3000,
+      });
+    }
+  }, [dispatch, searchQuery]);
+
   useEffect(() => {
     const fetchDataAndLog = async () => {
-      // await setMonths()
+      await fetchTotals()
       await fetchData();
     };
     fetchDataAndLog();
-  }, [fetchData]);
+  }, [fetchData, fetchTotals]);
 
 
   return (
@@ -186,30 +213,30 @@ const VmatAccount = () => {
         <Column
           field="vmatcommision"
           header="VMAT Commission"
-          footer={`${computeTotal("vmatcommision")}`}
+          footer={totals.totalVmatCommision || 0}
         ></Column>
         <Column
           field="vmatcrossing"
           header="VMAT Crossing"
-          footer={`${computeTotal("vmatcrossing")}`}
+          footer={totals.totalVmatCrossing || 0}
         ></Column>
         <Column
           field="tdsdeduction"
           header="TDS Deduction"
           // body={renderInput}
-          footer={`${computeTotal("tdsdeduction")}`}
+          footer={totals.totalTdsDeduction || 0}
         ></Column>
         <Column
           field="vmatexpense"
           header="Vmat Expense"
           body={renderInput}
-          footer={`${computeTotal("vmatexpense")}`}
+          footer={totals.totalVmatExpense || 0}
         ></Column>
         <Column field="reason" header="Reason" body={renderInput}></Column>
         <Column
           field="income"
           header="VMAT Income"
-          footer={`${computeTotal("income")}`}
+          footer={totals.totalIncome || 0}
         ></Column>
         {/* <Column field="profit" header="VMAT Profit"></Column> */}
         <Column
@@ -217,9 +244,7 @@ const VmatAccount = () => {
           body={renderButton}
           style={{ minWidth: "200px", right: "0", position: "sticky" }}
           footer={
-            <span className="text-red-500 font-bold text-sm">{`PROFIT : ${computeTotal(
-              "profit"
-            )}`}</span>
+            <span className="text-red-500 font-bold text-sm">{`PROFIT : ${computeTotal()}`}</span>
           }
         ></Column>
       </DataTable>

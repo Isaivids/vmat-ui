@@ -192,12 +192,24 @@ const AdvVmat = () => {
     );
   };
 
+  const getType = useCallback(() => {
+    if (showPending && showCompleted) {
+        return 3;
+    } else if (showCompleted) {
+        return 2;
+    } else if (showPending) {
+        return 1;
+    } else {
+        return 0;
+    }
+}, [showCompleted, showPending]);
+
   const fetchData = useCallback(async () => {
     try {
       const trcukData = await dispatch(
-        getByVmat({ limit: rows, offset: page * rows, search: searchQuery })
+        getByVmat({ limit: rows, offset: page * rows, search: searchQuery, ftype : getType() })
       );
-      if (trcukData.payload.data.length && !trcukData.payload.error) {
+      if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
         setData(trcukData.payload.data);
         setRowColor(trcukData.payload.data);
         setTotalPage(trcukData.payload.pagination.totalDocuments);
@@ -210,7 +222,7 @@ const AdvVmat = () => {
         life: 3000,
       });
     }
-  }, [dispatch, page, rows, searchQuery]);
+  }, [dispatch, getType, page, rows, searchQuery]);
 
   useEffect(() => {
     const fetchDataAndLog = async () => {
@@ -227,9 +239,9 @@ const AdvVmat = () => {
     return "green";
   };
 
-  useEffect(() => {
-    filterDataFunction(data, showPending, showCompleted);
-  }, [data, showPending, showCompleted]);
+  // useEffect(() => {
+  //   filterDataFunction(data, showPending, showCompleted);
+  // }, [data, showPending, showCompleted]);
 
   const filterDataFunction = (
     data: any,
@@ -258,10 +270,10 @@ const AdvVmat = () => {
     const { name, checked } = e.target;
     if (name === "pending") {
       setShowPending(checked);
-      filterDataFunction(data, checked, showCompleted);
+      // filterDataFunction(data, checked, showCompleted);
     } else if (name === "completed") {
       setShowCompleted(checked);
-      filterDataFunction(data, showPending, checked);
+      // filterDataFunction(data, showPending, checked);
     }
   };
 
@@ -302,7 +314,7 @@ const AdvVmat = () => {
         </div>
       </div>
       <DataTable
-        value={filteredData}
+        value={data}
         showGridlines
         scrollable
         scrollHeight="70vh"
