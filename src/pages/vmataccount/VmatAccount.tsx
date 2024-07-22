@@ -122,7 +122,7 @@ const VmatAccount = () => {
   };
   // Compute totals for each column
   const computeTotal = () => {
-    return Number(totals.totalIncome || 0) - Number(totals.totalVmatExpense || 0)
+    return Number(totals?.totalIncome || 0) - Number(totals?.totalVmatExpense || 0)
   };
 
   const fetchData = useCallback(async () => {
@@ -213,30 +213,30 @@ const VmatAccount = () => {
         <Column
           field="vmatcommision"
           header="VMAT Commission"
-          footer={totals.totalVmatCommision || 0}
+          footer={totals?.totalVmatCommision || 0}
         ></Column>
         <Column
           field="vmatcrossing"
           header="VMAT Crossing"
-          footer={totals.totalVmatCrossing || 0}
+          footer={totals?.totalVmatCrossing || 0}
         ></Column>
         <Column
           field="tdsdeduction"
           header="TDS Deduction"
           // body={renderInput}
-          footer={totals.totalTdsDeduction || 0}
+          footer={totals?.totalTdsDeduction || 0}
         ></Column>
         <Column
           field="vmatexpense"
           header="Vmat Expense"
           body={renderInput}
-          footer={totals.totalVmatExpense || 0}
+          footer={totals?.totalVmatExpense || 0}
         ></Column>
         <Column field="reason" header="Reason" body={renderInput}></Column>
         <Column
           field="income"
           header="VMAT Income"
-          footer={totals.totalIncome || 0}
+          footer={totals?.totalIncome || 0}
         ></Column>
         {/* <Column field="profit" header="VMAT Profit"></Column> */}
         <Column
