@@ -7,7 +7,7 @@ import { AppDispatch } from "../../store/store";
 import { getbytwopay, updateByTwoPay } from "../../store/slice/bytwopaySlice";
 import { Paginator } from "primereact/paginator";
 import { Toast } from "primereact/toast";
-import { formatDate, getTwoPayDetails, messages } from "../../api/constants";
+import { formatDate, getTwoPayDetails, initialrows, messages, paginationRows } from "../../api/constants";
 import CommonDatePicker from "../calender/CommonDatePicker";
 import CommonDropdown from "../dropdown/CommonDropdown";
 import CustomButtonComponent from "../button/CustomButtonComponent";
@@ -29,12 +29,11 @@ const AdvTwopay = () => {
   // chekcbox
   const [showPending, setShowPending] = useState(true);
   const [showCompleted, setShowCompleted] = useState(true);
-  const [filteredData, setFilteredData]:any = useState([]);
   //seection
   const [selectedProducts, setSelectedProducts] = useState([]);
   //pagination
   const [first, setFirst] = useState(0);
-  const [rows, setRows] = useState(10);
+  const [rows, setRows] = useState(initialrows);
   const [totalPage, setTotalPage] = useState(0);
   const [page, setPage] = useState(0);
   const onPageChange = (event: any) => {
@@ -282,41 +281,12 @@ const AdvTwopay = () => {
     return "green";
   };
 
-  // useEffect(() => {
-  //   filterDataFunction(data, showPending, showCompleted);
-  // }, [data, showPending, showCompleted]);
-
-  const filterDataFunction = (
-    data: any,
-    showPending: boolean,
-    showCompleted: boolean
-  ) => {
-    const filtered = data.filter((row: any) => {
-      if (
-        showPending &&
-        [null, "", undefined, "PENDING"].includes(row.modeofpayment)
-      ) {
-        return true;
-      }
-      if (
-        showCompleted &&
-        ![null, "", undefined, "PENDING"].includes(row.modeofpayment)
-      ) {
-        return true;
-      }
-      return false;
-    });
-    setFilteredData(filtered);
-  };
-
   const handleCheckboxChange = (e: any) => {
     const { name, checked } = e.target;
     if (name === "pending") {
       setShowPending(checked);
-      // filterDataFunction(data, checked, showCompleted);
     } else if (name === "completed") {
       setShowCompleted(checked);
-      // filterDataFunction(data, showPending, checked);
     }
   };
 
@@ -430,7 +400,7 @@ const AdvTwopay = () => {
         rows={rows}
         totalRecords={totalPage}
         onPageChange={onPageChange}
-        rowsPerPageOptions={[10, 20, 30]}
+        rowsPerPageOptions={paginationRows}
       />
     </div>
   );

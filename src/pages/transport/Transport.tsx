@@ -7,7 +7,7 @@ import { AppDispatch } from "../../store/store";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Paginator } from "primereact/paginator";
 import { Toast } from "primereact/toast";
-import { messages } from "../../api/constants";
+import { initialrows, messages, paginationRows } from "../../api/constants";
 import { getTransportDetail, updateTransportDetail } from "../../store/slice/truckSlice";
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
 
@@ -20,7 +20,7 @@ const Transport = () => {
   const [backupData, setBackupData]: any = useState(null);
   //pagination
   const [first, setFirst] = useState(0);
-  const [rows, setRows] = useState(10);
+  const [rows, setRows] = useState(initialrows);
   const [totalPage, setTotalPage] = useState(0);
   const [page, setPage] = useState(0);
   const onPageChange = (event: any) => {
@@ -213,7 +213,7 @@ const Transport = () => {
         rows={rows}
         totalRecords={totalPage}
         onPageChange={onPageChange}
-        rowsPerPageOptions={[10, 20, 30]}
+        rowsPerPageOptions={paginationRows}
       />
     </div>
   );

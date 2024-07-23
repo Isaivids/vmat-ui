@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Paginator } from "primereact/paginator";
-import { formatDate, getCCPTODetails, messages } from "../../api/constants";
+import { formatDate, getCCPTODetails, initialrows, messages, paginationRows } from "../../api/constants";
 import { Toast } from "primereact/toast";
 import { getccpto, updateccpto } from "../../store/slice/ccptoSlice";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
@@ -32,7 +32,7 @@ const Ccpto = () => {
   const [selectedProducts, setSelectedProducts] = useState([]);
   //pagination
   const [first, setFirst] = useState(0);
-  const [rows, setRows] = useState(10);
+  const [rows, setRows] = useState(initialrows);
   const [totalPage, setTotalPage] = useState(0);
   const [page, setPage] = useState(0);
   const onPageChange = (event: any) => {
@@ -338,7 +338,7 @@ const Ccpto = () => {
         rows={rows}
         totalRecords={totalPage}
         onPageChange={onPageChange}
-        rowsPerPageOptions={[10, 20, 30]}
+        rowsPerPageOptions={paginationRows}
       />
     </div>
   );

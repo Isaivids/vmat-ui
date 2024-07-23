@@ -6,7 +6,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Button } from "primereact/button";
-import { formatDate, getTCPDoc, messages } from "../../api/constants";
+import { formatDate, getTCPDoc, initialrows, messages, paginationRows } from "../../api/constants";
 import { InputText } from "primereact/inputtext";
 import { gettcp, updatetcp } from "../../store/slice/tcpSlice";
 import { downloadPDF } from "./document";
@@ -31,7 +31,7 @@ const Tcp = () => {
   //eo selection
   //pagination
   const [first, setFirst] = useState(0);
-  const [rows, setRows] = useState(10);
+  const [rows, setRows] = useState(initialrows);
   const [totalPage, setTotalPage] = useState(0);
   const [page, setPage] = useState(0);
   const [rowColor, setRowColor]:any = useState([])
@@ -345,7 +345,7 @@ const Tcp = () => {
         rows={rows}
         totalRecords={totalPage}
         onPageChange={onPageChange}
-        rowsPerPageOptions={[10, 20, 30]}
+        rowsPerPageOptions={paginationRows}
       />
     </div>
   );

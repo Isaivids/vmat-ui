@@ -11,7 +11,7 @@ import { AppDispatch } from "../../store/store";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Paginator } from "primereact/paginator";
 import { Toast } from "primereact/toast";
-import { getTruckDetails, messages } from "../../api/constants";
+import { getTruckDetails, initialrows, messages, paginationRows } from "../../api/constants";
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
 import { downloadPDF } from "../tcp/document";
 
@@ -26,7 +26,7 @@ const TruckDetail = () => {
   const [selectedProducts, setSelectedProducts] = useState([]);
   //pagination
   const [first, setFirst] = useState(0);
-  const [rows, setRows] = useState(10);
+  const [rows, setRows] = useState(initialrows);
   const [totalPage, setTotalPage] = useState(0);
   const [page, setPage] = useState(0);
   const onPageChange = (event: any) => {
@@ -215,7 +215,7 @@ const TruckDetail = () => {
         rows={rows}
         totalRecords={totalPage}
         onPageChange={onPageChange}
-        rowsPerPageOptions={[10, 20, 30]}
+        rowsPerPageOptions={paginationRows}
       />
     </div>
   );

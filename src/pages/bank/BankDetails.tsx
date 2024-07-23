@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Paginator } from "primereact/paginator";
-import { messages } from "../../api/constants";
+import { initialrows, messages, paginationRows } from "../../api/constants";
 import { Toast } from "primereact/toast";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import { InputText } from "primereact/inputtext";
@@ -25,7 +25,7 @@ const BankDetails = () => {
 
   //pagination
   const [first, setFirst] = useState(0);
-  const [rows, setRows] = useState(10);
+  const [rows, setRows] = useState(initialrows);
   const [totalPage, setTotalPage] = useState(0);
   const [page, setPage] = useState(0);
   const onPageChange = (event: any) => {
@@ -304,7 +304,7 @@ const BankDetails = () => {
         rows={rows}
         totalRecords={totalPage}
         onPageChange={onPageChange}
-        rowsPerPageOptions={[10, 20, 30]}
+        rowsPerPageOptions={paginationRows}
       />
     </div>
   );

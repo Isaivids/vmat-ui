@@ -7,7 +7,7 @@ import { AppDispatch } from "../../store/store";
 import { getAck, updateAck } from "../../store/slice/ackSlice";
 import { Paginator } from "primereact/paginator";
 import { Toast } from "primereact/toast";
-import { formatDate, getACK, messages } from "../../api/constants";
+import { formatDate, getACK, initialrows, messages, paginationRows } from "../../api/constants";
 import { Checkbox } from "primereact/checkbox";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import CommonDropdown from "../../components/dropdown/CommonDropdown";
@@ -29,7 +29,7 @@ const Ack = () => {
   const [showCompleted, setShowCompleted] = useState(true);
   //pagination
   const [first, setFirst] = useState(0);
-  const [rows, setRows] = useState(10);
+  const [rows, setRows] = useState(initialrows);
   const [totalPage, setTotalPage] = useState(0);
   const [page, setPage] = useState(0);
   const onPageChange = (event: any) => {
@@ -501,7 +501,7 @@ const Ack = () => {
         rows={rows}
         totalRecords={totalPage}
         onPageChange={onPageChange}
-        rowsPerPageOptions={[10, 20, 30]}
+        rowsPerPageOptions={paginationRows}
       />
     </div>
   );

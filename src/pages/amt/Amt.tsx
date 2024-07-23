@@ -10,7 +10,7 @@ import { validateFields } from "./validations";
 import { Toast } from "primereact/toast";
 import { Paginator } from "primereact/paginator";
 import { Dropdown } from "primereact/dropdown";
-import { messages } from "../../api/constants";
+import { initialrows, messages, paginationRows } from "../../api/constants";
 import DialogAmt from "../../components/dialogamt/DialogAmt";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
@@ -32,7 +32,7 @@ const Amt = () => {
   const [latestSerial, setLatestSerial] = useState('');
   //pagination
   const [first, setFirst] = useState(0);
-  const [rows, setRows] = useState(10);
+  const [rows, setRows] = useState(initialrows);
   const [totalPage, setTotalPage] = useState(0);
   const [page, setPage] = useState(0);
   const onPageChange = (event: any) => {
@@ -41,6 +41,14 @@ const Amt = () => {
     setRows(event.rows);
   };
   // ----------end of pagination
+  const tableContainerRef:any = useRef(null);
+
+  const scrollLeft = () => {
+    console.log(tableContainerRef.current.scrollLeft)
+    if (tableContainerRef.current) {
+      tableContainerRef.current.scrollLeft -= 1000; // Adjust the scroll amount as needed
+    }
+  };
   const onInputChange = (e: any, id: any, field: any) => {
     const { value } = e.target;
     const calcField = ["truckf", "transf", "truckadv", "transadv"];
@@ -360,6 +368,7 @@ const Amt = () => {
   }
 
   const addNewRow = () => {
+    // scrollLeft()
     const newRow = {
       _id : generateUniqueId(),
       sno: getNextSerialNumber(latestSerial),      
@@ -506,8 +515,8 @@ const Amt = () => {
         receipt={receipt}
         setReceipt={setReceipt}
         selectedData={selectedData}
-      />
-      <div className="p-2" style={{ overflowX: "auto" }}>
+      /> 
+        <div className="p-2" style={{ overflowX: "auto" }} ref={tableContainerRef}>
         <Button
           label="New"
           severity="success"
@@ -655,7 +664,7 @@ const Amt = () => {
           rows={rows}
           totalRecords={totalPage}
           onPageChange={onPageChange}
-          rowsPerPageOptions={[10, 20, 30]}
+          rowsPerPageOptions={paginationRows}
         />
       </div>
     </>
