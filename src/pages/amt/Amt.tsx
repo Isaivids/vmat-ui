@@ -15,6 +15,7 @@ import DialogAmt from "../../components/dialogamt/DialogAmt";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
 import ReceiptDialog from "../../pdf/ReceiptDialog";
+import { generatePDF } from "../../api/pdfUtil";
 // import { generatePDF } from "../../api/pdfUtil";
 
 const Amt = () => {
@@ -172,7 +173,7 @@ const Amt = () => {
             />
             <Button severity="danger" onClick={(event:any) => confirm2(event,rowData._id)}><i className="pi pi-trash"></i></Button>
             <Button label="Bill" severity="secondary" onClick={() => openReceiptDialog(rowData)}/>
-            {/* <Button onClick={() => generatePDF(rowData)}><i className="pi pi-file-export"></i></Button> */}
+            <Button onClick={() => generatePDF(rowData)}><i className="pi pi-file-export"></i></Button>
           </>
         )}
         {selectedRowId === rowData._id && (

@@ -39,7 +39,8 @@ const CommonDatePicker: React.FC<CommonDatePickerProps> = ({
   };
   
 
-  const minDate = isAdmin.body.data.admin ? getLastMonthDate() : getYesterdayDate();
+  const minDate = getLastMonthDate();
+  // const minDate = isAdmin.body.data.admin ? getLastMonthDate() : getYesterdayDate();
 
   return (
     <Calendar
