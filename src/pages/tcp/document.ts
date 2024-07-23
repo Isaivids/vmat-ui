@@ -144,6 +144,7 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
       },
 
       [8].includes(type) ? '' : grandTotalContent,
+      ...(type === 5 ? [{ image: messages.gpay, width: 150, alignment: "center" }] : []),
     ],
     styles: {
       header: {

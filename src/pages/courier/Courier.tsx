@@ -10,7 +10,6 @@ import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import { InputText } from "primereact/inputtext";
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
 import { Button } from "primereact/button";
-import { deletebankdetails, getbankdetail, updatebankdetail } from "../../store/slice/bankSlice";
 import { InputTextarea } from "primereact/inputtextarea";
 import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
 import { deletecourierdetails, getcourierdetail, updatecourierdetails } from "../../store/slice/courierSlice";
@@ -293,8 +292,8 @@ const Courier = () => {
         ></Column>
         <Column
           field="couriersendingname"
-          header="Courier Sending Name"
-          body={renderInput}
+          header="Courier Address"
+          body={renderTextarea}
         ></Column>
         <Column
           field="courierdetail"

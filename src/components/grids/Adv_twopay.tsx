@@ -14,6 +14,7 @@ import CustomButtonComponent from "../button/CustomButtonComponent";
 import { Button } from "primereact/button";
 import { downloadPDF } from "../../pages/tcp/document";
 import { Checkbox } from "primereact/checkbox";
+import { InputTextarea } from "primereact/inputtextarea";
 
 const AdvTwopay = () => {
   const searchQuery = useSelector((state: any) => state.search);
@@ -42,6 +43,35 @@ const AdvTwopay = () => {
     setRows(event.rows);
   };
   // ----------end of pagination
+
+  const onInputChange2 = (e: any, id: any, field: any) => {
+    const { value } = e.target;
+    const newData: any = data.map((row: any) => {
+      if (row._id === id) {
+        return { ...row, [field]: value };
+      }
+      return row;
+    });
+    setData(newData);
+  };
+
+  const renderTextarea = (rowData: any, field: any) => {
+    return (
+      <>
+      {rowData._id !== selectedRowId ? <span>{rowData[field.field] || ''}</span> : 
+        <InputTextarea
+          disabled={rowData._id !== selectedRowId}
+          value={rowData[field.field] || ''}
+          onChange={(e) => onInputChange2(e, rowData._id, field.field)}
+          rows={1} 
+          cols={27}
+          autoResize
+        />
+      }
+      </>
+    );
+  };
+
   const onInputChange = (e: any, id: any, field: any) => {
     const { value } = e.target;
     const newData: any = data.map((row: any) => {
@@ -371,7 +401,7 @@ const AdvTwopay = () => {
         <Column
           field="remarks"
           header="Remarks"
-          body={renderInput}
+          body={renderTextarea}
         ></Column>
         <Column field="total" header="Advance Amount Paid to Truck"></Column>
         <Column

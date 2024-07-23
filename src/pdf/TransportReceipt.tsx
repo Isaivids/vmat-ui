@@ -145,7 +145,7 @@ const TransportReceipt = ({ data }: any) => {
             </tr>
             <tr>
               <td colSpan={2}></td>
-              <td className="text-left text-lg" colSpan={2}>
+              <td className="text-center text-lg" colSpan={2}>
                 Total :{getGrandTotal()}
               </td>
             </tr>

@@ -186,7 +186,7 @@ const Ack = () => {
           data[index]._id = response.payload.data._id;
           const updatedRowColor = rowColor.map((item: any) => {
             if (item._id === rowData._id) {
-              return { ...item, modeofpayment: response.payload.data.modeofpayment };
+              return { ...item, modeofpayment: response.payload.data.modeofpayment,acknowledgementReceivedDate : response.payload.data.acknowledgementReceivedDate };
             }
             return item;
           });   
@@ -327,10 +327,15 @@ const Ack = () => {
   const rowClassName = (rowData: any) => {
     const color:any = rowColor.filter((x:any) => x._id === rowData._id);
     if(color.length){
-      if (["PENDING", "", null, undefined].includes(color[0].modeofpayment)) {
-        return "red";
+      if(["", null, undefined].includes(color[0].acknowledgementReceivedDate)){
+        return ''
+      }else{
+        if (["PENDING", "", null, undefined].includes(color[0].modeofpayment)) {
+          return "red";
+        }else if(!["PENDING", "", null, undefined].includes(color[0].modeofpayment)){
+          return "green";
+        }
       }
-      return "green";
     }
   };
 
