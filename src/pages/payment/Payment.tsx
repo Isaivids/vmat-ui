@@ -60,8 +60,8 @@ const Payment = () => {
           Number(updatedRow.ats.transbln) +
           Number(updatedRow.loadunloadchar) +
           Number(updatedRow.loadingwagespending) +
-          Number(updatedRow.extraloadingwagespaidbydriver);
-
+          Number(updatedRow.extraloadingwagespaidbydriver) - 
+          Math.abs(Number(updatedRow.tdstbp));
         return updatedRow;
       }
       return row;
@@ -128,6 +128,7 @@ const Payment = () => {
       modeofpayment: rowData.modeofpayment,
       paymentreceiveddate: getFormattedDate(rowData.paymentreceiveddate),
       remarks: rowData.remarks,
+      tdstbp: Number(rowData.tdstbp),
       extraloadingwagespaidbydriver: Number(
         rowData.extraloadingwagespaidbydriver
       ),
@@ -372,6 +373,11 @@ const Payment = () => {
         <Column
           field="plusorminus"
           header="Unloading Charge"
+          body={renderInput}
+        ></Column>
+        <Column
+          field="tdstbp"
+          header="TDS Dedcution 1%"
           body={renderInput}
         ></Column>
         <Column

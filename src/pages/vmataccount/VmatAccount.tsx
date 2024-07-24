@@ -119,6 +119,7 @@ const VmatAccount = () => {
         if (index !== -1) {
           data[index]._id = response.payload.data._id;
         }
+        fetchTotals();
         setSelectedRowId(null);
         toast.current?.show({
           severity: "success",
