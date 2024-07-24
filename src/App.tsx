@@ -37,6 +37,7 @@ const App = () => {
   const vmat = useSelector((state: any) => state.vmat);
   const bank = useSelector((state: any) => state.bank);
   const courier = useSelector((state: any) => state.courier);
+  const bill = useSelector((state: any) => state.bill);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -63,7 +64,7 @@ const App = () => {
             tcp.loading ||
             transportState.loading ||
             transportadvance.loading || bank.loading ||
-            vmat.loading || vmat.tLoading || courier.loading) && <SpinnerWithLogo />}
+            vmat.loading || vmat.tLoading || courier.loading || bill.loading) && <SpinnerWithLogo />}
           <Routes>
             <Route element={<WithOutNavBar />}>
               <Route path="/" element={<Login />} />

@@ -4,7 +4,7 @@ import { formatDate, messages } from './constants';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
-export const generatePDF = (data:any) => {
+export const generatePDF = (data:any,bill:any) => {
     const docDefinition: any = {
         pageSize: 'A4',
         content: [
@@ -44,10 +44,12 @@ export const generatePDF = (data:any) => {
                 alignment: 'center',
             },
             {
-                text: `Date: ${formatDate(data.date)}`,
-                alignment: 'right',
+                columns: [
+                    { text: `Bill Number: ${bill.newBill.billnumber}`,style: 'title2', alignment: 'left' },
+                    { text: `Date: ${formatDate(data.date)}`, alignment: 'right' }
+                ],
                 margin: [0, 20, 0, 30]
-            },
+            },            
             {
                 columns: [
                     {
@@ -100,6 +102,10 @@ export const generatePDF = (data:any) => {
             },
             title: {
                 fontSize: 18,
+                bold: true,
+                color: 'red'
+            },
+            title2: {
                 bold: true,
                 color: 'red'
             },

@@ -15,6 +15,7 @@ import transportadvanceSlice from "./slice/transportadvance";
 import vmatAccountSLice from "./slice/vmataccount";
 import bankDetailSlice from "./slice/bankSlice";
 import courierSllce from "./slice/courierSlice";
+import billSlice from "./slice/billSlice";
 
 export const Store:any = configureStore({
     reducer: { 
@@ -34,6 +35,7 @@ export const Store:any = configureStore({
         vmat : vmatAccountSLice,
         bank : bankDetailSlice,
         courier : courierSllce,
+        bill : billSlice,
     }
 })
 

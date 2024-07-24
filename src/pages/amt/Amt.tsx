@@ -16,6 +16,7 @@ import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
 import ReceiptDialog from "../../pdf/ReceiptDialog";
 import { generatePDF } from "../../api/pdfUtil";
+import { updaterecentbill } from "../../store/slice/billSlice";
 // import { generatePDF } from "../../api/pdfUtil";
 
 const Amt = () => {
@@ -161,6 +162,23 @@ const Amt = () => {
     });
   };
 
+  const getMemoOpen = async(rowData:any) =>{
+    try {
+      const body = {serialnumber : rowData.sno}
+      const response = await dispatch(updaterecentbill(body));
+      if(!response.payload.error){
+        generatePDF(rowData,response.payload);
+      }
+    } catch (error) {
+      toast.current?.show({
+        severity: "error",
+        summary: messages.error,
+        detail: messages.updateoraddfailure,
+        life: 3000,
+      });
+    }
+  }
+
   const renderButton = (rowData: any) => {
     return (
       <div className="flex gap-2 justify-content-center">
@@ -173,7 +191,7 @@ const Amt = () => {
             />
             <Button severity="danger" onClick={(event:any) => confirm2(event,rowData._id)}><i className="pi pi-trash"></i></Button>
             <Button label="Bill" severity="secondary" onClick={() => openReceiptDialog(rowData)}/>
-            <Button onClick={() => generatePDF(rowData)}><i className="pi pi-file-export"></i></Button>
+            <Button label="Memo" onClick={() => getMemoOpen(rowData)} />
           </>
         )}
         {selectedRowId === rowData._id && (
