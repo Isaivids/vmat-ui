@@ -49,7 +49,7 @@ const BankDetails = () => {
   const renderTextarea = (rowData: any, field: any) => {
     return (
       <>
-      {rowData._id !== selectedRowId ? <span>{rowData[field.field] || ''}</span> : 
+      {/* {rowData._id !== selectedRowId ? <span>{rowData[field.field] || ''}</span> :  */}
         <InputTextarea
           disabled={rowData._id !== selectedRowId}
           value={rowData[field.field] || ''}
@@ -58,7 +58,7 @@ const BankDetails = () => {
           cols={27}
           autoResize
         />
-      }
+      {/* } */}
       </>
     );
   };
