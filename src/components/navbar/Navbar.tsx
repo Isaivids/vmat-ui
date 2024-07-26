@@ -15,6 +15,8 @@ import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 import { Toast } from "primereact/toast";
 import { messages } from "../../api/constants";
+import { AutoComplete } from "primereact/autocomplete";
+import { getSuggestions } from "../../store/slice/suggesstions";
 const logo = require("../../assets/logo.svg").default;
 
 const Navbar = () => {
@@ -23,12 +25,14 @@ const Navbar = () => {
   const [details, setDetails]: any = useState({});
   const dispatch = useDispatch<AppDispatch>();
   const [search, setSearch] = useState("");
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
   const [fromDate, setFromdate]: any = useState(null);
   const [toDate, setTodate]: any = useState(null);
   const [visible, setVisible] = useState(false);
-  const [data, setData]:any = useState({currentPassword : '' , newPassword : ''});
+  const [data, setData]: any = useState({ currentPassword: '', newPassword: '' });
   const navigate = useNavigate();
   const toast = useRef<Toast>(null);
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const getUserInfoDetails = useCallback(async () => {
     const result: any = await dispatch(getUserInfo());
@@ -36,24 +40,44 @@ const Navbar = () => {
       if (!result.payload.error) {
         setDetails(result.payload.data);
       }
-    } catch (error) {}
+    } catch (error) { }
   }, [dispatch]);
 
   const handleSearchChange = (event: any) => {
-    setSearch(event.target.value);
+    const value = event.query;
+    
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+    
+    setSearch(value); // Update search state immediately
+    
+    searchTimeoutRef.current = setTimeout(() => {
+      fetchSearchSuggestions(value); // Use the value directly
+    }, 300);
+  };
+  const fetchSearchSuggestions = async (query: string) => {
+    try {
+      const response = await dispatch(getSuggestions(query))
+      if(!response.payload.error){
+        setSearchSuggestions(response.payload.data);
+        console.log(searchSuggestions)
+      }
+    } catch (error) {
+      console.error("Error fetching search suggestions:", error);
+    }
   };
 
   const formatDate = (date: any) => {
     if (!date) return "";
-  
+
     const d = new Date(date);
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
     const day = String(d.getDate()).padStart(2, '0');
-  
+
     return `${year}-${month}-${day}`;
   };
-  
 
   const handleSearch = () => {
     dispatch(
@@ -65,15 +89,15 @@ const Navbar = () => {
     );
   };
 
-  const handleChangePassword = async () =>{
+  const handleChangePassword = async () => {
     try {
       const response = await dispatch(changePassword(data));
-      if(!response.payload.error){
+      if (!response.payload.error) {
         setVisible(false);
         sessionStorage.removeItem('idToken');
         dispatch(clearUser());
         navigate('/');
-      }else{
+      } else {
         toast.current?.show({
           severity: "error",
           summary: messages.error,
@@ -137,13 +161,12 @@ const Navbar = () => {
       >
         <IconField iconPosition="left">
           <InputIcon className="pi pi-search"> </InputIcon>
-          <InputText
-            type="text"
-            placeholder="Type something to search"
+          <AutoComplete
             value={search}
-            onChange={handleSearchChange}
-            className="form-control ip"
-            style={{ width: "300px" }}
+            suggestions={searchSuggestions}
+            completeMethod={(e:any) => handleSearchChange(e)}
+            placeholder="Type something to search"
+            onChange={(e:any) => setSearch(e.target.value)}
           />
         </IconField>
         <Calendar
@@ -158,10 +181,10 @@ const Navbar = () => {
           value={toDate ? new Date(toDate) : null}
           onChange={(e: any) => setTodate(e.value)}
         />
-        <Button label="Search" severity="warning" onClick={handleSearch}/>
+        <Button label="Search" severity="warning" onClick={handleSearch} />
       </div>
       <div className="flex align-items-center gap-2">
-        <span className="text-scy font-semibold	uppercase">
+        <span className="text-scy font-semibold uppercase">
           {details?.username}
         </span>
         <Avatar
@@ -180,7 +203,7 @@ const Navbar = () => {
           footer={footerContent}
         >
           <Toast ref={toast} />
-          <Changepassword data={data} setData={setData}/>
+          <Changepassword data={data} setData={setData} />
         </Dialog>
       </div>
     </div>
