@@ -297,6 +297,6 @@ export const pageName = [
 ]
 
 export const initialrows = 50;
-export const paginationRows = [50,100,150];
+export const paginationRows = [50,100,200,300,400,500];
 
 export const totalColumns = ['total','transadvtotruck','advanceamount','finaltotaltotruckowner','pending','tyrasporterpaidamt']
