@@ -33,7 +33,7 @@ export const messages = {
   ],
   modeOfAdvance: [
     { name: "By VMAT", code: 1 },
-    { name: "By Transport", code: 2 },
+    { name: "By Transport / Balance", code: 2 },
     { name: "By Transporter / To pay", code: 3 },
     { name: "By To pay", code: 4 },
   ],
