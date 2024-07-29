@@ -73,7 +73,7 @@ export const generatePDF = (data:any,bill:any) => {
                             { text: `:  ${data.to}`, bold : true, margin: [0,0,0,30] },
                             { text: `:  ${data.transname}`, bold : true, margin: [0,0,0,30] },
                             { text: `:  ${data.truckloadwt}`, bold : true, margin: [0,0,0,30] },
-                            { text: `:  ${data.truckf}`, bold : true, margin: [0,0,0,30] },
+                            { text: `:  ${data.transf}`, bold : true, margin: [0,0,0,30] },
                             { text: `:  ${data.transadv}`, bold : true, margin: [0,0,0,30] },
                             { text: `:  ${data.transbln}`, bold : true, margin: [0,0,0,30] },
                             { text: `:  ${data.twopay}`, bold : true, margin: [0,0,0,30] }
