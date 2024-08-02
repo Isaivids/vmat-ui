@@ -19,13 +19,6 @@ const CommonDatePicker: React.FC<CommonDatePickerProps> = ({
   const value = rowData[field.field];
   const isValidDate = value && !isNaN(new Date(value).getTime());
 
-  const getYesterdayDate = () => {
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
-    return yesterday;
-  };
-
   const getLastMonthDate = () => {
     const today = new Date();
     const lastMonth = new Date(today);

@@ -3,7 +3,6 @@ import "./Navbar.scss";
 import { Avatar } from "primereact/avatar";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
-import { InputText } from "primereact/inputtext";
 import { useDispatch, useSelector } from "react-redux";
 import { setSearchQuery } from "../../store/slice/searchSlice";
 import { AppDispatch } from "../../store/store";

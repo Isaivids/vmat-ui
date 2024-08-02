@@ -45,12 +45,6 @@ const Amt = () => {
   // ----------end of pagination
   const tableContainerRef:any = useRef(null);
 
-  const scrollLeft = () => {
-    console.log(tableContainerRef.current.scrollLeft)
-    if (tableContainerRef.current) {
-      tableContainerRef.current.scrollLeft -= 1000; // Adjust the scroll amount as needed
-    }
-  };
   const onInputChange = (e: any, id: any, field: any) => {
     const { value } = e.target;
     const calcField = ["truckf", "transf", "truckadv", "transadv"];
