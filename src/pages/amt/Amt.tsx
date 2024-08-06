@@ -302,6 +302,7 @@ const Amt = () => {
     if (newRowAdded) {
       createNewdata(data.find((row: any) => row._id === id));
       setNewRowAdded(false);
+      setSelectedRowId(null);
     } else {
       let payload: any = getNewdataPayload(
         data.find((row: any) => row._id === id)
@@ -314,12 +315,13 @@ const Amt = () => {
             sno,date,truckname,trucknumber,transname,from,to,truckadv,transaddvtype,repdate,
             unloaddate,deliverydate,reportingdate,lateday,halting,truckf,
             transf,vmatf,modeofadvance,transbalancetype,truckbalancetype,
-            transadv,truckbln,transbln,twopay,truckloadwt
+            transadv,truckbln,transbln,twopay,truckloadwt,_id
           } = response.payload.data;
           setSelectedRowId(null);
           const updatedBackupData = originalData.map((item: any) =>
             item._id === response.payload.data._id
               ? {
+                _id : _id,
                 sno: sno,
                 date: date,
                 truckname: truckname,
@@ -360,6 +362,7 @@ const Amt = () => {
             life: 3000,
           });
         }
+        setSelectedRowId(null);
       } catch (error: any) {
         toast.current?.show({
           severity: "error",
