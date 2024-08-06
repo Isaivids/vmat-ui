@@ -7,7 +7,13 @@ import { AppDispatch } from "../../store/store";
 import { getAck, updateAck } from "../../store/slice/ackSlice";
 import { Paginator } from "primereact/paginator";
 import { Toast } from "primereact/toast";
-import { formatDate, getACK, initialrows, messages, paginationRows } from "../../api/constants";
+import {
+  formatDate,
+  getACK,
+  initialrows,
+  messages,
+  paginationRows,
+} from "../../api/constants";
 import { Checkbox } from "primereact/checkbox";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import CommonDropdown from "../../components/dropdown/CommonDropdown";
@@ -23,7 +29,7 @@ const Ack = () => {
   const toast = useRef<Toast>(null);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const userDetails = useSelector((state: any) => state.user);
-  const [rowColor, setRowColor]:any = useState([])
+  const [rowColor, setRowColor]: any = useState([]);
   // chekcbox
   const [showPending, setShowPending] = useState(true);
   const [showCompleted, setShowCompleted] = useState(true);
@@ -55,7 +61,10 @@ const Ack = () => {
       <div className="flex gap-3 align-items-center">
         <Checkbox
           checked={rowData[field]}
-            disabled={rowData._id !== selectedRowId || ![3, 4].includes(rowData.ats.modeofadvance)}
+          disabled={
+            rowData._id !== selectedRowId ||
+            ![3, 4].includes(rowData.ats.modeofadvance)
+          }
           onChange={() => handleCheckboxChange(rowData, field)}
         />
         <span>{rowData[parent]}</span>
@@ -77,7 +86,7 @@ const Ack = () => {
         addThree += updatedRow.transcrossing;
       }
     } else {
-      if([2].includes(updatedRow.ats.modeofadvance)){
+      if ([2].includes(updatedRow.ats.modeofadvance)) {
         addThree = updatedRow.vmatcommision;
       }
       if (updatedRow.hidetc) {
@@ -94,17 +103,23 @@ const Ack = () => {
       updatedRow.pendingamountfromtruckowner =
         addThree + Number(updatedRow.expense);
       updatedRow.finaltotaltotruckowner =
-        Number(updatedRow.ats.transbln) - Number(updatedRow.tdsack) +
+        Number(updatedRow.ats.transbln) -
+        Number(updatedRow.tdsack) +
         Number(updatedRow.expense) -
-        Number(updatedRow.podcharge)  - Math.abs(updatedRow.ats.lateday) + Number(updatedRow.ats.halting);
+        Number(updatedRow.podcharge) -
+        Math.abs(updatedRow.ats.lateday) +
+        Number(updatedRow.ats.halting);
     } else {
       updatedRow.pendingamountfromtruckowner = 0;
       // updatedRow.pendingamountfromtruckowner = Number(updatedRow.ats.truckbln) + (Number(addThree) + Number(expense) + Number(halting));
       updatedRow.finaltotaltotruckowner =
         updatedRow.ats.truckbln -
-        Number(updatedRow.tdsack) - 
+        Number(updatedRow.tdsack) -
         Number(addThree) -
-        Number(updatedRow.podcharge) - Math.abs(updatedRow.ats.lateday) + Number(updatedRow.ats.halting) + Number(updatedRow.expense)
+        Number(updatedRow.podcharge) -
+        Math.abs(updatedRow.ats.lateday) +
+        Number(updatedRow.ats.halting) +
+        Number(updatedRow.expense);
     }
     return updatedRow;
   };
@@ -114,7 +129,7 @@ const Ack = () => {
     const newData: any = data.map((row: any) => {
       if (row._id === id) {
         const updatedRow = { ...row, [field]: value };
-        if(['rtgsnumber','remark'].includes(field)){
+        if (["rtgsnumber", "remark"].includes(field)) {
           return updatedRow;
         }
         return calculateUpdatedRow(updatedRow);
@@ -176,20 +191,61 @@ const Ack = () => {
       tdsack: Number(rowData.tdsack),
       _id: rowData._id,
       ats: rowData.ats,
-      remark : rowData.remark
+      remark: rowData.remark,
     };
     try {
       const response = await dispatch(updateAck(payload));
       if (response.payload.data && !response.payload.error) {
-        const index = data.findIndex((item: any) => item._id === rowData._id);
+        const index = backupData.findIndex(
+          (item: any) => item._id === rowData._id
+        );
         if (index !== -1) {
-          data[index]._id = response.payload.data._id;
+          const {
+            acknowledgementReceivedDate,
+            hidevc,
+            hidevcm,
+            hidetc,
+            expense,
+            finaltotaltotruckowner,
+            paymentReceivedDate,
+            modeofpayment,
+            podcharge,
+            rtgsnumber,
+            tdsack,
+          } = response.payload.data;
+          const updatedBackupData = backupData.map((item: any) =>
+            item._id === rowData._id
+              ? {
+                  ...item,
+                  acknowledgementReceivedDate:acknowledgementReceivedDate,
+                  hidevc: hidevc,
+                  hidevcm: hidevcm,
+                  hidetc: hidetc,
+                  expense: Number(expense),
+                  finaltotaltotruckowner: Number(
+                    finaltotaltotruckowner
+                  ),
+                  paymentReceivedDate: paymentReceivedDate,
+                  modeofpayment: modeofpayment,
+                  podcharge: podcharge,
+                  rtgsnumber: rtgsnumber,
+                  tdsack: Number(tdsack),
+                }
+              : item
+          );
+          setBackupData(updatedBackupData);
           const updatedRowColor = rowColor.map((item: any) => {
             if (item._id === rowData._id) {
-              return { ...item, modeofpayment: response.payload.data.modeofpayment,acknowledgementReceivedDate : response.payload.data.acknowledgementReceivedDate };
+              return {
+                ...item,
+                modeofpayment: response.payload.data.modeofpayment,
+                acknowledgementReceivedDate:
+                  response.payload.data.acknowledgementReceivedDate,
+              };
             }
             return item;
-          });   
+          });
+          setData([...updatedBackupData]);
           setRowColor(updatedRowColor);
         }
         setSelectedRowId(null);
@@ -222,7 +278,7 @@ const Ack = () => {
     return (
       <InputText
         disabled={rowData._id !== selectedRowId}
-        value={rowData[field.field] || ''}
+        value={rowData[field.field] || ""}
         onChange={(e) => onInputChange(e, rowData._id, field.field)}
         autoComplete="off"
       />
@@ -270,7 +326,9 @@ const Ack = () => {
 
   const handleEdit = (rowData: any) => {
     setSelectedRowId(rowData._id);
-    setBackupData([...data]);
+    setBackupData(data);
+    const filtered = data.filter((x: any) => x._id === rowData._id);
+    setData(filtered);
   };
 
   const renderButton = (rowData: any) => {
@@ -287,21 +345,25 @@ const Ack = () => {
 
   const getType = useCallback(() => {
     if (showPending && showCompleted) {
-        return 3;
+      return 3;
     } else if (showCompleted) {
-        return 2;
+      return 2;
     } else if (showPending) {
-        return 1;
+      return 1;
     } else {
-        return 0;
+      return 0;
     }
-}, [showCompleted, showPending]);
-
+  }, [showCompleted, showPending]);
 
   const fetchData = useCallback(async () => {
     try {
       const ackdata = await dispatch(
-        getAck({ limit: rows, offset: page * rows, search: searchQuery, ftype : getType() })
+        getAck({
+          limit: rows,
+          offset: page * rows,
+          search: searchQuery,
+          ftype: getType(),
+        })
       );
       if (Array.isArray(ackdata.payload.data) && !ackdata.payload.error) {
         setData(ackdata.payload.data);
@@ -326,14 +388,18 @@ const Ack = () => {
   }, [fetchData]);
 
   const rowClassName = (rowData: any) => {
-    const color:any = rowColor.filter((x:any) => x._id === rowData._id);
-    if(color.length){
-      if(["", null, undefined].includes(color[0].acknowledgementReceivedDate)){
-        return ''
-      }else{
+    const color: any = rowColor.filter((x: any) => x._id === rowData._id);
+    if (color.length) {
+      if (
+        ["", null, undefined].includes(color[0].acknowledgementReceivedDate)
+      ) {
+        return "";
+      } else {
         if (["PENDING", "", null, undefined].includes(color[0].modeofpayment)) {
           return "red";
-        }else if(!["PENDING", "", null, undefined].includes(color[0].modeofpayment)){
+        } else if (
+          !["PENDING", "", null, undefined].includes(color[0].modeofpayment)
+        ) {
           return "green";
         }
       }
@@ -349,11 +415,10 @@ const Ack = () => {
     }
   };
 
-
   // Compute totals for each column
-  const computeTotal = (field:any) => {
+  const computeTotal = (field: any) => {
     return data
-      .reduce((acc:any, item:any) => acc + (parseFloat(item[field]) || 0), 0)
+      .reduce((acc: any, item: any) => acc + (parseFloat(item[field]) || 0), 0)
       .toFixed(2);
   };
 
@@ -429,11 +494,7 @@ const Ack = () => {
         <Column field="ats.from" header="From"></Column>
         <Column field="ats.to" header="To"></Column>
         <Column field="ats.truckbln" header="Truck Balance"></Column>
-        <Column
-          field="tdsack"
-          header="Others"
-          body={renderInput}
-        ></Column>
+        <Column field="tdsack" header="Others" body={renderInput}></Column>
         <Column field="ats.lateday" header="Late Delivery"></Column>
         <Column field="ats.halting" header="Halting"></Column>
         <Column field="remark" header="Remark" body={renderInput}></Column>
@@ -474,7 +535,7 @@ const Ack = () => {
           field="finaltotaltotruckowner"
           header="Final Total to Truck Owner"
           style={{ minWidth: "200px" }}
-          footer={`${computeTotal('finaltotaltotruckowner')}`}
+          footer={`${computeTotal("finaltotaltotruckowner")}`}
         ></Column>
         <Column
           field="paymentReceivedDate"

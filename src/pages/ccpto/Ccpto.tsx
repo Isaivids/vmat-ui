@@ -4,7 +4,13 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Paginator } from "primereact/paginator";
-import { formatDate, getCCPTODetails, initialrows, messages, paginationRows } from "../../api/constants";
+import {
+  formatDate,
+  getCCPTODetails,
+  initialrows,
+  messages,
+  paginationRows,
+} from "../../api/constants";
 import { Toast } from "primereact/toast";
 import { getccpto, updateccpto } from "../../store/slice/ccptoSlice";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
@@ -24,7 +30,7 @@ const Ccpto = () => {
   const [backupData, setBackupData]: any = useState(null);
   const modeOfPayments = messages.modeofpayments;
   const userDetails = useSelector((state: any) => state.user);
-  const [rowColor, setRowColor]:any = useState([])
+  const [rowColor, setRowColor]: any = useState([]);
   // chekcbox
   const [showPending, setShowPending] = useState(true);
   const [showCompleted, setShowCompleted] = useState(true);
@@ -56,7 +62,7 @@ const Ccpto = () => {
     return (
       <InputText
         disabled={rowData._id !== selectedRowId}
-        value={rowData[field.field] || ''}
+        value={rowData[field.field] || ""}
         onChange={(e: any) => onInputChange(e, rowData._id, field.field)}
         autoComplete="off"
       />
@@ -137,17 +143,34 @@ const Ccpto = () => {
     try {
       const response = await dispatch(updateccpto(payload));
       if (!response.payload.error) {
-        const index = data.findIndex((item: any) => item._id === rowData._id);
+        const index = backupData.findIndex(
+          (item: any) => item._id === rowData._id
+        );
         if (index !== -1) {
-          data[index]._id = response.payload.data._id;
+          const updatedBackupData = backupData.map((item: any) =>
+            item._id === rowData._id
+              ? {
+                  ...item,
+                  modeofpayment: response.payload.data.modeofpayment,
+                  rtgsnumber: response.payload.data.rtgsnumber,
+                  paymentReceivedDate: response.payload.data.paymentReceivedDate,
+                }
+              : item
+          );
+          setBackupData(updatedBackupData);
           const updatedRowColor = rowColor.map((item: any) => {
             if (item._id === rowData._id) {
-              return { ...item, modeofpayment: response.payload.data.modeofpayment };
+              return {
+                ...item,
+                modeofpayment: response.payload.data.modeofpayment,
+              };
             }
             return item;
-          });   
+          });
           setRowColor(updatedRowColor);
+          setData([...updatedBackupData]);
         }
+
         setSelectedRowId(null);
         toast.current?.show({
           severity: "success",
@@ -175,8 +198,12 @@ const Ccpto = () => {
   };
 
   const handleEdit = (rowData: any) => {
+    setBackupData(data);
+    const filtered = data.filter((x: any) => x._id === rowData._id);
+    setData(filtered);
     setSelectedRowId(rowData._id);
-    setBackupData([...data]);
+    // setSelectedRowData(rowData);
+    // setDialogVisible(true);
   };
 
   const renderButton = (rowData: any) => {
@@ -193,21 +220,25 @@ const Ccpto = () => {
 
   const getType = useCallback(() => {
     if (showPending && showCompleted) {
-        return 3;
+      return 3;
     } else if (showCompleted) {
-        return 2;
+      return 2;
     } else if (showPending) {
-        return 1;
+      return 1;
     } else {
-        return 0;
+      return 0;
     }
-}, [showCompleted, showPending]);
-
+  }, [showCompleted, showPending]);
 
   const fetchData = useCallback(async () => {
     try {
       const trcukData = await dispatch(
-        getccpto({ limit: rows, offset: page * rows, search: searchQuery,ftype : getType() })
+        getccpto({
+          limit: rows,
+          offset: page * rows,
+          search: searchQuery,
+          ftype: getType(),
+        })
       );
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
         setData(trcukData.payload.data);
@@ -232,8 +263,8 @@ const Ccpto = () => {
   }, [fetchData]);
 
   const rowClassName = (rowData: any) => {
-    const color:any = rowColor.filter((x:any) => x._id === rowData._id);
-    if(color.length){
+    const color: any = rowColor.filter((x: any) => x._id === rowData._id);
+    if (color.length) {
       if (["PENDING", "", null, undefined].includes(color[0].modeofpayment)) {
         return "red";
       }
