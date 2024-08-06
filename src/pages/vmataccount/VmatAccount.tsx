@@ -87,6 +87,7 @@ const VmatAccount = () => {
         value={rowData[field.field] || ''}
         onChange={(e) => onInputChange(e, rowData._id, field.field)}
         keyfilter={isStringField ? undefined : "num"}
+        autoComplete="off"
       />
     );
   };

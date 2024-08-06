@@ -13,10 +13,10 @@ const getNestedValue = (obj: any, path: any) => {
     return type ? type.name : '';
   }
   if (path.startsWith("paymentreceiveddate") || path.startsWith("ats.date")) {
-    if (obj.paymentreceiveddate) {
+    if (path.startsWith("paymentreceiveddate")  && obj.paymentreceiveddate) {
       return formatDate(obj.paymentreceiveddate);
     }
-    if (obj.ats.date) {
+    if (path.startsWith("ats.date") && obj.ats.date) {
       return formatDate(obj.ats.date);
     }
     return '';

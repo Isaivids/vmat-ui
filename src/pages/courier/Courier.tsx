@@ -78,9 +78,10 @@ const Courier = () => {
     return (
       <InputText
         disabled={rowData._id !== selectedRowId}
-        value={rowData[field.field]}
+        value={rowData[field.field] || ''}
         onChange={(e: any) => onInputChange(e, rowData._id, field.field)}
         keyfilter={stringFields ? undefined : "num"}
+        autoComplete="off"
       />
     );
   };

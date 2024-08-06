@@ -90,9 +90,10 @@ const AdvTwopay = () => {
     return (
       <InputText
         disabled={rowData._id !== selectedRowId}
-        value={rowData[field.field]}
+        value={rowData[field.field] || ''}
         onChange={(e) => onInputChange(e, rowData._id, field.field)}
         keyfilter={["rtgsnumber","remarks"].includes(field.field) ? undefined : "num"}
+        autoComplete="off"
       />
     );
   };

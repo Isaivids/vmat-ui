@@ -224,6 +224,7 @@ const Ack = () => {
         disabled={rowData._id !== selectedRowId}
         value={rowData[field.field] || ''}
         onChange={(e) => onInputChange(e, rowData._id, field.field)}
+        autoComplete="off"
       />
     );
   };
@@ -430,13 +431,13 @@ const Ack = () => {
         <Column field="ats.truckbln" header="Truck Balance"></Column>
         <Column
           field="tdsack"
-          header="TDS deduction 1%"
+          header="Others"
           body={renderInput}
         ></Column>
         <Column field="ats.lateday" header="Late Delivery"></Column>
         <Column field="ats.halting" header="Halting"></Column>
         <Column field="remark" header="Remark" body={renderInput}></Column>
-        <Column field="expense" header="Unloading Wages" body={renderInput}></Column>
+        <Column field="expense" header="Expense" body={renderInput}></Column>
         <Column
           field="podcharge"
           header="POD Charge"

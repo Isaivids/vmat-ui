@@ -61,10 +61,11 @@ const Tcp = () => {
       <div className="flex align-items-center rel">
         <InputText
           disabled={rowData._id !== selectedRowId}
-          value={rowData[field.field]}
+          value={rowData[field.field] || ''}
           onChange={(e) => onInputChange(e, rowData._id, field.field)}
           keyfilter={isStringField ? undefined : "num"}
           style={{ width: "150px" }}
+          autoComplete="off"
         />
       </div>
     );

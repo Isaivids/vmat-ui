@@ -248,7 +248,7 @@ export const getTransADV = () => {
 export const getTBP = () => {
   return [
     { field: "ats.date", header: "Date" },
-    { field: "ats.truckname", header: "Truck Name" },
+    // { field: "ats.truckname", header: "Truck Name" },
     { field: "ats.trucknumber", header: "Truck Number" },
     { field: "ats.transbln", header: "Transport balance" },
     { field: "loadingwagespending", header: "Loading Wages Pending" },
@@ -256,6 +256,7 @@ export const getTBP = () => {
     { field: "loadunloadchar", header: "Unloading Wages" },
     { field: "plusorminus", header: "Unloading Charge" },
     { field: "tyrasporterpaidamt", header: "Transporter to be Paid" },
+    { field : "tdstbp" , header : "TDS Deduction 1%"},
     { field: "remarks", header: "Remarks" },
     { field: "paymentreceiveddate", header: "Payment Received Date" },
     { field: "modeofpayment", header: "Mode Of Payment" },
@@ -278,6 +279,7 @@ export const getACK = () => {
     { field: "vmatcommision", header: "VMAT Commission" },
     { field: "transcrossing", header: "Transport Crossing" },
     { field: "ats.twopay", header: "By To Pay Transport Balance." },
+    { field: "tdsack", header: "Others" },
     { field: "finaltotaltotruckowner", header: "Final Total to Truck Owner" },
     { field: "paymentReceivedDate", header: "Payment transfer to truck owner" },
     { field: "modeofpayment", header: "Mode Of Payment" },
@@ -296,7 +298,7 @@ export const pageName = [
   { type: 8, name: 'Truck Details' },
 ]
 
-export const initialrows = 50;
-export const paginationRows = [50,100,200,300,400,500];
+export const initialrows = 10;
+export const paginationRows = [10,15,20,25,30];
 
 export const totalColumns = ['total','transadvtotruck','advanceamount','finaltotaltotruckowner','pending','tyrasporterpaidamt']

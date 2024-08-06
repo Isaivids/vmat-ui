@@ -3,7 +3,12 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
-import { addAts, deleteAts, getAts, updateats } from "../../store/slice/atsSlice";
+import {
+  addAts,
+  deleteAts,
+  getAts,
+  updateats,
+} from "../../store/slice/atsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { validateFields } from "./validations";
@@ -17,6 +22,12 @@ import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
 import ReceiptDialog from "../../pdf/ReceiptDialog";
 import { generatePDF } from "../../api/pdfUtil";
 import { updaterecentbill } from "../../store/slice/billSlice";
+import {
+  generateUniqueId,
+  getNewdataPayload,
+  getNextSerialNumber,
+} from "../../api/utils";
+import ActionButtons from "./ActionButtons";
 // import { generatePDF } from "../../api/pdfUtil";
 
 const Amt = () => {
@@ -31,7 +42,7 @@ const Amt = () => {
   const [selectedData, setSelectedData]: any = useState({});
   const userDetails = useSelector((state: any) => state.user);
   const [receipt, setReceipt] = useState(false);
-  const [latestSerial, setLatestSerial] = useState('');
+  const [latestSerial, setLatestSerial] = useState("");
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(initialrows);
@@ -43,38 +54,49 @@ const Amt = () => {
     setRows(event.rows);
   };
   // ----------end of pagination
-  const tableContainerRef:any = useRef(null);
+  const tableContainerRef: any = useRef(null);
 
-  const onInputChange = (e: any, id: any, field: any) => {
-    const { value } = e.target;
-    const calcField = ["truckf", "transf", "truckadv", "transadv"];
-    const newData = data.map((row: any) => {
-      if (row._id === id) {
-        let updatedRow = { ...row, [field]: value };
-        if (calcField.includes(field)) {
-          updatedRow = { ...row, [field]: value };
-          updatedRow.truckbln =
-            Number(updatedRow.truckf) - Number(updatedRow.truckadv);
-          updatedRow.transbln =
-            Number(updatedRow.transf) - Number(updatedRow.transadv);
+  const onInputChange = useCallback(
+    (e: any, id: any, field: any) => {
+      const { value } = e.target;
+      const calcField = ["truckf", "transf", "truckadv", "transadv"];
+      const newData = data.map((row: any) => {
+        if (row._id === id) {
+          let updatedRow = { ...row, [field]: value };
+          if (calcField.includes(field)) {
+            updatedRow = { ...row, [field]: value };
+            updatedRow.truckbln =
+              Number(updatedRow.truckf) - Number(updatedRow.truckadv);
+            if (updatedRow.transbalancetype === "TOPAY") {
+              updatedRow.twopay =
+                Number(updatedRow.transf) - Number(updatedRow.transadv);
+            } else {
+              updatedRow.transbln =
+                Number(updatedRow.transf) - Number(updatedRow.transadv);
+            }
+          }
+          return updatedRow;
         }
-        return updatedRow;
-      }
-      return row;
-    });
-    setData(newData);
-  };
+        return row;
+      });
+      setData(newData);
+    },
+    [data]
+  );
 
-  const onDateChange = (e: any, id: any, field: any) => {
-    const value = e.value;
-    const newData = data.map((row: any) => {
-      if (row._id === id) {
-        return { ...row, [field]: value };
-      }
-      return row;
-    });
-    setData(newData);
-  };
+  const onDateChange = useCallback(
+    (e: any, id: any, field: any) => {
+      const value = e.value;
+      const newData = data.map((row: any) => {
+        if (row._id === id) {
+          return { ...row, [field]: value };
+        }
+        return row;
+      });
+      setData(newData);
+    },
+    [data]
+  );
 
   const renderInput = (rowData: any, field: any) => {
     const isNumberField = [
@@ -94,10 +116,11 @@ const Amt = () => {
       <div className="flex align-items-center rel">
         <InputText
           disabled={rowData._id !== selectedRowId}
-          value={rowData[field.field]}
+          value={rowData[field.field] || ""}
           onChange={(e) => onInputChange(e, rowData._id, field.field)}
           keyfilter={isNumberField ? "num" : undefined}
           style={{ width: "150px" }}
+          autoComplete="off"
         />
         {isMt && <span className="font-semibold abs">mt</span>}
       </div>
@@ -123,207 +146,80 @@ const Amt = () => {
     setSelectedData(rowData);
   };
 
-  const accept = async(id:any) => {
+  const fetchData = useCallback(async () => {
     try {
-      const response = await dispatch(deleteAts(id));
-      if(response.payload.error === false){
-        toast.current?.show({
-          severity: "info",
-          summary: "Confirmed",
-          detail: response.payload.message,
-          life: 3000,
-        });
-        fetchData();
-      }
-    } catch (error) {
-      toast.current?.show({
-        severity: "error",
-        summary: "Error",
-        detail: 'Unable to do this operation now',
-        life: 3000,
-      });
-    }
-  };
-
-  const confirm2 = (event: any,id:any) => {
-    confirmPopup({
-      target: event.currentTarget,
-      message: "Do you want to delete this record?",
-      icon: "pi pi-info-circle",
-      defaultFocus: "reject",
-      acceptClassName: "p-button-danger",
-      accept : () => accept(id),
-    });
-  };
-
-  const getMemoOpen = async(rowData:any) =>{
-    try {
-      const body = {serialnumber : rowData.sno}
-      const response = await dispatch(updaterecentbill(body));
-      if(!response.payload.error){
-        generatePDF(rowData,response.payload);
+      const atsData = await dispatch(
+        getAts({ limit: rows, offset: page * rows, search: searchQuery })
+      );
+      if (Array.isArray(atsData.payload.data) && !atsData.payload.error) {
+        const formattedData = atsData.payload.data.map((item: any) => ({
+          ...item,
+          date: new Date(item.date),
+          repdate: item.repdate ? new Date(item.repdate) : null,
+          unloaddate: item.unloaddate ? new Date(item.unloaddate) : null,
+        }));
+        setData(formattedData);
+        setLatestSerial(atsData.payload.latestSerial.sno);
+        setTotalPage(atsData.payload.pagination.totalDocuments);
       }
     } catch (error) {
       toast.current?.show({
         severity: "error",
         summary: messages.error,
-        detail: messages.updateoraddfailure,
+        detail: messages.loadfailure,
         life: 3000,
       });
     }
-  }
+  }, [dispatch, page, rows, searchQuery]);
 
-  const renderButton = (rowData: any) => {
-    return (
-      <div className="flex gap-2 justify-content-center">
-        {!selectedRowId && (
-          <>
-            <Button
-              label="Edit"
-              severity="warning"
-              onClick={() => handleEdit(rowData._id)}
-            />
-            <Button severity="danger" onClick={(event:any) => confirm2(event,rowData._id)}><i className="pi pi-trash"></i></Button>
-            <Button label="Bill" severity="secondary" onClick={() => openReceiptDialog(rowData)}/>
-            <Button label="Memo" onClick={() => getMemoOpen(rowData)} />
-          </>
-        )}
-        {selectedRowId === rowData._id && (
-          <>
-            <Button
-              label="Save"
-              severity="success"
-              onClick={() => handleSave(rowData._id)}
-            />
-            <Button
-              label="Cancel"
-              severity="danger"
-              onClick={() => handleCancel(rowData._id)}
-            />
-          </>
-        )}
-      </div>
-    );
-  };
-
-  const handleEdit = (id: any) => {
-    const originalRowData = data.find((row: any) => row._id === id);
-    setOriginalData(originalRowData);
-    setSelectedRowId(id);
-  };
-
-  const getFormatteddate = (inputDate: any) => {
-    if ([null, undefined, ""].includes(inputDate)) {
-      return "";
-    } else {
-      const date = new Date(inputDate);
-      const localDate = new Date(
-        date.getTime() - date.getTimezoneOffset() * 60000
-      )
-        .toISOString()
-        .split("T")[0];
-      return localDate;
-    }
-  };
-
-  const getNewdataPayload = (inputObject: any) => {
-    const outputObject = {
-      sno: inputObject.sno,
-      date: getFormatteddate(inputObject.date),
-      truckname: inputObject.truckname,
-      trucknumber: inputObject.trucknumber,
-      transname: inputObject.transname,
-      from: inputObject.from,
-      to: inputObject.to,
-      truckadv: Number(inputObject.truckadv),
-      transaddvtype: Number(inputObject.transaddvtype),
-      repdate: getFormatteddate(inputObject.repdate),
-      unloaddate: getFormatteddate(inputObject.unloaddate),
-      deliverydate: getFormatteddate(inputObject.deliverydate),
-      reportingdate: getFormatteddate(inputObject.reportingdate),
-      lateday: inputObject.lateday,
-      halting: inputObject.halting,
-      truckf: Number(inputObject.truckf),
-      transf: Number(inputObject.transf),
-      vmatf: Number(inputObject.vmatf),
-      modeofadvance: Number(inputObject.modeofadvance),
-      transbalancetype: inputObject.transbalancetype,
-      truckbalancetype: inputObject.truckbalancetype,
-      transadv: Number(inputObject.transadv),
-      truckbln: Number(inputObject.truckbln),
-      transbln: Number(inputObject.transbln),
-      twopay: Number(inputObject.twopay),
-      truckloadwt: Number(inputObject.truckloadwt),
-    };
-    return outputObject;
-  };
-
-  const createNewdata = async (data1: any) => {
-    const payload = getNewdataPayload(data1);
-    try {
-      const response = await dispatch(addAts(payload));
-      data1._id = response.payload.data._id;
-      setSelectedRowId(null);
-      setLatestSerial(response.payload.latestSerial.sno);
-      // setData(dateSort(data));
-      toast.current?.show({
-        severity: "success",
-        summary: messages.success,
-        detail: messages.updateoraddsuccess,
-        life: 3000,
-      });
-    } catch (error: any) {
-      // toast.current?.show({
-      //   severity: "error",
-      //   summary: messages.error,
-      //   detail: messages.updateoraddfailure,
-      //   life: 3000,
-      // });
-    }
-  };
-
-  const handleSave = async (id: any) => {
-    const rowData = data.find((row: any) => row._id === id);
-    const { isValid, missingFields } = validateFields(rowData);
-
-    if (!isValid) {
-      toast.current?.show({
-        severity: "error",
-        summary: messages.validationerror,
-        detail: `${missingFields.join(", ")} is required`,
-        life: 3000,
-      });
-      return;
-    }
-    if (newRowAdded) {
-      createNewdata(data.find((row: any) => row._id === id));
-      setNewRowAdded(false);
-    } else {
-      let payload: any = getNewdataPayload(
-        data.find((row: any) => row._id === id)
-      );
-      payload["_id"] = id;
+  const accept = useCallback(
+    async (id: any) => {
       try {
-        const response = await dispatch(updateats(payload));
-        if (response.payload.data && !response.payload.error) {
-          const index = data.findIndex(
-            (item: any) => item._id === response.payload.data._id
-          );
-          if (index !== -1) {
-            data[index]._id = response.payload.data._id;
-          }
-          setSelectedRowId(null);
-          // setData(dateSort(data));
-          setLatestSerial(response.payload.latestSerial.sno);
-          // fetchData();
+        const response = await dispatch(deleteAts(id));
+        if (response.payload.error === false) {
           toast.current?.show({
-            severity: "success",
-            summary: messages.success,
-            detail: messages.updateoraddsuccess,
+            severity: "info",
+            summary: "Confirmed",
+            detail: response.payload.message,
             life: 3000,
           });
+          fetchData();
         }
-      } catch (error: any) {
+      } catch (error) {
+        toast.current?.show({
+          severity: "error",
+          summary: "Error",
+          detail: "Unable to do this operation now",
+          life: 3000,
+        });
+      }
+    },
+    [dispatch, fetchData]
+  );
+
+  const confirm2 = useCallback(
+    (event: any, id: any) => {
+      confirmPopup({
+        target: event.currentTarget,
+        message: "Do you want to delete this record?",
+        icon: "pi pi-info-circle",
+        defaultFocus: "reject",
+        acceptClassName: "p-button-danger",
+        accept: () => accept(id),
+      });
+    },
+    [accept]
+  );
+
+  const getMemoOpen = useCallback(
+    async (rowData: any) => {
+      try {
+        const body = { serialnumber: rowData.sno };
+        const response = await dispatch(updaterecentbill(body));
+        if (!response.payload.error) {
+          generatePDF(rowData, response.payload);
+        }
+      } catch (error) {
         toast.current?.show({
           severity: "error",
           summary: messages.error,
@@ -331,60 +227,141 @@ const Amt = () => {
           life: 3000,
         });
       }
-    }
-    setSelectedRowId(null);
-    setOriginalData({});
-  };
+    },
+    [dispatch]
+  );
 
-  const handleCancel = (id: any) => {
-    if (newRowAdded) {
-      setData(data.filter((row: any) => row._id !== id));
-      setNewRowAdded(false);
-    } else {
-      const restoredData = data.map((row: any) =>
-        row._id === id ? originalData : row
-      );
-      setData(restoredData);
-    }
-    setSelectedRowId(null);
-    setOriginalData({});
-  };
+  const handleEdit = useCallback(
+    (id: any) => {
+      const originalRowData = data.find((row: any) => row._id === id);
+      setOriginalData(originalRowData);
+      setSelectedRowId(id);
+    },
+    [data]
+  );
 
-  function generateUniqueId() {
-    const now = new Date();
-    const datePart = now.getFullYear().toString() + 
-                     (now.getMonth() + 1).toString().padStart(2, '0') + 
-                     now.getDate().toString().padStart(2, '0') + 
-                     now.getHours().toString().padStart(2, '0') + 
-                     now.getMinutes().toString().padStart(2, '0') + 
-                     now.getSeconds().toString().padStart(2, '0') + 
-                     now.getMilliseconds().toString().padStart(3, '0');
-    const alphabets = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-    const randomPart = Array.from({ length: 5 }, () => alphabets[Math.floor(Math.random() * alphabets.length)]).join('');
-    return datePart + randomPart;
-  }
+  const createNewdata = useCallback(
+    async (data1: any) => {
+      const payload = getNewdataPayload(data1);
+      try {
+        const response = await dispatch(addAts(payload));
+        data1._id = response.payload.data._id;
+        setSelectedRowId(null);
+        setLatestSerial(response.payload.latestSerial.sno);
+        // setData(dateSort(data));
+        toast.current?.show({
+          severity: "success",
+          summary: messages.success,
+          detail: messages.updateoraddsuccess,
+          life: 3000,
+        });
+      } catch (error: any) {
+        // toast.current?.show({
+        //   severity: "error",
+        //   summary: messages.error,
+        //   detail: messages.updateoraddfailure,
+        //   life: 3000,
+        // });
+      }
+    },
+    [dispatch]
+  );
 
-  const getNextSerialNumber = (sno:string) => {
-    const [currentSerialNumber, currentMonth] = sno.split('-').map(Number);
-    const date = new Date();
-    const currentMonthFromSystem = (date.getMonth() + 1).toString().padStart(2, '0');
-    let newSerialNumber,newMonth;
-    if (currentMonthFromSystem !== currentMonth.toString().padStart(2, '0')) {
-      newSerialNumber = 1;
-      newMonth = currentMonthFromSystem;
-    } else {
-      newSerialNumber = currentSerialNumber + 1;
-      newMonth = currentMonth.toString().padStart(2, '0');
-    }
-    const newSno = `${newSerialNumber.toString().padStart(2, '0')}-${newMonth}`;
-    return newSno;
-  }
+  const handleSave = useCallback(
+    async (id: any) => {
+      const rowData = data.find((row: any) => row._id === id);
+      const { isValid, missingFields } = validateFields(rowData);
+
+      if (!isValid) {
+        toast.current?.show({
+          severity: "error",
+          summary: messages.validationerror,
+          detail: `${missingFields.join(", ")} is required`,
+          life: 3000,
+        });
+        return;
+      }
+      if (newRowAdded) {
+        createNewdata(data.find((row: any) => row._id === id));
+        setNewRowAdded(false);
+      } else {
+        let payload: any = getNewdataPayload(
+          data.find((row: any) => row._id === id)
+        );
+        payload["_id"] = id;
+        try {
+          const response = await dispatch(updateats(payload));
+          if (response.payload.data && !response.payload.error) {
+            const index = data.findIndex(
+              (item: any) => item._id === response.payload.data._id
+            );
+            if (index !== -1) {
+              data[index]._id = response.payload.data._id;
+            }
+            setSelectedRowId(null);
+            // setData(dateSort(data));
+            setLatestSerial(response.payload.latestSerial.sno);
+            // fetchData();
+            toast.current?.show({
+              severity: "success",
+              summary: messages.success,
+              detail: messages.updateoraddsuccess,
+              life: 3000,
+            });
+          }
+        } catch (error: any) {
+          toast.current?.show({
+            severity: "error",
+            summary: messages.error,
+            detail: messages.updateoraddfailure,
+            life: 3000,
+          });
+        }
+      }
+      setSelectedRowId(null);
+      setOriginalData({});
+    },
+    [createNewdata, data, dispatch, newRowAdded]
+  );
+
+  const handleCancel = useCallback(
+    (id: any) => {
+      if (newRowAdded) {
+        setData(data.filter((row: any) => row._id !== id));
+        setNewRowAdded(false);
+      } else {
+        const restoredData = data.map((row: any) =>
+          row._id === id ? originalData : row
+        );
+        setData(restoredData);
+      }
+      setSelectedRowId(null);
+      setOriginalData({});
+    },
+    [data, newRowAdded, originalData]
+  );
+
+  const renderButton = useCallback(
+    (rowData: any) => (
+      <ActionButtons
+        rowData={rowData}
+        selectedRowId={selectedRowId}
+        handleEdit={handleEdit}
+        confirm2={confirm2}
+        openReceiptDialog={openReceiptDialog}
+        getMemoOpen={getMemoOpen}
+        handleSave={handleSave}
+        handleCancel={handleCancel}
+      />
+    ),
+    [confirm2, getMemoOpen, handleCancel, handleEdit, handleSave, selectedRowId]
+  );
 
   const addNewRow = () => {
     // scrollLeft()
     const newRow = {
-      _id : generateUniqueId(),
-      sno: getNextSerialNumber(latestSerial),      
+      _id: generateUniqueId(),
+      sno: getNextSerialNumber(latestSerial),
       date: "",
       truckname: "",
       trucknumber: "",
@@ -481,33 +458,6 @@ const Amt = () => {
       />
     );
   };
-
-  const fetchData = useCallback(async () => {
-    try {
-      const atsData = await dispatch(
-        getAts({ limit: rows, offset: page * rows, search: searchQuery })
-      );
-      if (Array.isArray(atsData.payload.data) && !atsData.payload.error) {
-        const formattedData = atsData.payload.data.map((item: any) => ({
-          ...item,
-          date: new Date(item.date),
-          repdate: item.repdate ? new Date(item.repdate) : null,
-          unloaddate: item.unloaddate ? new Date(item.unloaddate) : null,
-        }));
-        setData(formattedData);
-        setLatestSerial(atsData.payload.latestSerial.sno);
-        setTotalPage(atsData.payload.pagination.totalDocuments);
-      }
-    } catch (error) {
-      toast.current?.show({
-        severity: "error",
-        summary: messages.error,
-        detail: messages.loadfailure,
-        life: 3000,
-      });
-    }
-  }, [dispatch, page, rows, searchQuery]);
-
   useEffect(() => {
     const fetchDataAndLog = async () => {
       await fetchData();
@@ -528,14 +478,18 @@ const Amt = () => {
         receipt={receipt}
         setReceipt={setReceipt}
         selectedData={selectedData}
-      /> 
-        <div className="p-2" style={{ overflowX: "auto" }} ref={tableContainerRef}>
+      />
+      <div
+        className="p-2"
+        style={{ overflowX: "auto" }}
+        ref={tableContainerRef}
+      >
         <Button
           label="New"
           severity="success"
           onClick={addNewRow}
           className="mb-2"
-          disabled = {selectedRowId}
+          disabled={selectedRowId}
         />
         <DataTable
           value={data}
@@ -571,16 +525,8 @@ const Amt = () => {
             header="Transport Name"
             body={renderInput}
           ></Column>
-          <Column
-            field="from"
-            header="From"
-            body={renderInput}
-          ></Column>
-          <Column
-            field="to"
-            header="To"
-            body={renderInput}
-          ></Column>
+          <Column field="from" header="From" body={renderInput}></Column>
+          <Column field="to" header="To" body={renderInput}></Column>
           <Column
             field="truckf"
             header="Truck Freight"
