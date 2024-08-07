@@ -21,6 +21,9 @@ const getNestedValue = (obj: any, path: any) => {
     }
     return '';
   }
+  if('addThree' in obj && path === 'transcrossing'){
+    return obj.vmatcrossing + obj.transcrossing
+  }
   return path
     .split(".")
     .reduce((acc: any, part: any) => acc && acc[part], obj);
@@ -133,6 +136,10 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
         text: getSearch(searchQuery),
         style: "subheader3",
         alignment: "center",
+      },
+      {
+        text: `Total Sl. No : ${tableBody.length - 1}`,
+        style: "subheader3",
       },
       {
         table: {

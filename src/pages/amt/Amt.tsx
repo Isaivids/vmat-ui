@@ -53,10 +53,14 @@ const Amt = () => {
         let updatedRow = { ...row, [field]: value };
         if (calcField.includes(field)) {
           updatedRow = { ...row, [field]: value };
-          updatedRow.truckbln =
-            Number(updatedRow.truckf) - Number(updatedRow.truckadv);
-          updatedRow.transbln =
-            Number(updatedRow.transf) - Number(updatedRow.transadv);
+          updatedRow.truckbln = Number(updatedRow.truckf) - Number(updatedRow.truckadv);
+          if(updatedRow.transbalancetype === 'TOPAY'){
+            updatedRow.transbln = 0;
+            updatedRow.twopay = Number(updatedRow.transf) - Number(updatedRow.transadv);
+          }else if(updatedRow.transbalancetype === 'BALANCE'){
+            updatedRow.transbln = Number(updatedRow.transf) - Number(updatedRow.transadv);
+            updatedRow.twopay = 0;
+          }
         }
         return updatedRow;
       }
@@ -351,7 +355,6 @@ const Amt = () => {
                }
               : item
           );
-          console.log(updatedBackupData)
           setOriginalData(updatedBackupData);
           setLatestSerial(response.payload.latestSerial.sno);
           setData([...updatedBackupData]);
@@ -471,8 +474,15 @@ const Amt = () => {
       if (row._id === id) {
         // return { ...row, [field]: value.code };
         const updatedRow = { ...row, [field]: value.code };
-        if (updatedRow.modeofadvance === 3) {
-          updatedRow.twopay = updatedRow.transbln;
+        // if (updatedRow.modeofadvance === 3) {
+        //   updatedRow.twopay = updatedRow.transbln;
+        // }
+        if(updatedRow.transbalancetype === 'TOPAY'){
+          updatedRow.transbln = 0;
+          updatedRow.twopay = Number(updatedRow.transf) - Number(updatedRow.transadv);
+        }else if(updatedRow.transbalancetype === 'BALANCE'){
+          updatedRow.transbln = Number(updatedRow.transf) - Number(updatedRow.transadv);
+          updatedRow.twopay = 0;
         }
         return updatedRow;
       }

@@ -212,6 +212,7 @@ const Ack = () => {
             podcharge,
             rtgsnumber,
             tdsack,
+            remark
           } = response.payload.data;
           const updatedBackupData = backupData.map((item: any) =>
             item._id === rowData._id
@@ -230,6 +231,7 @@ const Ack = () => {
                   podcharge: podcharge,
                   rtgsnumber: rtgsnumber,
                   tdsack: Number(tdsack),
+                  remark : remark
                 }
               : item
           );
@@ -498,7 +500,7 @@ const Ack = () => {
         <Column field="ats.lateday" header="Late Delivery"></Column>
         <Column field="ats.halting" header="Halting"></Column>
         <Column field="remark" header="Remark" body={renderInput}></Column>
-        <Column field="expense" header="Expense" body={renderInput}></Column>
+        <Column field="expense" header="Unloading Wages" body={renderInput}></Column>
         <Column
           field="podcharge"
           header="POD Charge"
