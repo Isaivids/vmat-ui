@@ -116,9 +116,24 @@ const VmatAccount = () => {
     try {
       const response = await dispatch(updatevmataccount(payload));
       if (response.payload.data && !response.payload.error) {
-        const index = data.findIndex((item: any) => item._id === rowData._id);
+        const index = backupData.findIndex((item: any) => item._id === rowData._id);
         if (index !== -1) {
-          data[index]._id = response.payload.data._id;
+          // data[index]._id = response.payload.data._id;
+          const updatedBackupData = backupData.map((item: any) =>
+            item._id === rowData._id
+              ? {
+                  ...item,
+                  vmatexpense: Number(response.payload.data.vmatexpense),
+                  reason: response.payload.data.reason,
+                  tdsdeduction: response.payload.data.tdsdeduction,
+                  income: response.payload.data.income,
+                  profit: response.payload.data.profit,
+                  _id: response.payload.data._id,
+                }
+              : item
+          );
+          setBackupData(updatedBackupData);
+          setData([...updatedBackupData]);
         }
         fetchTotals();
         setSelectedRowId(null);
@@ -140,8 +155,12 @@ const VmatAccount = () => {
   };
 
   const handleEdit = (rowData: any) => {
+    // setSelectedRowId(rowData._id);
+    // setBackupData([...data]);
+    setBackupData(data);
+    const filtered = data.filter((x: any) => x._id === rowData._id);
+    setData(filtered);
     setSelectedRowId(rowData._id);
-    setBackupData([...data]);
   };
 
   const handleCancel = () => {

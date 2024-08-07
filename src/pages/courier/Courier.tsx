@@ -123,7 +123,6 @@ const Courier = () => {
   };
 
   const handleSave = async (rowData: any) => {
-    console.log(rowData)
     const payload = {
       couriersendingname: rowData.couriersendingname,
       courierdetail: rowData.courierdetail,
@@ -136,9 +135,28 @@ const Courier = () => {
     try {
         const response = await dispatch(updatecourierdetails(payload));
         if (!response.payload.error) {
-          const index = data.findIndex((item: any) => item._id === rowData._id);
+          const index = backupData.findIndex((item: any) => item._id === rowData._id);
           if (index !== -1) {
-            data[index]._id = response.payload.data._id;
+            // data[index]._id = response.payload.data._id;
+            const updatedBackupData = backupData.map((item: any) =>
+              item._id === rowData._id
+                ? {
+                    ...item,
+                    couriersendingname: response.payload.data.couriersendingname,
+                    courierdetail: response.payload.data.courierdetail,
+                    debitamount: Number(response.payload.data.debitamount),
+                    creditamount: Number(response.payload.data.creditamount),
+                    remarks: response.payload.data.remarks,
+                    date : response.payload.data.date,
+                    _id: response.payload.data._id,
+                  }
+                : item
+            );
+            setBackupData(updatedBackupData);
+            setData([...updatedBackupData]);
+          }else{
+            setBackupData([response.payload.data,...backupData]);
+            setData([response.payload.data,...backupData]);
           }
           setSelectedRowId(null);
           toast.current?.show({
@@ -169,8 +187,12 @@ const Courier = () => {
   };
 
   const handleEdit = (rowData: any) => {
+    // setSelectedRowId(rowData._id);
+    // setBackupData([...data]);
+    setBackupData(data);
+    const filtered = data.filter((x: any) => x._id === rowData._id);
+    setData(filtered);
     setSelectedRowId(rowData._id);
-    setBackupData([...data]);
   };
 
   const accept = async(id:any) => {
@@ -231,7 +253,8 @@ const Courier = () => {
       creditamount: 0,
       date: '',
     };
-    setData([newRow, ...data]);
+    setBackupData(data)
+    setData([newRow]);
     setSelectedRowId(newRow._id);
   };
 

@@ -134,9 +134,27 @@ const BankDetails = () => {
     try {
         const response = await dispatch(updatebankdetail(payload));
         if (!response.payload.error) {
-          const index = data.findIndex((item: any) => item._id === rowData._id);
+          const index = backupData.findIndex((item: any) => item._id === rowData._id);
           if (index !== -1) {
-            data[index]._id = response.payload.data._id;
+            // data[index]._id = response.payload.data._id;
+            const updatedBackupData = backupData.map((item: any) =>
+              item._id === rowData._id
+                ? {
+                    ...item,
+                    paymentdate: response.payload.data.paymentdate,
+                    advanceamount: Number(response.payload.data.advanceamount),
+                    balanceamount: Number(response.payload.data.balanceamount),
+                    transportbranches: response.payload.data.transportbranches,
+                    rtgsnumber: response.payload.data.rtgsnumber,
+                    _id: response.payload.data._id,
+                  }
+                : item
+            );
+            setBackupData(updatedBackupData);
+            setData([...updatedBackupData]);
+          }else{
+            setBackupData([response.payload.data,...backupData]);
+            setData([response.payload.data,...backupData]);
           }
           setSelectedRowId(null);
           toast.current?.show({
@@ -167,8 +185,12 @@ const BankDetails = () => {
   };
 
   const handleEdit = (rowData: any) => {
+    // setSelectedRowId(rowData._id);
+    // setBackupData([...data]);
+    setBackupData(data);
+    const filtered = data.filter((x: any) => x._id === rowData._id);
+    setData(filtered);
     setSelectedRowId(rowData._id);
-    setBackupData([...data]);
   };
 
   const accept = async(id:any) => {
@@ -228,7 +250,8 @@ const BankDetails = () => {
       transportbranches: "",
       rtgsnumber: "",
     };
-    setData([newRow, ...data]);
+    setBackupData(data)
+    setData([newRow]);
     setSelectedRowId(newRow._id);
   };
 

@@ -80,8 +80,12 @@ const Tcp = () => {
   };
 
   const handleEdit = (rowData: any) => {
+    // setSelectedRowId(rowData._id);
+    // setBackupData([...data]);
+    setBackupData(data);
+    const filtered = data.filter((x: any) => x._id === rowData._id);
+    setData(filtered);
     setSelectedRowId(rowData._id);
-    setBackupData([...data]);
   };
 
   const getFormattedDate = (inputDate: any) => {
@@ -111,9 +115,24 @@ const Tcp = () => {
     try {
       const response = await dispatch(updatetcp(payload));
       if (!response.payload.error) {
-        const index = data.findIndex((item: any) => item._id === rowData._id);
+        const index = backupData.findIndex((item: any) => item._id === rowData._id);
         if (index !== -1) {
-          data[index]._id = response.payload.data._id;
+          // data[index]._id = response.payload.data._id;
+          const updatedBackupData = backupData.map((item: any) =>
+            item._id === rowData._id
+              ? {
+                  ...item,
+                  modeofpayment: response.payload.data.modeofpayment,
+                  rtgsnumber: response.payload.data.rtgsnumber,
+                  paymentReceivedDate: response.payload.data.paymentReceivedDate,
+                  total: response.payload.data.total,
+                  others: response.payload.data.others,
+                  remarks: response.payload.data.remarks,
+                  _id: response.payload.data._id,
+                }
+              : item
+          );
+          setBackupData(updatedBackupData);
           const updatedRowColor = rowColor.map((item: any) => {
             if (item._id === rowData._id) {
               return { ...item, modeofpayment: response.payload.data.modeofpayment };
@@ -121,6 +140,7 @@ const Tcp = () => {
             return item;
           });   
           setRowColor(updatedRowColor);
+          setData([...updatedBackupData]);
         }
         setSelectedRowId(null);
         toast.current?.show({

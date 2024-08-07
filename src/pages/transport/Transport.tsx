@@ -81,11 +81,32 @@ const Transport = () => {
       const response = await dispatch(updateTransportDetail(payload));
 
       if (!response.payload.error) {
-        const index = data.findIndex((item: any) => item._id === rowData._id);
+        const index = backupData.findIndex((item: any) => item._id === rowData._id);
         if (index !== -1) {
-          data[index] = response.payload.data;
+          // data[index] = response.payload.data;
+          const updatedBackupData = backupData.map((item: any) =>
+            item._id === rowData._id
+              ? {
+                  ...item,
+                  truckname: response.payload.data.truckname,
+                  transportname: response.payload.data.transportname,
+                  address: response.payload.data.address,
+                  phonenumber: response.payload.data.phonenumber,
+                  accountnumber: response.payload.data.accountnumber,
+                  pannumber: response.payload.data.pannumber,
+                  loadingaddress: response.payload.data.loadingaddress,
+                  unloadingaddress: response.payload.data.unloadingaddress,
+                  location: response.payload.data.location,
+                  _id: response.payload.data._id,
+                }
+              : item
+          );
+          setBackupData(updatedBackupData);
+          setData([...updatedBackupData]);
         } else {
-          data.push(response.payload.data);
+          setBackupData([response.payload.data,...backupData]);
+          setData([response.payload.data,...backupData]);
+          // data.push(response.payload.data);
         }
 
         setSelectedRowId(null);
@@ -117,8 +138,12 @@ const Transport = () => {
   };
 
   const handleEdit = (rowData: any) => {
+    // setSelectedRowId(rowData._id);
+    // setBackupData([...data]);
+    setBackupData(data);
+    const filtered = data.filter((x: any) => x._id === rowData._id);
+    setData(filtered);
     setSelectedRowId(rowData._id);
-    setBackupData([...data]);
   };
 
   const handleAddNewRow = () => {
@@ -134,7 +159,8 @@ const Transport = () => {
       unloadingaddress: "",
       location: "",
     };
-    setData([newRow, ...data]);
+    setBackupData(data)
+    setData([newRow]);
     setSelectedRowId(newRow._id);
   };
 

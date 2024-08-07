@@ -116,9 +116,34 @@ const TransportAdvance = () => {
     try {
       const response = await dispatch(updateTransportAdvance(payload));
       if (response.payload.data && !response.payload.error) {
-        const index = data.findIndex((item: any) => item._id === rowData._id);
+        const index = backupData.findIndex((item: any) => item._id === rowData._id);
+        const {
+          transporterpaidadvanceamount,modeofpayment,dateofadvancepayment,
+          remarks,extraloadingwagespaidbydriver,loadingwages,rtgsnumber,tdstta,_id
+        } = response.payload.data;
         if (index !== -1) {
-          data[index]._id = response.payload.data._id;
+          // data[index]._id = response.payload.data._id;
+          const updatedBackupData = backupData.map((item: any) =>
+            item._id === rowData._id
+              ? {
+                ...rowData,
+                transporterpaidadvanceamount: Number(
+                  transporterpaidadvanceamount
+                ),
+                modeofpayment: modeofpayment,
+                dateofadvancepayment: dateofadvancepayment,
+                remarks: remarks,
+                extraloadingwagespaidbydriver: Number(
+                  extraloadingwagespaidbydriver
+                ),
+                loadingwages : Number(loadingwages),
+                rtgsnumber: rtgsnumber,
+                tdstta: Number(tdstta),
+                _id: _id,
+                }
+              : item
+          );
+          setBackupData(updatedBackupData);
           const updatedRowColor = rowColor.map((item: any) => {
             if (item._id === rowData._id) {
               return { ...item, modeofpayment: response.payload.data.modeofpayment };
@@ -126,6 +151,7 @@ const TransportAdvance = () => {
             return item;
           });   
           setRowColor(updatedRowColor);
+          setData([...updatedBackupData]);
         }
         setSelectedRowId(null);
         toast.current?.show({
@@ -136,6 +162,7 @@ const TransportAdvance = () => {
         });
       }
     } catch (error) {
+      console.log(error)
       toast.current?.show({
         severity: "error",
         summary: messages.error,
@@ -146,8 +173,10 @@ const TransportAdvance = () => {
   };
 
   const handleEdit = (rowData: any) => {
+    setBackupData(data);
+    const filtered = data.filter((x: any) => x._id === rowData._id);
+    setData(filtered);
     setSelectedRowId(rowData._id);
-    setBackupData([...data]);
   };
 
   const handleCancel = () => {

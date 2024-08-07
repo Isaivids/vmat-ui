@@ -6,7 +6,13 @@ import { getByVmat, updateByVmat } from "../../store/slice/byvmatSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Paginator } from "primereact/paginator";
-import { formatDate, getVMAT, initialrows, messages, paginationRows } from "../../api/constants";
+import {
+  formatDate,
+  getVMAT,
+  initialrows,
+  messages,
+  paginationRows,
+} from "../../api/constants";
 import { Toast } from "primereact/toast";
 import CommonDatePicker from "../calender/CommonDatePicker";
 import CommonDropdown from "../dropdown/CommonDropdown";
@@ -27,7 +33,7 @@ const AdvVmat = () => {
   const [showPending, setShowPending] = useState(true);
   const [showCompleted, setShowCompleted] = useState(true);
   const userDetails = useSelector((state: any) => state.user);
-  const [rowColor, setRowColor]:any = useState([])
+  const [rowColor, setRowColor]: any = useState([]);
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(initialrows);
@@ -64,7 +70,7 @@ const AdvVmat = () => {
     return (
       <InputText
         disabled={rowData._id !== selectedRowId}
-        value={rowData[field.field] || ''}
+        value={rowData[field.field] || ""}
         onChange={(e) => onInputChange(e, rowData._id, field.field)}
         keyfilter={isStringField ? undefined : "num"}
         autoComplete="off"
@@ -88,24 +94,55 @@ const AdvVmat = () => {
     try {
       const response = await dispatch(updateByVmat(payload));
       if (!response.payload.error) {
-        const index = data.findIndex((item: any) => item._id === rowData._id);
+        const index = backupData.findIndex((item: any) => item._id === rowData._id);
         if (index !== -1) {
-          data[index]._id = response.payload.data._id;
-          const updatedRowColor = rowColor.map((item: any) => {
-            if (item._id === rowData._id) {
-              return { ...item, modeofpayment: response.payload.data.modeofpayment };
-            }
-            return item;
-          });   
-          setRowColor(updatedRowColor);
+          // data[index]._id = response.payload.data._id;
+          const index = backupData.findIndex(
+            (item: any) => item._id === rowData._id
+          );
+          const {
+            pendinglabourwages,extlabourwages,others,othersreason,
+            advanceamount,total,paymentreceiveddate,modeofpayment,rtgsnumber,_id
+          } = response.payload.data;
+          if (index !== -1) {
+            const updatedBackupData = backupData.map((item: any) =>
+              item._id === rowData._id
+                ? {
+                    ...item,
+                    pendinglabourwages: Number(pendinglabourwages),
+                    extlabourwages: Number(extlabourwages),
+                    others: Number(others),
+                    othersreason: othersreason,
+                    advanceamount: Number(advanceamount),
+                    total: Number(total),
+                    paymentreceiveddate: paymentreceiveddate,
+                    modeofpayment: modeofpayment,
+                    rtgsnumber: rtgsnumber,
+                    _id: _id,
+                  }
+                : item
+            );
+            setBackupData(updatedBackupData);
+            const updatedRowColor = rowColor.map((item: any) => {
+              if (item._id === rowData._id) {
+                return {
+                  ...item,
+                  modeofpayment: response.payload.data.modeofpayment,
+                };
+              }
+              return item;
+            });
+            setRowColor(updatedRowColor);
+            setData([...updatedBackupData]);
+          }
+          setSelectedRowId(null);
+          toast.current?.show({
+            severity: "success",
+            summary: messages.success,
+            detail: messages.updateoraddsuccess,
+            life: 3000,
+          });
         }
-        setSelectedRowId(null);
-        toast.current?.show({
-          severity: "success",
-          summary: messages.success,
-          detail: messages.updateoraddsuccess,
-          life: 3000,
-        });
       }
     } catch (error) {
       toast.current?.show({
@@ -126,8 +163,12 @@ const AdvVmat = () => {
   };
 
   const handleEdit = (rowData: any) => {
+    // setSelectedRowId(rowData._id);
+    // setBackupData([...data]);
+    setBackupData(data);
+    const filtered = data.filter((x: any) => x._id === rowData._id);
+    setData(filtered);
     setSelectedRowId(rowData._id);
-    setBackupData([...data]);
   };
 
   const renderButton = (rowData: any) => {
@@ -194,20 +235,25 @@ const AdvVmat = () => {
 
   const getType = useCallback(() => {
     if (showPending && showCompleted) {
-        return 3;
+      return 3;
     } else if (showCompleted) {
-        return 2;
+      return 2;
     } else if (showPending) {
-        return 1;
+      return 1;
     } else {
-        return 0;
+      return 0;
     }
-}, [showCompleted, showPending]);
+  }, [showCompleted, showPending]);
 
   const fetchData = useCallback(async () => {
     try {
       const trcukData = await dispatch(
-        getByVmat({ limit: rows, offset: page * rows, search: searchQuery, ftype : getType() })
+        getByVmat({
+          limit: rows,
+          offset: page * rows,
+          search: searchQuery,
+          ftype: getType(),
+        })
       );
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
         setData(trcukData.payload.data);
@@ -232,13 +278,12 @@ const AdvVmat = () => {
   }, [fetchData]);
 
   const rowClassName = (rowData: any) => {
-    const color:any = rowColor.filter((x:any) => x._id === rowData._id);
+    const color: any = rowColor.filter((x: any) => x._id === rowData._id);
     if ([null, "", undefined, "PENDING"].includes(color[0].modeofpayment)) {
       return "red";
     }
     return "green";
   };
-
 
   const handleCheckboxChange = (e: any) => {
     const { name, checked } = e.target;

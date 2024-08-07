@@ -141,9 +141,29 @@ const Payment = () => {
     try {
       const response = await dispatch(updateTransAdvance(payload));
       if (response.payload.data && !response.payload.error) {
-        const index = data.findIndex((item: any) => item._id === rowData._id);
+        const index = backupData.findIndex((item: any) => item._id === rowData._id);
         if (index !== -1) {
-          data[index]._id = response.payload.data._id;
+          // data[index]._id = response.payload.data._id;
+          const updatedBackupData = backupData.map((item: any) =>
+            item._id === rowData._id
+              ? {
+                  ...item,
+                  modeofpayment: response.payload.data.modeofpayment,
+                  rtgsnumber: response.payload.data.rtgsnumber,
+                  paymentReceivedDate: response.payload.data.paymentReceivedDate,
+                  loadunloadchar: Number(response.payload.data.loadunloadchar),
+                  tyrasporterpaidamt: Number(response.payload.data.tyrasporterpaidamt),
+                  remarks: response.payload.data.remarks,
+                  tdstbp: Number(response.payload.data.tdstbp),
+                  extraloadingwagespaidbydriver: Number(
+                    response.payload.data.extraloadingwagespaidbydriver
+                  ),
+                  loadingwagespending: Number(response.payload.data.loadingwagespending),
+                  _id: response.payload.data._id,
+                }
+              : item
+          );
+          setBackupData(updatedBackupData);
           const updatedRowColor = rowColor.map((item: any) => {
             if (item._id === rowData._id) {
               return { ...item, modeofpayment: response.payload.data.modeofpayment };
@@ -151,6 +171,7 @@ const Payment = () => {
             return item;
           });   
           setRowColor(updatedRowColor);
+          setData([...updatedBackupData]);
         }
         setSelectedRowId(null);
         toast.current?.show({
@@ -171,8 +192,12 @@ const Payment = () => {
   };
 
   const handleEdit = (rowData: any) => {
+    // setSelectedRowId(rowData._id);
+    // setBackupData([...data]);
+    setBackupData(data);
+    const filtered = data.filter((x: any) => x._id === rowData._id);
+    setData(filtered);
     setSelectedRowId(rowData._id);
-    setBackupData([...data]);
   };
 
   const handleCancel = () => {
