@@ -277,7 +277,7 @@ export const getACK = () => {
     { field: "podcharge", header: "POD Charge" },
     // { field: "vmatcrossing", header: "VMAT Crossing" },
     { field: "vmatcommision", header: "VMAT Commission" },
-    { field: "transcrossing", header: "Transport Crossing" },
+    // { field: "transcrossing", header: "Transport Crossing" },
     { field: "ats.twopay", header: "By To Pay Transport Balance." },
     { field: "tdsack", header: "Others" },
     { field: "finaltotaltotruckowner", header: "Final Total to Truck Owner" },

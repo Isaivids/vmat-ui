@@ -21,9 +21,6 @@ const getNestedValue = (obj: any, path: any) => {
     }
     return '';
   }
-  if('addThree' in obj && path === 'transcrossing'){
-    return obj.vmatcrossing + obj.transcrossing
-  }
   return path
     .split(".")
     .reduce((acc: any, part: any) => acc && acc[part], obj);
