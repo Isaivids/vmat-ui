@@ -4,11 +4,10 @@ import { formatDate, messages } from "../api/constants";
 import { Button } from "primereact/button";
 import ReactToPrint from "react-to-print";
 import { InputText } from "primereact/inputtext";
-import { InputNumber } from "primereact/inputnumber";
 
 const TransportReceipt = ({ data }: any) => {
   const componentRef: any = useRef();
-  const [mamol, setMamol] = useState({loading : 0, guide : 0})
+  const [mamol, setMamol]:any = useState({loading : 0, guide : 0})
   // Function to handle printing success
   const handlePrintSuccess = () => {
     console.log("Print successful!");
@@ -16,12 +15,12 @@ const TransportReceipt = ({ data }: any) => {
   };
 
   const getGrandTotal = () =>{
-    return mamol.loading + mamol.guide +  Number(calculateCommission(data) || 0)
+    return Number(mamol.loading) + Number(mamol.guide) +  Number(calculateCommission(data) || 0)
   }
 
   const handleChangeMamol = (e:any) => {
     const { name, value } = e.target;
-    setMamol((prevMamol) => ({
+    setMamol((prevMamol:any) => ({
       ...prevMamol,
       [name]: value,
     }));
@@ -135,13 +134,13 @@ const TransportReceipt = ({ data }: any) => {
               <td>Truck Advance Amount</td>
               <td>{data.truckadv}</td>
               <td>Loading Mamol</td>
-              <td><InputNumber value={mamol.loading} name="loading" onValueChange={(e:any) => handleChangeMamol(e)} /></td>
+              <td><InputText keyfilter={"num"} value={mamol.loading} name="loading" onChange={(e:any) => handleChangeMamol(e)} /></td>
             </tr>
             <tr>
               <td>Truck Balance/ To Pay</td>
               <td>{data.truckbln}</td>
               <td>Guide Mamol</td>
-              <td><InputNumber value={mamol.guide} name="guide" onValueChange={(e:any) => handleChangeMamol(e)} /></td>
+              <td><InputText keyfilter={"num"} value={mamol.guide} name="guide" onChange={(e:any) => handleChangeMamol(e)} /></td>
             </tr>
             <tr>
               <td colSpan={2}></td>
