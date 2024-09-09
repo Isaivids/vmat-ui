@@ -141,7 +141,7 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
       {
         table: {
           headerRows: 1,
-          widths: columns.map(() => [5,6,8].includes(type) ? '*' : 'auto'),
+          widths: columns.map(() => [5,8].includes(type) ? '*' : 'auto'),
           body: tableBody,
           style: "details",
         },
