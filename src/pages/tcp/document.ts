@@ -1,4 +1,4 @@
-import { formatDate, messages } from "../../api/constants";
+import { ackWidths, ccptoWidths, formatDate, messages, tbpWidths, tcpWidths, transWidths, truckWidths, twopayWidths, vmatWidths } from "../../api/constants";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { pageName } from '../../api/constants';
@@ -25,6 +25,39 @@ const getNestedValue = (obj: any, path: any) => {
     .split(".")
     .reduce((acc: any, part: any) => acc && acc[part], obj);
 };
+
+const getWidths = (type:any) =>{
+  let returnValue:any;
+  switch (type) {
+    case 1:
+      returnValue = vmatWidths
+      break;
+      case 2:
+      returnValue = transWidths
+      break;
+      case 3:
+      returnValue = twopayWidths
+      break;
+      case 4:
+      returnValue = ackWidths
+      break;
+      case 5:
+      returnValue = ccptoWidths
+      break;
+      case 6:
+      returnValue = tcpWidths
+      break;
+      case 7:
+      returnValue = tbpWidths
+      break;
+      case 8:
+      returnValue = truckWidths
+      break;
+    default:
+      break;
+  }
+  return returnValue;
+}
 
 const getSearch = (searchQuery: any) => {
   let returnValue = '';
@@ -109,7 +142,7 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
   };
 
   const docDefinition: any = {
-    pageSize: (tableHeaders.length < 14 || type === 6) ? 'A4' : 'A3',
+    pageSize: (tableHeaders.length < 14) ? 'A4' : 'A3',
     pageOrientation: 'landscape',
     pageMargins: [10, 10, 10, 10],
     content: [
@@ -141,9 +174,16 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
       {
         table: {
           headerRows: 1,
-          widths: columns.map(() => [5,8].includes(type) ? '*' : 'auto'),
+          // widths: [6].includes(type) ? tcpWidths : columns.map(() => [5,6,8].includes(type) ? '*' : 'auto'),
+          widths: getWidths(type),
           body: tableBody,
           style: "details",
+        },
+        layout: {
+          hLineWidth: function(i: number, node: any) { return (i === 0 || i === node.table.body.length) ? 1 : 0.5; },
+          vLineWidth: function(i: number) { return 0.5; },
+          hLineColor: function(i: number, node: any) { return (i === 0 || i === node.table.body.length) ? 'black' : 'gray'; },
+          vLineColor: function(i: number) { return 'gray'; },
         },
       },
 

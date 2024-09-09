@@ -165,6 +165,7 @@ export const getTCPDoc = () => {
     { field: "rtgsnumber", header: "RTGS Number" },
   ];
 }
+export const tcpWidths = ['*',70,100,100,100,100,100,100]
 
 export const getTruckDetails = () => {
   return [
@@ -179,6 +180,8 @@ export const getTruckDetails = () => {
   ];
 }
 
+export const truckWidths = [500,'*']
+
 export const getCCPTODetails = () => {
   return [
     { field: "ats.date", header: "Date" },
@@ -192,6 +195,8 @@ export const getCCPTODetails = () => {
     // { field: "rtgsnumber", header: "RTGS Number" },
   ];
 };
+
+export const ccptoWidths = ['*',70,100,100,100,100,100,100]
 
 export const getTwoPayDetails = () => {
   return [
@@ -210,6 +215,8 @@ export const getTwoPayDetails = () => {
   ];
 };
 
+export const twopayWidths = ['*',50,50,50,50,50,50,50,50,50,50,50]
+
 export const getVMAT = () => {
   return [
     { field: "ats.date", header: "Date" },
@@ -227,6 +234,8 @@ export const getVMAT = () => {
     { field: "rtgsnumber", header: "RTGS Number" },
   ];
 }
+export const vmatWidths = ['*',50,50,50,50,50,50,50,50,50,50,50,50]
+
 
 export const getTransADV = () => {
   return [
@@ -245,6 +254,8 @@ export const getTransADV = () => {
     { field: "rtgsnumber", header: "RTGS Number" },
   ];
 }
+export const transWidths = ['*',70,70,70,70,70,70,70,70,50,50,50,50]
+
 export const getTBP = () => {
   return [
     { field: "ats.date", header: "Date" },
@@ -263,6 +274,8 @@ export const getTBP = () => {
     { field: "rtgsnumber", header: "RTGS Number" },
   ];
 }
+export const tbpWidths = ['*',50,50,50,50,50,50,50,50,50,50,60,50]
+
 export const getACK = () => {
   return [
     { field: "ats.date", header: "Date" },
@@ -286,6 +299,9 @@ export const getACK = () => {
     { field: "rtgsnumber", header: "RTGS Number" },
   ];
 }
+
+export const ackWidths = ['*',50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50]
+
 
 export const pageName = [
   { type: 1, name: 'Truck Advance By VMAT' },
