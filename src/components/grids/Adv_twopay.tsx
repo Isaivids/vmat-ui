@@ -145,7 +145,7 @@ const AdvTwopay = () => {
                   ...item,
                   modeofpayment: response.payload.data.modeofpayment,
                   rtgsnumber: response.payload.data.rtgsnumber,
-                  paymentReceivedDate: response.payload.data.paymentReceivedDate,
+                  paymentreceiveddate: response.payload.data.paymentreceiveddate,
                   luxwages: Number(response.payload.data.luxwages),
                   total: Number(response.payload.data.total),
                   remarks: response.payload.data.remarks,

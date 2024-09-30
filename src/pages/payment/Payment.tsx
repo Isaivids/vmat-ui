@@ -17,6 +17,7 @@ import CustomButtonComponent from "../../components/button/CustomButtonComponent
 import { Button } from "primereact/button";
 import { downloadPDF } from "../tcp/document";
 import { Checkbox } from "primereact/checkbox";
+import { RadioButton } from "primereact/radiobutton";
 const Payment = () => {
   const dispatch = useDispatch<AppDispatch>();
   const toast = useRef<Toast>(null);
@@ -27,7 +28,8 @@ const Payment = () => {
   const [backupData, setBackupData]: any = useState(null);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const userDetails = useSelector((state: any) => state.user);
-  const [rowColor, setRowColor]:any = useState([])
+  const [rowColor, setRowColor]:any = useState([]);
+  const [type, setType] = useState(1);
   // chekcbox
   const [showPending, setShowPending] = useState(true);
   const [showCompleted, setShowCompleted] = useState(true);
@@ -277,7 +279,8 @@ const Payment = () => {
           limit: rows,
           offset: page * rows,
           search: searchQuery,
-          ftype : getType()
+          ftype : getType(),
+          screen : type
         })
       );
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
@@ -293,7 +296,7 @@ const Payment = () => {
         life: 3000,
       });
     }
-  }, [dispatch, getType, page, rows, searchQuery]);
+  }, [dispatch, getType, page, rows, searchQuery, type]);
 
   useEffect(() => {
     const fetchDataAndLog = async () => {
@@ -332,6 +335,18 @@ const Payment = () => {
         disabled={selectedProducts.length <= 0}
         className="mb-2"
       />
+      <div className="card flex justify-content-center">
+            <div className="flex flex-wrap gap-3">
+                <div className="flex align-items-center">
+                    <RadioButton inputId="type1" name="type1" value={1} onChange={(e) => setType(e.value)} checked={type === 1} />
+                    <label htmlFor="type1" className="ml-2">Transport Balance to VMAT</label>
+                </div>
+                <div className="flex align-items-center">
+                    <RadioButton inputId="type2" name="type2" value={2} onChange={(e) => setType(e.value)} checked={type === 2} />
+                    <label htmlFor="type2" className="ml-2">Transport Balance to Truck</label>
+                </div>
+            </div>
+        </div>
               <div className="flex align-items-center my-3">
           <Checkbox
             inputId="pending"

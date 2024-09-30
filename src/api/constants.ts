@@ -66,7 +66,7 @@ export const messages = {
       color: "yellowMenu"
     },
     {
-      name: "Transporter To Pay Advance",
+      name: "Transporter Advance To Truck",
       to: "/topay",
       image: require("../assets/ico5.svg").default,
       color: "whitemenu"
@@ -165,7 +165,7 @@ export const getTCPDoc = () => {
     { field: "rtgsnumber", header: "RTGS Number" },
   ];
 }
-export const tcpWidths = ['*',70,100,100,100,100,100,100]
+export const tcpWidths = [70,'*',100,100,100,100,100,100]
 
 export const getTruckDetails = () => {
   return [
@@ -196,7 +196,7 @@ export const getCCPTODetails = () => {
   ];
 };
 
-export const ccptoWidths = ['*',70,100,100,100,100,100,100]
+export const ccptoWidths = [70,'*',100,100,100,100,100,100]
 
 export const getTwoPayDetails = () => {
   return [
@@ -215,7 +215,7 @@ export const getTwoPayDetails = () => {
   ];
 };
 
-export const twopayWidths = ['*',50,50,50,50,50,50,50,50,50,50,50]
+export const twopayWidths = [70,'*',50,50,50,50,50,50,50,50,50,50]
 
 export const getVMAT = () => {
   return [
@@ -234,7 +234,7 @@ export const getVMAT = () => {
     { field: "rtgsnumber", header: "RTGS Number" },
   ];
 }
-export const vmatWidths = ['*',50,50,50,50,50,50,50,50,50,50,50,50]
+export const vmatWidths = [70,'*',50,50,50,50,50,50,50,50,50,50,50]
 
 
 export const getTransADV = () => {
@@ -254,7 +254,7 @@ export const getTransADV = () => {
     { field: "rtgsnumber", header: "RTGS Number" },
   ];
 }
-export const transWidths = ['*',70,70,70,70,70,70,70,70,50,50,50,50]
+export const transWidths = [70,'*',70,70,70,70,70,70,70,50,50,50,50]
 
 export const getTBP = () => {
   return [
@@ -274,7 +274,7 @@ export const getTBP = () => {
     { field: "rtgsnumber", header: "RTGS Number" },
   ];
 }
-export const tbpWidths = ['*',50,50,50,50,50,50,50,50,50,50,60,50]
+export const tbpWidths = [50,'*',50,50,50,50,50,50,50,50,50,60,50]
 
 export const getACK = () => {
   return [
@@ -300,7 +300,7 @@ export const getACK = () => {
   ];
 }
 
-export const ackWidths = ['*',50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50]
+export const ackWidths = [70,70,'*',50,50,50,50,50,50,50,50,50,50,50,50,50,50]
 
 
 export const pageName = [

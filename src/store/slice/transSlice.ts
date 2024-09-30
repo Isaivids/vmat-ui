@@ -13,7 +13,7 @@ const initialState = {
 }
 
 export const getTransCrossing = createAsyncThunk('gettransadvance', async (payload:any) => {
-    const response:any = await apiCall.get(`/gettransadvance?limit=${payload.limit}&offset=${payload.offset}&search=${payload.search.query}&fromDate=${payload.search.fromDate}&toDate=${payload.search.toDate}&ftype=${payload.ftype}`);
+    const response:any = await apiCall.get(`/gettransadvance?limit=${payload.limit}&offset=${payload.offset}&search=${payload.search.query}&fromDate=${payload.search.fromDate}&toDate=${payload.search.toDate}&ftype=${payload.ftype}&screen=${payload.screen}`);
     if (response.error) {
         throw new Error("Error message");
     }

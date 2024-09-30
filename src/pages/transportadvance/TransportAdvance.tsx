@@ -5,7 +5,12 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Paginator } from "primereact/paginator";
-import { formatDate, initialrows, messages, paginationRows } from "../../api/constants";
+import {
+  formatDate,
+  initialrows,
+  messages,
+  paginationRows,
+} from "../../api/constants";
 import { Toast } from "primereact/toast";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import CommonDropdown from "../../components/dropdown/CommonDropdown";
@@ -15,6 +20,7 @@ import {
 } from "../../store/slice/transportadvance";
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
 import { Checkbox } from "primereact/checkbox";
+import { RadioButton } from "primereact/radiobutton";
 
 const TransportAdvance = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -25,10 +31,11 @@ const TransportAdvance = () => {
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
   const userDetails = useSelector((state: any) => state.user);
-  const [rowColor, setRowColor]:any = useState([])
+  const [rowColor, setRowColor]: any = useState([]);
   // chekcbox
   const [showPending, setShowPending] = useState(true);
   const [showCompleted, setShowCompleted] = useState(true);
+  const [type, setType] = useState(1);
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(initialrows);
@@ -46,10 +53,10 @@ const TransportAdvance = () => {
       if (row._id === id) {
         const updatedRow = { ...row, [field]: value };
         updatedRow.transporterpaidadvanceamount =
-          Number(updatedRow.ats.transadv)
-          - Math.abs(Number(updatedRow.tdstta)) +
+          Number(updatedRow.ats.transadv) -
+          Math.abs(Number(updatedRow.tdstta)) +
           Number(updatedRow.loadingwages) +
-            Number(updatedRow.extraloadingwagespaidbydriver);
+          Number(updatedRow.extraloadingwagespaidbydriver);
         return updatedRow;
       }
       return row;
@@ -62,7 +69,7 @@ const TransportAdvance = () => {
     return (
       <InputText
         disabled={rowData._id !== selectedRowId}
-        value={rowData[field.field] || ''}
+        value={rowData[field.field] || ""}
         onChange={(e) => onInputChange(e, rowData._id, field.field)}
         keyfilter={isStringField ? undefined : "num"}
         autoComplete="off"
@@ -107,7 +114,7 @@ const TransportAdvance = () => {
       extraloadingwagespaidbydriver: Number(
         rowData.extraloadingwagespaidbydriver
       ),
-      loadingwages : Number(rowData.loadingwages),
+      loadingwages: Number(rowData.loadingwages),
       rtgsnumber: rowData.rtgsnumber,
       tdstta: Number(rowData.tdstta),
       _id: rowData._id,
@@ -116,30 +123,39 @@ const TransportAdvance = () => {
     try {
       const response = await dispatch(updateTransportAdvance(payload));
       if (response.payload.data && !response.payload.error) {
-        const index = backupData.findIndex((item: any) => item._id === rowData._id);
+        const index = backupData.findIndex(
+          (item: any) => item._id === rowData._id
+        );
         const {
-          transporterpaidadvanceamount,modeofpayment,dateofadvancepayment,
-          remarks,extraloadingwagespaidbydriver,loadingwages,rtgsnumber,tdstta,_id
+          transporterpaidadvanceamount,
+          modeofpayment,
+          dateofadvancepayment,
+          remarks,
+          extraloadingwagespaidbydriver,
+          loadingwages,
+          rtgsnumber,
+          tdstta,
+          _id,
         } = response.payload.data;
         if (index !== -1) {
           // data[index]._id = response.payload.data._id;
           const updatedBackupData = backupData.map((item: any) =>
             item._id === rowData._id
               ? {
-                ...rowData,
-                transporterpaidadvanceamount: Number(
-                  transporterpaidadvanceamount
-                ),
-                modeofpayment: modeofpayment,
-                dateofadvancepayment: dateofadvancepayment,
-                remarks: remarks,
-                extraloadingwagespaidbydriver: Number(
-                  extraloadingwagespaidbydriver
-                ),
-                loadingwages : Number(loadingwages),
-                rtgsnumber: rtgsnumber,
-                tdstta: Number(tdstta),
-                _id: _id,
+                  ...rowData,
+                  transporterpaidadvanceamount: Number(
+                    transporterpaidadvanceamount
+                  ),
+                  modeofpayment: modeofpayment,
+                  dateofadvancepayment: dateofadvancepayment,
+                  remarks: remarks,
+                  extraloadingwagespaidbydriver: Number(
+                    extraloadingwagespaidbydriver
+                  ),
+                  loadingwages: Number(loadingwages),
+                  rtgsnumber: rtgsnumber,
+                  tdstta: Number(tdstta),
+                  _id: _id,
                 }
               : item
           );
@@ -149,7 +165,7 @@ const TransportAdvance = () => {
               return { ...item, modeofpayment: response.payload.data.modeofpayment };
             }
             return item;
-          });   
+          });
           setRowColor(updatedRowColor);
           setData([...updatedBackupData]);
         }
@@ -239,15 +255,15 @@ const TransportAdvance = () => {
 
   const getType = useCallback(() => {
     if (showPending && showCompleted) {
-        return 3;
+      return 3;
     } else if (showCompleted) {
-        return 2;
+      return 2;
     } else if (showPending) {
-        return 1;
+      return 1;
     } else {
-        return 0;
+      return 0;
     }
-}, [showCompleted, showPending]);
+  }, [showCompleted, showPending]);
 
   const fetchData = useCallback(async () => {
     try {
@@ -256,7 +272,8 @@ const TransportAdvance = () => {
           limit: rows,
           offset: page * rows,
           search: searchQuery,
-          ftype : getType()
+          ftype: getType(),
+          screen : type
         })
       );
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
@@ -272,7 +289,7 @@ const TransportAdvance = () => {
         life: 3000,
       });
     }
-  }, [dispatch, getType, page, rows, searchQuery]);
+  }, [dispatch, getType, page, rows, searchQuery, type]);
 
   useEffect(() => {
     const fetchDataAndLog = async () => {
@@ -303,27 +320,41 @@ const TransportAdvance = () => {
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
-      <div className="flex align-items-center my-3">
-        <Checkbox
-          inputId="pending"
-          name="pending"
-          checked={showPending}
-          onChange={handleCheckboxChange}
-          className="mr-2"
-        />
-        <label htmlFor="pending" className="mr-4">
-          Pending
-        </label>
-        <Checkbox
-          inputId="completed"
-          name="completed"
-          checked={showCompleted}
-          onChange={handleCheckboxChange}
-          className="mr-2"
-        />
-        <label htmlFor="completed" className="mr-4">
-          Completed
-        </label>
+      <div className="flex justify-content-between">
+      <div className="card flex justify-content-center">
+            <div className="flex flex-wrap gap-3">
+                <div className="flex align-items-center">
+                    <RadioButton inputId="type1" name="type1" value={1} onChange={(e) => setType(e.value)} checked={type === 1} />
+                    <label htmlFor="type1" className="ml-2">Transport Advance to VMAT</label>
+                </div>
+                <div className="flex align-items-center">
+                    <RadioButton inputId="type2" name="type2" value={2} onChange={(e) => setType(e.value)} checked={type === 2} />
+                    <label htmlFor="type2" className="ml-2">Transporter to pay Advance</label>
+                </div>
+            </div>
+        </div>
+        <div className="flex align-items-center my-3">
+          <Checkbox
+            inputId="pending"
+            name="pending"
+            checked={showPending}
+            onChange={handleCheckboxChange}
+            className="mr-2"
+          />
+          <label htmlFor="pending" className="mr-4">
+            Pending
+          </label>
+          <Checkbox
+            inputId="completed"
+            name="completed"
+            checked={showCompleted}
+            onChange={handleCheckboxChange}
+            className="mr-2"
+          />
+          <label htmlFor="completed" className="mr-4">
+            Completed
+          </label>
+        </div>
       </div>
       <DataTable
         value={data}
@@ -354,7 +385,11 @@ const TransportAdvance = () => {
           header="TDS deduction 1%"
           body={renderInput}
         ></Column>
-        <Column field="loadingwages" body={renderInput} header="Loading Wages"></Column>
+        <Column
+          field="loadingwages"
+          body={renderInput}
+          header="Loading Wages"
+        ></Column>
         <Column
           field="extraloadingwagespaidbydriver"
           header="Extra loading wages paid by driver"
