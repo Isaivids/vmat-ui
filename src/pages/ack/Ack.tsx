@@ -20,6 +20,7 @@ import CommonDropdown from "../../components/dropdown/CommonDropdown";
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
 import { Button } from "primereact/button";
 import { downloadPDF } from "../tcp/document";
+import { RadioButton } from "primereact/radiobutton";
 const Ack = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [data, setData]: any = useState([]);
@@ -30,6 +31,7 @@ const Ack = () => {
   const [selectedProducts, setSelectedProducts] = useState([]);
   const userDetails = useSelector((state: any) => state.user);
   const [rowColor, setRowColor]: any = useState([]);
+  const [type, setType] = useState(1);
   // chekcbox
   const [showPending, setShowPending] = useState(true);
   const [showCompleted, setShowCompleted] = useState(true);
@@ -363,6 +365,7 @@ const Ack = () => {
           offset: page * rows,
           search: searchQuery,
           ftype: getType(),
+          screen : type
         })
       );
       if (Array.isArray(ackdata.payload.data) && !ackdata.payload.error) {
@@ -378,7 +381,7 @@ const Ack = () => {
         life: 3000,
       });
     }
-  }, [dispatch, getType, page, rows, searchQuery]);
+  }, [dispatch, getType, page, rows, searchQuery, type]);
 
   useEffect(() => {
     const fetchDataAndLog = async () => {
@@ -435,6 +438,18 @@ const Ack = () => {
           disabled={selectedProducts.length <= 0}
           className="mb-2"
         />
+        <div className="card flex justify-content-center">
+            <div className="flex flex-wrap gap-3">
+                <div className="flex align-items-center">
+                    <RadioButton inputId="type1" name="type1" value={1} onChange={(e) => setType(e.value)} checked={type === 1} />
+                    <label htmlFor="type1" className="ml-2">Truck Balance by VMAT</label>
+                </div>
+                <div className="flex align-items-center">
+                    <RadioButton inputId="type2" name="type2" value={2} onChange={(e) => setType(e.value)} checked={type === 2} />
+                    <label htmlFor="type2" className="ml-2">Truck Balance by Transporter</label>
+                </div>
+            </div>
+        </div>
         <div className="flex align-items-center my-3">
           <Checkbox
             inputId="pending"
