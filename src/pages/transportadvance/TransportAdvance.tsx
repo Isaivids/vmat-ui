@@ -8,7 +8,6 @@ import { Paginator } from "primereact/paginator";
 import {
   formatDate,
   getTruckAdvanceDetails,
-  getTruckDetails,
   initialrows,
   messages,
   paginationRows,
