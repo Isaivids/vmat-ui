@@ -1,4 +1,4 @@
-import { ackWidths, ccptoWidths, formatDate, messages, tbpWidths, tcpWidths, transWidths, truckAdvanceWidths, truckWidths, twopayWidths, vmatWidths } from "../../api/constants";
+import { ackWidths, ackWidths2, ccptoWidths, formatDate, messages, tbpWidths, tbpWidths2, tcpWidths, transWidths, truckAdvanceWidths, truckWidths, twopayWidths, vmatWidths } from "../../api/constants";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { pageName } from '../../api/constants';
@@ -55,6 +55,12 @@ const getWidths = (type:any) =>{
       break;
       case 9:
         returnValue = truckAdvanceWidths;
+        break;
+      case 10:
+        returnValue = tbpWidths2;
+        break;
+      case 11:
+        returnValue = ackWidths2;
         break;
     default:
       break;

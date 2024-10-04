@@ -12,6 +12,7 @@ import { Paginator } from "primereact/paginator";
 import {
   formatDate,
   getTBP,
+  getTBP2,
   initialrows,
   messages,
   paginationRows,
@@ -364,7 +365,7 @@ const Payment = () => {
           label="Download"
           severity="secondary"
           onClick={() =>
-            downloadPDF(selectedProducts, getTBP(), searchQuery, 7)
+            downloadPDF(selectedProducts, type ===1 ? getTBP() : getTBP2(), searchQuery, type ===1 ? 7 : 10)
           }
           disabled={selectedProducts.length <= 0}
           className="mb-2"

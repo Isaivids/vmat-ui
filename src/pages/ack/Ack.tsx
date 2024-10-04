@@ -10,6 +10,7 @@ import { Toast } from "primereact/toast";
 import {
   formatDate,
   getACK,
+  getACK2,
   initialrows,
   messages,
   paginationRows,
@@ -448,12 +449,13 @@ const Ack = () => {
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
-      <div className="flex justify-content-between">
+      <div className="flex justify-content-between align-items-center">
         <Button
+          style={{height : '30px'}}
           label="Download"
           severity="secondary"
           onClick={() =>
-            downloadPDF(selectedProducts, getACK(), searchQuery, 4)
+            downloadPDF(selectedProducts,type === 1 ? getACK() : getACK2(), searchQuery, type===1 ? 4 : 11)
           }
           disabled={selectedProducts.length <= 0}
           className="mb-2"
