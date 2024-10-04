@@ -180,6 +180,23 @@ export const getTruckDetails = () => {
   ];
 }
 
+export const getTruckAdvanceDetails = () => {
+  return [
+    { field: "ats.date", header: "Date" },
+    { field: "ats.transname", header: "Transport Name" },
+    { field: "ats.trucknumber", header: "Truck Number" },
+    { field: "ats.truckname", header: "Truck Name" },
+    { field: "ats.from", header: "From" },
+    { field: "ats.to", header: "To" },
+    { field: "ats.transadv", header: "Transport Advance" },
+    { field: "tdstta", header: "TDS Deduction 1%" },
+    { field: "extraloadingwagespaidbydriver", header: "Extra Loading  Paid by Driver" },
+    { field: "transporterpaidadvanceamount", header: "Transporter Paid Advance Amount" },
+  ];
+}
+
+export const truckAdvanceWidths = [70,'*',70,70,70,70,70,70,70,70]
+
 export const truckWidths = [500,'*']
 
 export const getCCPTODetails = () => {

@@ -297,8 +297,9 @@ const AdvVmat = () => {
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
-      <div className="flex justify-content-between">
+      <div className="flex justify-content-between align-items-center">
         <Button
+          style={{height : '30px'}}
           className="mb-1"
           label="Download"
           severity="secondary"

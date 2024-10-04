@@ -1,4 +1,4 @@
-import { ackWidths, ccptoWidths, formatDate, messages, tbpWidths, tcpWidths, transWidths, truckWidths, twopayWidths, vmatWidths } from "../../api/constants";
+import { ackWidths, ccptoWidths, formatDate, messages, tbpWidths, tcpWidths, transWidths, truckAdvanceWidths, truckWidths, twopayWidths, vmatWidths } from "../../api/constants";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { pageName } from '../../api/constants';
@@ -53,6 +53,9 @@ const getWidths = (type:any) =>{
       case 8:
       returnValue = truckWidths
       break;
+      case 9:
+        returnValue = truckAdvanceWidths;
+        break;
     default:
       break;
   }
@@ -119,6 +122,8 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
     totalColumns = ['pending']
   } else if(type === 7){
     totalColumns = ['tyrasporterpaidamt']
+  } else if(type === 9){
+    totalColumns = ['transporterpaidadvanceamount']
   } 
   totalColumns.forEach((column:any) => {
     try {

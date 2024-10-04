@@ -473,10 +473,18 @@ const Amt = () => {
     const newData = data.map((row: any) => {
       if (row._id === id) {
         // return { ...row, [field]: value.code };
-        const updatedRow = { ...row, [field]: value.code };
-        // if (updatedRow.modeofadvance === 3) {
-        //   updatedRow.twopay = updatedRow.transbln;
-        // }
+        const updatedRow:any = { ...row, [field]: value.code };
+        if ([1,2].includes(updatedRow.modeofadvance)) {
+          updatedRow.truckbalancetype = 'BALANCE';
+          updatedRow.transbalancetype = 'BALANCE';
+          updatedRow.transbln = Number(updatedRow.transf) - Number(updatedRow.transadv);
+          updatedRow.twopay = 0;
+        }else if([3,4].includes(updatedRow.modeofadvance)){
+          updatedRow.truckbalancetype = 'TOPAY';
+          updatedRow.transbalancetype = 'TOPAY'
+          updatedRow.transbln = 0;
+          updatedRow.twopay = Number(updatedRow.transf) - Number(updatedRow.transadv);
+        }
         if(updatedRow.transbalancetype === 'TOPAY'){
           updatedRow.transbln = 0;
           updatedRow.twopay = Number(updatedRow.transf) - Number(updatedRow.transadv);

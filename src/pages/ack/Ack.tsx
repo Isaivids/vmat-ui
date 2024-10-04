@@ -130,8 +130,19 @@ const Ack = () => {
     const { value } = e.target;
     const newData: any = data.map((row: any) => {
       if (row._id === id) {
-        const updatedRow = { ...row, [field]: value };
+        const updatedRow:any = { ...row, [field]: value };
         if (["rtgsnumber", "remark"].includes(field)) {
+          return updatedRow;
+        }
+        if (field === "trpaidtotruck" && Number(updatedRow.trpaidtotruck)) {
+          const diffto = Number(updatedRow.trpaidtotruck) - Number(updatedRow.finaltotaltotruckowner);
+          if (Math.sign(diffto) === 1) {
+            updatedRow.diffto = diffto;
+            updatedRow.difffrom = 0;
+          } else {
+            updatedRow.difffrom = Math.abs(diffto);
+            updatedRow.diffto = 0;
+          }
           return updatedRow;
         }
         return calculateUpdatedRow(updatedRow);
@@ -191,6 +202,9 @@ const Ack = () => {
       podcharge: rowData.podcharge,
       rtgsnumber: rowData.rtgsnumber,
       tdsack: Number(rowData.tdsack),
+      trpaidtotruck: Number(rowData.trpaidtotruck),
+      diffto: Number(rowData.diffto),
+      difffrom: Number(rowData.difffrom),
       _id: rowData._id,
       ats: rowData.ats,
       remark: rowData.remark,
@@ -215,6 +229,9 @@ const Ack = () => {
             rtgsnumber,
             tdsack,
             remark,
+            trpaidtotruck,
+            diffto,
+            difffrom
           } = response.payload.data;
           const updatedBackupData = backupData.map((item: any) =>
             item._id === rowData._id
@@ -232,6 +249,9 @@ const Ack = () => {
                   rtgsnumber: rtgsnumber,
                   tdsack: Number(tdsack),
                   remark: remark,
+                  trpaidtotruck: Number(trpaidtotruck),
+                  diffto: Number(diffto),
+                  difffrom: Number(difffrom),
                 }
               : item
           );
@@ -556,6 +576,27 @@ const Ack = () => {
           style={{ minWidth: "200px" }}
           footer={`${computeTotal("finaltotaltotruckowner")}`}
         ></Column>
+        {type === 2 && (
+          <Column
+            field="trpaidtotruck"
+            header="Transporter Paid To Truck"
+            body={renderInput}
+          ></Column>
+        )}
+        {type === 2 && (
+          <Column
+            field="diffto"
+            header="Difference Amount to Transporter"
+            style={{ minWidth: "200px" }}
+          ></Column>
+        )}
+        {type === 2 && (
+          <Column
+            field="difffrom"
+            header="Difference Amount from Transporter"
+            style={{ minWidth: "200px" }}
+          ></Column>
+        )}
         <Column
           field="paymentReceivedDate"
           header="Payment transfer to truck owner"

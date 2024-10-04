@@ -7,6 +7,8 @@ import { AppDispatch } from "../../store/store";
 import { Paginator } from "primereact/paginator";
 import {
   formatDate,
+  getTruckAdvanceDetails,
+  getTruckDetails,
   initialrows,
   messages,
   paginationRows,
@@ -21,6 +23,8 @@ import {
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
 import { Checkbox } from "primereact/checkbox";
 import { RadioButton } from "primereact/radiobutton";
+import { Button } from "primereact/button";
+import { downloadPDF } from "../tcp/document";
 
 const TransportAdvance = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -32,6 +36,7 @@ const TransportAdvance = () => {
   const [backupData, setBackupData]: any = useState(null);
   const userDetails = useSelector((state: any) => state.user);
   const [rowColor, setRowColor]: any = useState([]);
+  const [selectedProducts, setSelectedProducts] = useState([]);
   // chekcbox
   const [showPending, setShowPending] = useState(true);
   const [showCompleted, setShowCompleted] = useState(true);
@@ -320,7 +325,14 @@ const TransportAdvance = () => {
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
-      <div className="flex justify-content-between">
+      <div className="flex justify-content-between align-items-center">
+      <Button
+        style={{height : '30px'}}
+        label="Download"
+        severity="secondary"
+        onClick={() => downloadPDF(selectedProducts,getTruckAdvanceDetails(),searchQuery,9)}
+        disabled={selectedProducts.length <= 0}
+      />
       <div className="card flex justify-content-center">
             <div className="flex flex-wrap gap-3">
                 <div className="flex align-items-center">
@@ -362,7 +374,9 @@ const TransportAdvance = () => {
         scrollable
         scrollHeight="80vh"
         rowClassName={rowClassName}
+        selection={selectedProducts} onSelectionChange={(e:any) => setSelectedProducts(e.value)}
       >
+       <Column selectionMode="multiple"></Column>
         <Column
           field="ats.sno"
           header="S.No"

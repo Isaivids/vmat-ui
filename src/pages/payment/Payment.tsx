@@ -9,7 +9,13 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Paginator } from "primereact/paginator";
-import { formatDate, getTBP, initialrows, messages, paginationRows } from "../../api/constants";
+import {
+  formatDate,
+  getTBP,
+  initialrows,
+  messages,
+  paginationRows,
+} from "../../api/constants";
 import { Toast } from "primereact/toast";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import CommonDropdown from "../../components/dropdown/CommonDropdown";
@@ -28,7 +34,7 @@ const Payment = () => {
   const [backupData, setBackupData]: any = useState(null);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const userDetails = useSelector((state: any) => state.user);
-  const [rowColor, setRowColor]:any = useState([]);
+  const [rowColor, setRowColor]: any = useState([]);
   const [type, setType] = useState(1);
   // chekcbox
   const [showPending, setShowPending] = useState(true);
@@ -51,7 +57,17 @@ const Payment = () => {
         const updatedRow = { ...row, [field]: value };
         const currentPlusOrMinus = Number(row.plusorminus) || 0;
         const newPlusOrMinusValue = Number(value) || 0;
-
+        if (field === "trpaidtotruck" && updatedRow.trpaidtotruck) {
+          const diffto = updatedRow.trpaidtotruck - updatedRow.tyrasporterpaidamt;
+          if (Math.sign(diffto) === 1) {
+            updatedRow.diffto = diffto;
+            updatedRow.difffrom = 0;
+          } else {
+            updatedRow.difffrom = Math.abs(diffto);
+            updatedRow.diffto = 0;
+          }
+          return updatedRow;
+        }
         if (field === "plusorminus") {
           updatedRow.loadunloadchar =
             Number(row.loadunloadchar) -
@@ -62,7 +78,7 @@ const Payment = () => {
           Number(updatedRow.ats.transbln) +
           Number(updatedRow.loadunloadchar) +
           Number(updatedRow.loadingwagespending) +
-          Number(updatedRow.extraloadingwagespaidbydriver) - 
+          Number(updatedRow.extraloadingwagespaidbydriver) -
           Math.abs(Number(updatedRow.tdstbp));
         return updatedRow;
       }
@@ -89,8 +105,8 @@ const Payment = () => {
     return (
       <InputText
         disabled={rowData._id !== selectedRowId}
-        value={rowData[field.field] || ''}
-        onChange={(e) => onInputChange(e, rowData._id, field.field)}
+        value={rowData[field.field] || ""}
+        onChange={(e:any) => onInputChange(e, rowData._id, field.field)}
         keyfilter={isStringField ? undefined : "num"}
         onBlur={() => onInputBlur(rowData._id, field.field)}
         autoComplete="off"
@@ -138,12 +154,17 @@ const Payment = () => {
       loadingwagespending: Number(rowData.loadingwagespending),
       rtgsnumber: rowData.rtgsnumber,
       _id: rowData._id,
+      trpaidtotruck: Number(rowData.trpaidtotruck),
+      diffto: Number(rowData.diffto),
+      difffrom: Number(rowData.difffrom),
       atsid: rowData.ats._id,
     };
     try {
       const response = await dispatch(updateTransAdvance(payload));
       if (response.payload.data && !response.payload.error) {
-        const index = backupData.findIndex((item: any) => item._id === rowData._id);
+        const index = backupData.findIndex(
+          (item: any) => item._id === rowData._id
+        );
         if (index !== -1) {
           // data[index]._id = response.payload.data._id;
           const updatedBackupData = backupData.map((item: any) =>
@@ -152,15 +173,23 @@ const Payment = () => {
                   ...item,
                   modeofpayment: response.payload.data.modeofpayment,
                   rtgsnumber: response.payload.data.rtgsnumber,
-                  paymentReceivedDate: response.payload.data.paymentReceivedDate,
+                  paymentReceivedDate:
+                    response.payload.data.paymentReceivedDate,
                   loadunloadchar: Number(response.payload.data.loadunloadchar),
-                  tyrasporterpaidamt: Number(response.payload.data.tyrasporterpaidamt),
+                  tyrasporterpaidamt: Number(
+                    response.payload.data.tyrasporterpaidamt
+                  ),
                   remarks: response.payload.data.remarks,
                   tdstbp: Number(response.payload.data.tdstbp),
                   extraloadingwagespaidbydriver: Number(
                     response.payload.data.extraloadingwagespaidbydriver
                   ),
-                  loadingwagespending: Number(response.payload.data.loadingwagespending),
+                  trpaidtotruck: Number(response.payload.data.trpaidtotruck),
+                  diffto: Number(response.payload.data.diffto),
+                  difffrom: Number(response.payload.data.difffrom),
+                  loadingwagespending: Number(
+                    response.payload.data.loadingwagespending
+                  ),
                   _id: response.payload.data._id,
                 }
               : item
@@ -168,10 +197,13 @@ const Payment = () => {
           setBackupData(updatedBackupData);
           const updatedRowColor = rowColor.map((item: any) => {
             if (item._id === rowData._id) {
-              return { ...item, modeofpayment: response.payload.data.modeofpayment };
+              return {
+                ...item,
+                modeofpayment: response.payload.data.modeofpayment,
+              };
             }
             return item;
-          });   
+          });
           setRowColor(updatedRowColor);
           setData([...updatedBackupData]);
         }
@@ -262,15 +294,15 @@ const Payment = () => {
 
   const getType = useCallback(() => {
     if (showPending && showCompleted) {
-        return 3;
+      return 3;
     } else if (showCompleted) {
-        return 2;
+      return 2;
     } else if (showPending) {
-        return 1;
+      return 1;
     } else {
-        return 0;
+      return 0;
     }
-}, [showCompleted, showPending]);
+  }, [showCompleted, showPending]);
 
   const fetchData = useCallback(async () => {
     try {
@@ -279,8 +311,8 @@ const Payment = () => {
           limit: rows,
           offset: page * rows,
           search: searchQuery,
-          ftype : getType(),
-          screen : type
+          ftype: getType(),
+          screen: type,
         })
       );
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
@@ -306,8 +338,8 @@ const Payment = () => {
   }, [fetchData]);
 
   const rowClassName = (rowData: any) => {
-    const color:any = rowColor.filter((x:any) => x._id === rowData._id);
-    if(color.length){
+    const color: any = rowColor.filter((x: any) => x._id === rowData._id);
+    if (color.length) {
       if (["PENDING", "", null, undefined].includes(color[0].modeofpayment)) {
         return "red";
       }
@@ -328,26 +360,44 @@ const Payment = () => {
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
       <div className="flex justify-content-between">
-      <Button
-        label="Download"
-        severity="secondary"
-        onClick={() => downloadPDF(selectedProducts, getTBP(),searchQuery,7)}
-        disabled={selectedProducts.length <= 0}
-        className="mb-2"
-      />
-      <div className="card flex justify-content-center">
-            <div className="flex flex-wrap gap-3">
-                <div className="flex align-items-center">
-                    <RadioButton inputId="type1" name="type1" value={1} onChange={(e) => setType(e.value)} checked={type === 1} />
-                    <label htmlFor="type1" className="ml-2">Transport Balance to VMAT</label>
-                </div>
-                <div className="flex align-items-center">
-                    <RadioButton inputId="type2" name="type2" value={2} onChange={(e) => setType(e.value)} checked={type === 2} />
-                    <label htmlFor="type2" className="ml-2">Transport Balance to Truck</label>
-                </div>
+        <Button
+          label="Download"
+          severity="secondary"
+          onClick={() =>
+            downloadPDF(selectedProducts, getTBP(), searchQuery, 7)
+          }
+          disabled={selectedProducts.length <= 0}
+          className="mb-2"
+        />
+        <div className="card flex justify-content-center">
+          <div className="flex flex-wrap gap-3">
+            <div className="flex align-items-center">
+              <RadioButton
+                inputId="type1"
+                name="type1"
+                value={1}
+                onChange={(e) => setType(e.value)}
+                checked={type === 1}
+              />
+              <label htmlFor="type1" className="ml-2">
+                Transport Balance to VMAT
+              </label>
             </div>
+            <div className="flex align-items-center">
+              <RadioButton
+                inputId="type2"
+                name="type2"
+                value={2}
+                onChange={(e) => setType(e.value)}
+                checked={type === 2}
+              />
+              <label htmlFor="type2" className="ml-2">
+                Transport Balance to Truck
+              </label>
+            </div>
+          </div>
         </div>
-              <div className="flex align-items-center my-3">
+        <div className="flex align-items-center my-3">
           <Checkbox
             inputId="pending"
             name="pending"
@@ -388,7 +438,7 @@ const Payment = () => {
         <Column
           field="ats.date"
           header="Date"
-          body={(rowData:any) => formatDate(rowData.ats.date)}
+          body={(rowData: any) => formatDate(rowData.ats.date)}
           style={{ minWidth: "100px" }}
         ></Column>
         <Column field="ats.truckname" header="Truck Name"></Column>
@@ -427,6 +477,27 @@ const Payment = () => {
           header="Transporter to be Paid"
           style={{ minWidth: "200px" }}
         ></Column>
+        {type === 2 && (
+          <Column
+            field="trpaidtotruck"
+            header="Transporter Paid To Truck"
+            body={renderInput}
+          ></Column>
+        )}
+        {type === 2 && (
+          <Column
+            field="diffto"
+            header="Difference Amount to Transporter"
+            style={{ minWidth: "200px" }}
+          ></Column>
+        )}
+        {type === 2 && (
+          <Column
+            field="difffrom"
+            header="Difference Amount from Transporter"
+            style={{ minWidth: "200px" }}
+          ></Column>
+        )}
         <Column field="remarks" header="Remarks" body={renderInput}></Column>
         <Column
           field="paymentreceiveddate"
