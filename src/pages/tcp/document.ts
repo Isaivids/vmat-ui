@@ -94,13 +94,13 @@ const calculateColumnTotal = (data: any, columnField: any) => {
   }, 0);
 };
 
-export const downloadPDF = (data: any, columns: any, searchQuery: any, type: number) => {
+export const downloadPDF = (data: any, columns: any, searchQuery: any, type: number,ack?:any) => {
   const tableHeaders = columns.map((col: any) => ({
     text: col.header,
     style: "tableHeader",
     alignment: "center",
   }));
-  
+
   const tableBody = [
     tableHeaders,
     ...data.map((row: any) =>
@@ -145,13 +145,26 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
     text: 'Grand Total :' + totalColumns.map((column:any) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const columnName = columns.find((col: any) => col.field === column)?.header || column;
-      return `₹ ${totals[column].toFixed(2)}`;
+      const amount = totals[column] - (Number(ack?.amount)|| 0);
+      return `₹ ${amount.toFixed(2)} `;
     }).join('\n'),
     style: 'grandTotal',
     alignment: 'right',
     margin: [0, 10, 0, 0],
   };
 
+  const amount = {
+    text: `Others :  ${ack?.amount}`,
+    style: 'grandTotal',
+    alignment: 'right',
+    margin: [0, 10, 0, 0],
+  };
+  const remarks = {
+    text: `Comments :  ${ack?.notes}`,
+    style: 'grandTotal',
+    alignment: 'right',
+    margin: [0, 10, 0, 0],
+  };
   const docDefinition: any = {
     pageSize: (tableHeaders.length < 14) ? 'A4' : 'A3',
     pageOrientation: 'landscape',
@@ -197,7 +210,8 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
           vLineColor: function(i: number) { return 'gray'; },
         },
       },
-
+      ack ? amount : '',
+      ack ? remarks : '',
       [8].includes(type) ? '' : grandTotalContent,
       ...(type === 5 ? [{ image: messages.gpay, width: 150, alignment: "center" }] : []),
     ],

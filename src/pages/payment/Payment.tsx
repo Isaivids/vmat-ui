@@ -449,6 +449,11 @@ const Payment = () => {
         <Column field="ats.to" header="To"></Column>
         <Column field="ats.transbln" header="Transport balance"></Column>
         <Column
+          field="tdstbp"
+          header="TDS Dedcution 1%"
+          body={renderInput}
+        ></Column>
+        <Column
           field="loadingwagespending"
           header="Loading Wages Pending"
           body={renderInput}
@@ -469,15 +474,11 @@ const Payment = () => {
           body={renderInput}
         ></Column>
         <Column
-          field="tdstbp"
-          header="TDS Dedcution 1%"
-          body={renderInput}
-        ></Column>
-        <Column
           field="tyrasporterpaidamt"
           header="Transporter to be Paid"
           style={{ minWidth: "200px" }}
         ></Column>
+        <Column field="remarks" header="Remarks" body={renderInput}></Column>
         {type === 2 && (
           <Column
             field="trpaidtotruck"
@@ -499,7 +500,6 @@ const Payment = () => {
             style={{ minWidth: "200px" }}
           ></Column>
         )}
-        <Column field="remarks" header="Remarks" body={renderInput}></Column>
         <Column
           field="paymentreceiveddate"
           header="Payment Received Date"

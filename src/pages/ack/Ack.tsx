@@ -22,6 +22,8 @@ import CustomButtonComponent from "../../components/button/CustomButtonComponent
 import { Button } from "primereact/button";
 import { downloadPDF } from "../tcp/document";
 import { RadioButton } from "primereact/radiobutton";
+import { Dialog } from "primereact/dialog";
+import { InputTextarea } from "primereact/inputtextarea";
 const Ack = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [data, setData]: any = useState([]);
@@ -33,6 +35,11 @@ const Ack = () => {
   const userDetails = useSelector((state: any) => state.user);
   const [rowColor, setRowColor]: any = useState([]);
   const [type, setType] = useState(1);
+  const [visible, setVisible] = useState(false);
+  const [formData, setFormData] = useState({
+    amount: "",
+    notes: "",
+  });
   // chekcbox
   const [showPending, setShowPending] = useState(true);
   const [showCompleted, setShowCompleted] = useState(true);
@@ -57,6 +64,14 @@ const Ack = () => {
       return row;
     });
     setData(updatedData);
+  };
+
+  const handleChange = (e: any) => {
+    const { id, value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [id]: value,
+    }));
   };
 
   const renderCheckbox = (rowData: any, field: string, parent: any) => {
@@ -131,12 +146,14 @@ const Ack = () => {
     const { value } = e.target;
     const newData: any = data.map((row: any) => {
       if (row._id === id) {
-        const updatedRow:any = { ...row, [field]: value };
+        const updatedRow: any = { ...row, [field]: value };
         if (["rtgsnumber", "remark"].includes(field)) {
           return updatedRow;
         }
         if (field === "trpaidtotruck" && Number(updatedRow.trpaidtotruck)) {
-          const diffto = Number(updatedRow.trpaidtotruck) - Number(updatedRow.finaltotaltotruckowner);
+          const diffto =
+            Number(updatedRow.trpaidtotruck) -
+            Number(updatedRow.finaltotaltotruckowner);
           if (Math.sign(diffto) === 1) {
             updatedRow.diffto = diffto;
             updatedRow.difffrom = 0;
@@ -232,7 +249,7 @@ const Ack = () => {
             remark,
             trpaidtotruck,
             diffto,
-            difffrom
+            difffrom,
           } = response.payload.data;
           const updatedBackupData = backupData.map((item: any) =>
             item._id === rowData._id
@@ -366,6 +383,23 @@ const Ack = () => {
     );
   };
 
+  const footerContent = (
+    <div>
+      <Button
+        label="No"
+        icon="pi pi-times"
+        onClick={() => {setVisible(false); setFormData({amount : '', notes : ""})}}
+        className="p-button-text"
+      />
+      <Button
+        label="Yes"
+        icon="pi pi-check"
+        onClick={() => {setVisible(false);downloadPDF(selectedProducts,type === 1 ? getACK() : getACK2(), searchQuery, type===1 ? 4 : 11, formData);setFormData({amount : "", notes : ""})}}
+        autoFocus
+      />
+    </div>
+  );
+
   const getType = useCallback(() => {
     if (showPending && showCompleted) {
       return 3;
@@ -386,7 +420,7 @@ const Ack = () => {
           offset: page * rows,
           search: searchQuery,
           ftype: getType(),
-          screen : type
+          screen: type,
         })
       );
       if (Array.isArray(ackdata.payload.data) && !ackdata.payload.error) {
@@ -451,26 +485,43 @@ const Ack = () => {
       <Toast ref={toast} />
       <div className="flex justify-content-between align-items-center">
         <Button
-          style={{height : '30px'}}
+          style={{ height: "30px" }}
           label="Download"
           severity="secondary"
-          onClick={() =>
-            downloadPDF(selectedProducts,type === 1 ? getACK() : getACK2(), searchQuery, type===1 ? 4 : 11)
-          }
+          // onClick={() =>
+          //   downloadPDF(selectedProducts,type === 1 ? getACK() : getACK2(), searchQuery, type===1 ? 4 : 11)
+          // }
+          onClick={() => setVisible(true)}
           disabled={selectedProducts.length <= 0}
           className="mb-2"
         />
         <div className="card flex justify-content-center">
-            <div className="flex flex-wrap gap-3">
-                <div className="flex align-items-center">
-                    <RadioButton inputId="type1" name="type1" value={1} onChange={(e) => setType(e.value)} checked={type === 1} />
-                    <label htmlFor="type1" className="ml-2">Truck Balance by VMAT</label>
-                </div>
-                <div className="flex align-items-center">
-                    <RadioButton inputId="type2" name="type2" value={2} onChange={(e) => setType(e.value)} checked={type === 2} />
-                    <label htmlFor="type2" className="ml-2">Truck Balance by Transporter</label>
-                </div>
+          <div className="flex flex-wrap gap-3">
+            <div className="flex align-items-center">
+              <RadioButton
+                inputId="type1"
+                name="type1"
+                value={1}
+                onChange={(e) => setType(e.value)}
+                checked={type === 1}
+              />
+              <label htmlFor="type1" className="ml-2">
+                Truck Balance by VMAT
+              </label>
             </div>
+            <div className="flex align-items-center">
+              <RadioButton
+                inputId="type2"
+                name="type2"
+                value={2}
+                onChange={(e) => setType(e.value)}
+                checked={type === 2}
+              />
+              <label htmlFor="type2" className="ml-2">
+                Truck Balance by Transporter
+              </label>
+            </div>
+          </div>
         </div>
         <div className="flex align-items-center my-3">
           <Checkbox
@@ -531,47 +582,57 @@ const Ack = () => {
         <Column field="ats.from" header="From"></Column>
         <Column field="ats.to" header="To"></Column>
         <Column field="ats.truckbln" header="Truck Balance"></Column>
-        <Column field="tdsack" header="Others" body={renderInput}></Column>
-        <Column field="ats.lateday" header="Late Delivery"></Column>
-        <Column field="ats.halting" header="Halting"></Column>
-        <Column field="remark" header="Remark" body={renderInput}></Column>
         <Column
           field="expense"
           header="Unloading Wages"
           body={renderInput}
         ></Column>
+        <Column field="tdsack" header="Others(TDS)" body={renderInput}></Column>
+        <Column field="ats.lateday" header="Late Delivery"></Column>
+        <Column field="ats.halting" header="Halting"></Column>
+        <Column field="remark" header="Remark" body={renderInput}></Column>
         <Column
           field="podcharge"
           header="POD Charge"
           body={renderDropdown}
         ></Column>
-        <Column
-          field="vmatcrossing"
-          body={(rowData) => renderCheckbox(rowData, "hidevc", "vmatcrossing")}
-          header="VMAT Crossing"
-        ></Column>
-        <Column
-          field="vmatcommision"
-          body={(rowData) =>
-            renderCheckbox(rowData, "hidevcm", "vmatcommision")
-          }
-          header="VMAT Commission"
-        ></Column>
-        <Column
-          field="transcrossing"
-          body={(rowData) => renderCheckbox(rowData, "hidetc", "transcrossing")}
-          header="Transport Crossing"
-        ></Column>
-        <Column
+        {type === 2 && (
+          <Column
+            field="vmatcommision"
+            body={(rowData) =>
+              renderCheckbox(rowData, "hidevcm", "vmatcommision")
+            }
+            header="VMAT Commission"
+          ></Column>
+        )}
+        {type === 2 && (
+          <Column
+            field="vmatcrossing"
+            body={(rowData) =>
+              renderCheckbox(rowData, "hidevc", "vmatcrossing")
+            }
+            header="VMAT Crossing"
+          ></Column>
+        )}
+        {type === 2 && (
+          <Column
+            field="transcrossing"
+            body={(rowData) =>
+              renderCheckbox(rowData, "hidetc", "transcrossing")
+            }
+            header="Transport Crossing"
+          ></Column>
+        )}
+        {/* <Column
           field="ats.twopay"
           header="By To Pay Transport Balance."
           style={{ minWidth: "200px" }}
-        ></Column>
-        <Column
+        ></Column> */}
+        {/* <Column
           field="pendingamountfromtruckowner"
           header="Pending Amount From Truck Owner"
           style={{ minWidth: "200px" }}
-        ></Column>
+        ></Column> */}
         <Column
           field="finaltotaltotruckowner"
           header="Final Total to Truck Owner"
@@ -627,6 +688,46 @@ const Ack = () => {
         onPageChange={onPageChange}
         rowsPerPageOptions={paginationRows}
       />
+      <Dialog
+        header="Notes"
+        visible={visible}
+        onHide={() => {
+          if (!visible) return;
+          setVisible(false);
+          setFormData({amount : "", notes : ""})
+        }}
+        style={{ width: "50vw" }}
+        breakpoints={{ "960px": "75vw", "641px": "100vw" }}
+        footer={footerContent}
+      >
+        <div className="flex flex-column gap-3">
+          <div className="flex-auto">
+            <label htmlFor="amount" className="font-bold block mb-2">
+              Amount
+            </label>
+            <InputText
+              id="amount"
+              keyfilter="num"
+              className="w-full"
+              value={formData.amount}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="flex-auto">
+            <label htmlFor="notes" className="font-bold block mb-2">
+              Notes/Comments
+            </label>
+            <InputTextarea
+              id="notes"
+              autoResize
+              className="w-full"
+              rows={5}
+              value={formData.notes}
+              onChange={handleChange}
+            />
+          </div>
+        </div>
+      </Dialog>
     </div>
   );
 };
