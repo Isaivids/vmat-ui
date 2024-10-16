@@ -24,6 +24,7 @@ import { Checkbox } from "primereact/checkbox";
 import { RadioButton } from "primereact/radiobutton";
 import { Button } from "primereact/button";
 import { downloadPDF } from "../tcp/document";
+import { InputTextarea } from "primereact/inputtextarea";
 
 const TransportAdvance = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -105,6 +106,36 @@ const TransportAdvance = () => {
         .split("T")[0];
       return localDate;
     }
+  };
+
+  const onTextAreaChange = (e: any, id: any, field: any) => {
+    const { value } = e.target;
+    const newData: any = data.map((row: any) => {
+      if (row._id === id) {
+        return { ...row, [field]: value };
+      }
+      return row;
+    });
+    setData(newData);
+  };
+
+  const renderTextArea = (rowData: any, field: any) => {
+    return (
+      <div>
+        {rowData._id === selectedRowId ? (
+          <InputTextarea
+            disabled={rowData._id !== selectedRowId}
+            value={rowData[field.field] || ''}
+            onChange={(e) => onTextAreaChange(e, rowData._id, field.field)}
+            rows={1}
+            cols={30}
+            autoResize
+          />
+        ) : (
+          <span style={{ whiteSpace: 'pre-wrap' }}>{rowData[field.field] || ''}</span>
+        )}
+      </div>
+    );
   };
 
   const handleSave = async (rowData: any) => {
@@ -412,7 +443,7 @@ const TransportAdvance = () => {
           field="transporterpaidadvanceamount"
           header="Transporter Paid Advance Amount"
         ></Column>
-        <Column field="remarks" header="Remarks" body={renderInput}></Column>
+        <Column field="remarks" header="Remarks" body={renderTextArea}></Column>
         <Column
           field="dateofadvancepayment"
           header="Date of Advance Payment"

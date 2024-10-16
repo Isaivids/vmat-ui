@@ -43,6 +43,7 @@ const Ack = () => {
   // chekcbox
   const [showPending, setShowPending] = useState(true);
   const [showCompleted, setShowCompleted] = useState(true);
+  const [newData, setNewData] = useState(true);
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(initialrows);
@@ -55,16 +56,16 @@ const Ack = () => {
   };
   // ----------end of pagination
   // Checkbox state
-  const handleCheckboxChange = (rowData: any, field: string) => {
-    const updatedData = data.map((row: any) => {
-      if (row._id === rowData._id) {
-        const updatedRow = { ...row, [field]: !row[field] };
-        return calculateUpdatedRow(updatedRow);
-      }
-      return row;
-    });
-    setData(updatedData);
-  };
+  // const handleCheckboxChange = (rowData: any, field: string) => {
+  //   const updatedData = data.map((row: any) => {
+  //     if (row._id === rowData._id) {
+  //       const updatedRow = { ...row, [field]: !row[field] };
+  //       return calculateUpdatedRow(updatedRow);
+  //     }
+  //     return row;
+  //   });
+  //   setData(updatedData);
+  // };
 
   const handleChange = (e: any) => {
     const { id, value } = e.target;
@@ -74,21 +75,21 @@ const Ack = () => {
     }));
   };
 
-  const renderCheckbox = (rowData: any, field: string, parent: any) => {
-    return (
-      <div className="flex gap-3 align-items-center">
-        <Checkbox
-          checked={rowData[field]}
-          disabled={
-            rowData._id !== selectedRowId ||
-            ![3, 4].includes(rowData.ats.modeofadvance)
-          }
-          onChange={() => handleCheckboxChange(rowData, field)}
-        />
-        <span>{rowData[parent]}</span>
-      </div>
-    );
-  };
+  // const renderCheckbox = (rowData: any, field: string, parent: any) => {
+  //   return (
+  //     <div className="flex gap-3 align-items-center">
+  //       <Checkbox
+  //         checked={rowData[field]}
+  //         disabled={
+  //           rowData._id !== selectedRowId ||
+  //           ![3, 4].includes(rowData.ats.modeofadvance)
+  //         }
+  //         onChange={() => handleCheckboxChange(rowData, field)}
+  //       />
+  //       <span>{rowData[parent]}</span>
+  //     </div>
+  //   );
+  // };
 
   const calculateUpdatedRow = (updatedRow: any) => {
     let addThree = 0;
@@ -104,7 +105,7 @@ const Ack = () => {
         addThree += updatedRow.transcrossing;
       }
     } else {
-      if ([2].includes(updatedRow.ats.modeofadvance)) {
+      if ([1,2].includes(updatedRow.ats.modeofadvance)) {
         addThree = updatedRow.vmatcommision;
       }
       if (updatedRow.hidetc) {
@@ -126,18 +127,18 @@ const Ack = () => {
         Number(updatedRow.expense) -
         Number(updatedRow.podcharge) -
         Math.abs(updatedRow.ats.lateday) +
-        Number(updatedRow.ats.halting);
+        Number(updatedRow.ats.halting) + Number(updatedRow.loadingcharges || 0) + Number(updatedRow.others || 0);
     } else {
       updatedRow.pendingamountfromtruckowner = 0;
       // updatedRow.pendingamountfromtruckowner = Number(updatedRow.ats.truckbln) + (Number(addThree) + Number(expense) + Number(halting));
       updatedRow.finaltotaltotruckowner =
         updatedRow.ats.truckbln -
-        Number(updatedRow.tdsack) -
+        // Number(updatedRow.tdsack) -
         Number(addThree) -
         Number(updatedRow.podcharge) -
         Math.abs(updatedRow.ats.lateday) +
         Number(updatedRow.ats.halting) +
-        Number(updatedRow.expense);
+        Number(updatedRow.expense) + Number(updatedRow.loadingcharges || 0) + Number(updatedRow.others || 0);
     }
     return updatedRow;
   };
@@ -203,6 +204,37 @@ const Ack = () => {
     return localDate;
   };
 
+  const onTextAreaChange = (e: any, id: any, field: any) => {
+    const { value } = e.target;
+    const newData: any = data.map((row: any) => {
+      if (row._id === id) {
+        return { ...row, [field]: value };
+      }
+      return row;
+    });
+    setData(newData);
+  };
+
+  const renderTextArea = (rowData: any, field: any) => {
+    return (
+      <div>
+        {rowData._id === selectedRowId ? (
+          <InputTextarea
+            disabled={rowData._id !== selectedRowId}
+            value={rowData[field.field] || ''}
+            onChange={(e) => onTextAreaChange(e, rowData._id, field.field)}
+            rows={1}
+            cols={30}
+            autoResize
+          />
+        ) : (
+          <span style={{ whiteSpace: 'pre-wrap' }}>{rowData[field.field] || ''}</span>
+        )}
+      </div>
+    );
+  };
+  
+
   const handleSave = async (rowData: any) => {
     const payload = {
       acknowledgementReceivedDate: rowData.acknowledgementReceivedDate
@@ -226,6 +258,8 @@ const Ack = () => {
       _id: rowData._id,
       ats: rowData.ats,
       remark: rowData.remark,
+      others: Number(rowData.others || 0),
+      loadingcharges: Number(rowData.loadingcharges || 0),
     };
     try {
       const response = await dispatch(updateAck(payload));
@@ -250,6 +284,8 @@ const Ack = () => {
             trpaidtotruck,
             diffto,
             difffrom,
+            loadingcharges,
+            others
           } = response.payload.data;
           const updatedBackupData = backupData.map((item: any) =>
             item._id === rowData._id
@@ -270,6 +306,8 @@ const Ack = () => {
                   trpaidtotruck: Number(trpaidtotruck),
                   diffto: Number(diffto),
                   difffrom: Number(difffrom),
+                  others : Number(others),
+                  loadingcharges : Number(loadingcharges)
                 }
               : item
           );
@@ -401,16 +439,25 @@ const Ack = () => {
   );
 
   const getType = useCallback(() => {
-    if (showPending && showCompleted) {
-      return 3;
+    if (showPending && showCompleted && newData) {
+      return 0;
+    } else if (showPending && showCompleted) {
+      return 6;
+    } else if (showPending && newData) {
+      return 5;
+    } else if (showCompleted && newData) {
+      return 4;
     } else if (showCompleted) {
+      return 3;
+    } else if (newData) {
       return 2;
     } else if (showPending) {
       return 1;
     } else {
-      return 0;
+      return 7;
     }
-  }, [showCompleted, showPending]);
+  }, [showCompleted, showPending, newData]);
+  
 
   const fetchData = useCallback(async () => {
     try {
@@ -470,6 +517,8 @@ const Ack = () => {
       setShowPending(checked);
     } else if (name === "completed") {
       setShowCompleted(checked);
+    }else if(name === "newdata"){
+      setNewData(checked)
     }
   };
 
@@ -544,6 +593,16 @@ const Ack = () => {
           <label htmlFor="completed" className="mr-4">
             Completed
           </label>
+          <Checkbox
+            inputId="newdata"
+            name="newdata"
+            checked={newData}
+            onChange={handleCheckboxChange2}
+            className="mr-2"
+          />
+          <label htmlFor="newdata" className="mr-4">
+            New Data
+          </label>
         </div>
       </div>
       <DataTable
@@ -587,10 +646,16 @@ const Ack = () => {
           header="Unloading Wages"
           body={renderInput}
         ></Column>
-        <Column field="tdsack" header="Others(TDS)" body={renderInput}></Column>
+        <Column
+          field="loadingcharges"
+          header="Loading Charges"
+          body={renderInput}
+        ></Column>
+        {type === 2 && (<Column field="tdsack" header="TDS" body={renderInput}></Column>)}
+        <Column field="others" header="Others" body={renderInput}></Column>
         <Column field="ats.lateday" header="Late Delivery"></Column>
         <Column field="ats.halting" header="Halting"></Column>
-        <Column field="remark" header="Remark" body={renderInput}></Column>
+        <Column field="remark" header="Remark" body={renderTextArea}></Column>
         <Column
           field="podcharge"
           header="POD Charge"
@@ -599,27 +664,27 @@ const Ack = () => {
         {type === 2 && (
           <Column
             field="vmatcommision"
-            body={(rowData) =>
-              renderCheckbox(rowData, "hidevcm", "vmatcommision")
-            }
+            // body={(rowData) =>
+            //   renderCheckbox(rowData, "hidevcm", "vmatcommision")
+            // }
             header="VMAT Commission"
           ></Column>
         )}
         {type === 2 && (
           <Column
             field="vmatcrossing"
-            body={(rowData) =>
-              renderCheckbox(rowData, "hidevc", "vmatcrossing")
-            }
+            // body={(rowData) =>
+            //   renderCheckbox(rowData, "hidevc", "vmatcrossing")
+            // }
             header="VMAT Crossing"
           ></Column>
         )}
         {type === 2 && (
           <Column
             field="transcrossing"
-            body={(rowData) =>
-              renderCheckbox(rowData, "hidetc", "transcrossing")
-            }
+            // body={(rowData) =>
+            //   renderCheckbox(rowData, "hidetc", "transcrossing")
+            // }
             header="Transport Crossing"
           ></Column>
         )}
@@ -628,14 +693,14 @@ const Ack = () => {
           header="By To Pay Transport Balance."
           style={{ minWidth: "200px" }}
         ></Column> */}
-        {/* <Column
+        <Column
           field="pendingamountfromtruckowner"
           header="Pending Amount From Truck Owner"
           style={{ minWidth: "200px" }}
-        ></Column> */}
+        ></Column>
         <Column
           field="finaltotaltotruckowner"
-          header="Final Total to Truck Owner"
+          header="Final Payment to Truck Owner"
           style={{ minWidth: "200px" }}
           footer={`${computeTotal("finaltotaltotruckowner")}`}
         ></Column>
@@ -649,14 +714,14 @@ const Ack = () => {
         {type === 2 && (
           <Column
             field="diffto"
-            header="Difference Amount to Transporter"
+            header="Difference Amount from truck owner to VMAT"
             style={{ minWidth: "200px" }}
           ></Column>
         )}
         {type === 2 && (
           <Column
             field="difffrom"
-            header="Difference Amount from Transporter"
+            header="Difference Amount from Truck Owner"
             style={{ minWidth: "200px" }}
           ></Column>
         )}

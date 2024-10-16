@@ -123,6 +123,7 @@ const AdvTwopay = () => {
       return localDate;
     }
   };
+  
   const handleSave = async (rowData: any) => {
     const payload = {
       luxwages: Number(rowData.luxwages),

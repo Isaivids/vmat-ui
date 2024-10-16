@@ -14,6 +14,7 @@ import CustomButtonComponent from "../../components/button/CustomButtonComponent
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import CommonDropdown from "../../components/dropdown/CommonDropdown";
 import { Checkbox } from "primereact/checkbox";
+import { InputTextarea } from "primereact/inputtextarea";
 
 const Tcp = () => {
   const searchQuery = useSelector((state: any) => state.search);
@@ -39,6 +40,36 @@ const Tcp = () => {
     setPage(event.page);
     setFirst(event.first);
     setRows(event.rows);
+  };
+
+  const onTextAreaChange = (e: any, id: any, field: any) => {
+    const { value } = e.target;
+    const newData: any = data.map((row: any) => {
+      if (row._id === id) {
+        return { ...row, [field]: value };
+      }
+      return row;
+    });
+    setData(newData);
+  };
+
+  const renderTextArea = (rowData: any, field: any) => {
+    return (
+      <div>
+        {rowData._id === selectedRowId ? (
+          <InputTextarea
+            disabled={rowData._id !== selectedRowId}
+            value={rowData[field.field] || ''}
+            onChange={(e) => onTextAreaChange(e, rowData._id, field.field)}
+            rows={1}
+            cols={30}
+            autoResize
+          />
+        ) : (
+          <span style={{ whiteSpace: 'pre-wrap' }}>{rowData[field.field] || ''}</span>
+        )}
+      </div>
+    );
   };
   // ----------end of pagination
   const onInputChange = (e: any, id: any, field: any) => {
@@ -338,7 +369,7 @@ const Tcp = () => {
         <Column field="ats.to" header="To"></Column>
         <Column field="transcrossing" header="Trans Crossing"></Column>
         <Column field="others" body={renderInput} header="Others"></Column>
-        <Column field="remarks" body={renderInput} header="Remarks"></Column>
+        <Column field="remarks" body={renderTextArea} header="Remarks"></Column>
         <Column field="total" header="Total"></Column>
         <Column
           field="paymentReceivedDate"

@@ -17,6 +17,7 @@ import CustomButtonComponent from "../button/CustomButtonComponent";
 import { Button } from "primereact/button";
 import { downloadPDF } from "../../pages/tcp/document";
 import { Checkbox } from "primereact/checkbox";
+import { InputTextarea } from "primereact/inputtextarea";
 
 const AdvTrans = () => {
   const searchQuery = useSelector((state: any) => state.search);
@@ -232,6 +233,36 @@ const AdvTrans = () => {
     fetchDataAndLog();
   }, [fetchData]);
 
+  const onTextAreaChange = (e: any, id: any, field: any) => {
+    const { value } = e.target;
+    const newData: any = data.map((row: any) => {
+      if (row._id === id) {
+        return { ...row, [field]: value };
+      }
+      return row;
+    });
+    setData(newData);
+  };
+
+  const renderTextArea = (rowData: any, field: any) => {
+    return (
+      <div>
+        {rowData._id === selectedRowId ? (
+          <InputTextarea
+            disabled={rowData._id !== selectedRowId}
+            value={rowData[field.field] || ''}
+            onChange={(e) => onTextAreaChange(e, rowData._id, field.field)}
+            rows={1}
+            cols={30}
+            autoResize
+          />
+        ) : (
+          <span style={{ whiteSpace: 'pre-wrap' }}>{rowData[field.field] || ''}</span>
+        )}
+      </div>
+    );
+  };
+
   const rowClassName = (rowData: any) => {
     if ([null, "", undefined, "PENDING"].includes(rowData.modeofpayment)) {
       return "red";
@@ -328,7 +359,7 @@ const AdvTrans = () => {
           style={{ minWidth: "150px" }}
           header="Transport Advance to Truck"
         ></Column>
-        <Column field="remarks" header="Remarks" body={renderInput}></Column>
+        <Column field="remarks" header="Remarks" body={renderTextArea}></Column>
         <Column
           field="paymentreceiveddate"
           header="Payment Received Date"
