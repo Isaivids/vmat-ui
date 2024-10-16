@@ -59,12 +59,12 @@ export const messages = {
       image: require("../assets/ico3.svg").default,
       color: "whitemenu"
     },
-    // {
-    //   name: "Transport Advance",
-    //   to: "/transportadvance",
-    //   image: require("../assets/ico5.svg").default,
-    //   color: "yellowMenu"
-    // },
+    {
+       name: "Transport Advance",
+      to: "/transportadvance",
+       image: require("../assets/ico5.svg").default,
+       color: "yellowMenu"
+     },
     {
       name: "Transporter Advance To Truck",
       to: "/topay",
