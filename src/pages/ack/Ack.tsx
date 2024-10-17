@@ -25,6 +25,11 @@ import { RadioButton } from "primereact/radiobutton";
 import { Dialog } from "primereact/dialog";
 import { InputTextarea } from "primereact/inputtextarea";
 const Ack = () => {
+  const initialForm = [
+    { remark: "", amount: "" },
+    { remark: "", amount: "" },
+    { remark: "", amount: "" },
+  ];
   const dispatch = useDispatch<AppDispatch>();
   const [data, setData]: any = useState([]);
   const [selectedRowId, setSelectedRowId]: any = useState(null);
@@ -36,10 +41,6 @@ const Ack = () => {
   const [rowColor, setRowColor]: any = useState([]);
   const [type, setType] = useState(1);
   const [visible, setVisible] = useState(false);
-  const [formData, setFormData] = useState({
-    amount: "",
-    notes: "",
-  });
   // chekcbox
   const [showPending, setShowPending] = useState(true);
   const [showCompleted, setShowCompleted] = useState(true);
@@ -66,13 +67,12 @@ const Ack = () => {
   //   });
   //   setData(updatedData);
   // };
+  const [formData, setFormData] = useState(initialForm);
 
-  const handleChange = (e: any) => {
-    const { id, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [id]: value,
-    }));
+  const handleChange = (e: any, index: any, field: any) => {
+    const updatedRows: any = [...formData];
+    updatedRows[index][field] = e.target.value;
+    setFormData(updatedRows);
   };
 
   // const renderCheckbox = (rowData: any, field: string, parent: any) => {
@@ -105,7 +105,7 @@ const Ack = () => {
         addThree += updatedRow.transcrossing;
       }
     } else {
-      if ([1,2].includes(updatedRow.ats.modeofadvance)) {
+      if ([1, 2].includes(updatedRow.ats.modeofadvance)) {
         addThree = updatedRow.vmatcommision;
       }
       if (updatedRow.hidetc) {
@@ -127,7 +127,9 @@ const Ack = () => {
         Number(updatedRow.expense) -
         Number(updatedRow.podcharge) -
         Math.abs(updatedRow.ats.lateday) +
-        Number(updatedRow.ats.halting) + Number(updatedRow.loadingcharges || 0) + Number(updatedRow.others || 0);
+        Number(updatedRow.ats.halting) +
+        Number(updatedRow.loadingcharges || 0) +
+        Number(updatedRow.others || 0);
     } else {
       updatedRow.pendingamountfromtruckowner = 0;
       // updatedRow.pendingamountfromtruckowner = Number(updatedRow.ats.truckbln) + (Number(addThree) + Number(expense) + Number(halting));
@@ -138,7 +140,9 @@ const Ack = () => {
         Number(updatedRow.podcharge) -
         Math.abs(updatedRow.ats.lateday) +
         Number(updatedRow.ats.halting) +
-        Number(updatedRow.expense) + Number(updatedRow.loadingcharges || 0) + Number(updatedRow.others || 0);
+        Number(updatedRow.expense) +
+        Number(updatedRow.loadingcharges || 0) +
+        Number(updatedRow.others || 0);
     }
     return updatedRow;
   };
@@ -221,19 +225,20 @@ const Ack = () => {
         {rowData._id === selectedRowId ? (
           <InputTextarea
             disabled={rowData._id !== selectedRowId}
-            value={rowData[field.field] || ''}
+            value={rowData[field.field] || ""}
             onChange={(e) => onTextAreaChange(e, rowData._id, field.field)}
             rows={1}
             cols={30}
             autoResize
           />
         ) : (
-          <span style={{ whiteSpace: 'pre-wrap' }}>{rowData[field.field] || ''}</span>
+          <span style={{ whiteSpace: "pre-wrap" }}>
+            {rowData[field.field] || ""}
+          </span>
         )}
       </div>
     );
   };
-  
 
   const handleSave = async (rowData: any) => {
     const payload = {
@@ -285,7 +290,7 @@ const Ack = () => {
             diffto,
             difffrom,
             loadingcharges,
-            others
+            others,
           } = response.payload.data;
           const updatedBackupData = backupData.map((item: any) =>
             item._id === rowData._id
@@ -306,8 +311,8 @@ const Ack = () => {
                   trpaidtotruck: Number(trpaidtotruck),
                   diffto: Number(diffto),
                   difffrom: Number(difffrom),
-                  others : Number(others),
-                  loadingcharges : Number(loadingcharges)
+                  others: Number(others),
+                  loadingcharges: Number(loadingcharges),
                 }
               : item
           );
@@ -426,13 +431,26 @@ const Ack = () => {
       <Button
         label="No"
         icon="pi pi-times"
-        onClick={() => {setVisible(false); setFormData({amount : '', notes : ""})}}
+        onClick={() => {
+          setVisible(false);
+          setFormData(initialForm);
+        }}
         className="p-button-text"
       />
       <Button
         label="Yes"
         icon="pi pi-check"
-        onClick={() => {setVisible(false);downloadPDF(selectedProducts,type === 1 ? getACK() : getACK2(), searchQuery, type===1 ? 4 : 11, formData);setFormData({amount : "", notes : ""})}}
+        onClick={() => {
+          setVisible(false);
+          downloadPDF(
+            selectedProducts,
+            type === 1 ? getACK() : getACK2(),
+            searchQuery,
+            type === 1 ? 4 : 11,
+            formData
+          );
+          setFormData(initialForm);
+        }}
         autoFocus
       />
     </div>
@@ -457,7 +475,6 @@ const Ack = () => {
       return 7;
     }
   }, [showCompleted, showPending, newData]);
-  
 
   const fetchData = useCallback(async () => {
     try {
@@ -517,8 +534,8 @@ const Ack = () => {
       setShowPending(checked);
     } else if (name === "completed") {
       setShowCompleted(checked);
-    }else if(name === "newdata"){
-      setNewData(checked)
+    } else if (name === "newdata") {
+      setNewData(checked);
     }
   };
 
@@ -651,7 +668,9 @@ const Ack = () => {
           header="Loading Charges"
           body={renderInput}
         ></Column>
-        {type === 2 && (<Column field="tdsack" header="TDS" body={renderInput}></Column>)}
+        {type === 2 && (
+          <Column field="tdsack" header="TDS" body={renderInput}></Column>
+        )}
         <Column field="others" header="Others" body={renderInput}></Column>
         <Column field="ats.lateday" header="Late Delivery"></Column>
         <Column field="ats.halting" header="Halting"></Column>
@@ -759,37 +778,33 @@ const Ack = () => {
         onHide={() => {
           if (!visible) return;
           setVisible(false);
-          setFormData({amount : "", notes : ""})
+          setFormData(initialForm);
         }}
         style={{ width: "50vw" }}
         breakpoints={{ "960px": "75vw", "641px": "100vw" }}
         footer={footerContent}
       >
         <div className="flex flex-column gap-3">
-          <div className="flex-auto">
-            <label htmlFor="amount" className="font-bold block mb-2">
-              Amount
-            </label>
-            <InputText
-              id="amount"
-              keyfilter="num"
-              className="w-full"
-              value={formData.amount}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="flex-auto">
-            <label htmlFor="notes" className="font-bold block mb-2">
-              Notes/Comments
-            </label>
-            <InputTextarea
-              id="notes"
-              autoResize
-              className="w-full"
-              rows={5}
-              value={formData.notes}
-              onChange={handleChange}
-            />
+          <div className="flex flex-column gap-3">
+            {formData.map((row, index) => (
+              <div className="flex gap-2 my-2" key={index}>
+                <InputTextarea
+                  autoResize
+                  rows={1}
+                  className="col-5"
+                  placeholder="Enter the Remark"
+                  value={row.remark}
+                  onChange={(e) => handleChange(e, index, "remark")}
+                />
+                <InputText
+                  keyfilter="num"
+                  className="col-5"
+                  placeholder="Enter the Amount"
+                  value={row.amount}
+                  onChange={(e) => handleChange(e, index, "amount")}
+                />
+              </div>
+            ))}
           </div>
         </div>
       </Dialog>

@@ -100,7 +100,6 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
     style: "tableHeader",
     alignment: "center",
   }));
-
   const tableBody = [
     tableHeaders,
     ...data.map((row: any) =>
@@ -145,7 +144,12 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
     text: 'Grand Total :' + totalColumns.map((column:any) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const columnName = columns.find((col: any) => col.field === column)?.header || column;
-      const amount = totals[column] - (Number(ack?.amount)|| 0);
+      let amount = 0
+      if(ack && ack.length > 0){
+        amount = totals[column] - (Number(ack[0]?.amount)|| 0)- (Number(ack[1]?.amount)|| 0)- (Number(ack[2]?.amount)|| 0);
+      }else{
+        amount = totals[column]
+      }
       return `₹ ${amount.toFixed(2)} `;
     }).join('\n'),
     style: 'grandTotal',
@@ -153,18 +157,6 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
     margin: [0, 10, 0, 0],
   };
 
-  const amount = {
-    text: `Others :  ${ack?.amount}`,
-    style: 'grandTotal',
-    alignment: 'right',
-    margin: [0, 10, 0, 0],
-  };
-  const remarks = {
-    text: `Comments :  ${ack?.notes}`,
-    style: 'grandTotal',
-    alignment: 'right',
-    margin: [0, 10, 0, 0],
-  };
   const docDefinition: any = {
     pageSize: (tableHeaders.length < 14) ? 'A4' : 'A3',
     pageOrientation: 'landscape',
@@ -210,8 +202,9 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
           vLineColor: function(i: number) { return 'gray'; },
         },
       },
-      ack ? amount : '',
-      ack ? remarks : '',
+      ack && (ack[0].remark || ack[0].amount) ? {text : `${ack[0].remark} : ${ack[0].amount}`,alignment: 'right',style : 'header'} : "",
+      ack && (ack[1].remark || ack[1].amount) ? {text : `${ack[1].remark} : ${ack[1].amount}`,alignment: 'right',style : 'header'} : "",
+      ack && (ack[2].remark || ack[2].amount) ? {text : `${ack[2].remark} : ${ack[2].amount}`,alignment: 'right',style : 'header'} : "",
       [8].includes(type) ? '' : grandTotalContent,
       ...(type === 5 ? [{ image: messages.gpay, width: 150, alignment: "center" }] : []),
     ],
