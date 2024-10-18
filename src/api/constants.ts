@@ -33,6 +33,7 @@ export const messages = {
   ],
   modeOfAdvance: [
     { name: "By VMAT", code: 1 },
+    { name: "By VMAT / To Pay", code: 5 },
     { name: "By Transport / Balance", code: 2 },
     { name: "By Transporter / To pay", code: 3 },
     { name: "By To pay", code: 4 },
@@ -65,12 +66,12 @@ export const messages = {
        image: require("../assets/ico5.svg").default,
        color: "yellowMenu"
      },
-    {
-      name: "Transporter Advance To Truck",
-      to: "/topay",
-      image: require("../assets/ico5.svg").default,
-      color: "whitemenu"
-    },
+    // {
+    //   name: "Transporter Advance To Truck",
+    //   to: "/topay",
+    //   image: require("../assets/ico5.svg").default,
+    //   color: "whitemenu"
+    // },
     {
       name: "Acknowledgement",
       to: "/ack",
@@ -317,8 +318,8 @@ export const tbpWidths2 = [70,'*',50,50,50,50,40,40,50,60,70,50,50,40,60,40]
 
 export const getACK = () => {
   return [
-    { field: "ats.date", header: "Date" },
-    { field: "acknowledgementReceivedDate", header: "Ack.Rec Date" },
+    // { field: "ats.date", header: "Date" },
+    // { field: "acknowledgementReceivedDate", header: "Ack.Rec Date" },
     { field: "ats.truckname", header: "Truck Name" },
     { field: "ats.trucknumber", header: "Truck Number" },
     { field: "ats.transname", header: "Transport Name" },
@@ -339,13 +340,13 @@ export const getACK = () => {
   ];
 }
 
-export const ackWidths = [70,70,'*',50,50,50,50,50,50,50,50,50,50,50,50,50,50]
+export const ackWidths = ['*',80,80,80,50,50,50,50,50,50,50,80,80,80,80]
 
 
 export const getACK2 = () => {
   return [
-    { field: "ats.date", header: "Date" },
-    { field: "acknowledgementReceivedDate", header: "Ack.Rec Date" },
+    // { field: "ats.date", header: "Date" },
+    // { field: "acknowledgementReceivedDate", header: "Ack.Rec Date" },
     { field: "ats.truckname", header: "Truck Name" },
     { field: "ats.trucknumber", header: "Truck Number" },
     { field: "ats.transname", header: "Transport Name" },
@@ -367,7 +368,7 @@ export const getACK2 = () => {
   ];
 }
 
-export const ackWidths2 = [70,70,'*',50,50,40,40,40,50,50,50,50,50,50,50,50,50,50,50,50]
+export const ackWidths2 = ['*',70,70,50,40,40,50,50,50,50,50,50,50,50,70,70,70,70]
 
 
 export const pageName = [

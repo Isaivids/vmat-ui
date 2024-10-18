@@ -202,6 +202,7 @@ const Ccpto = () => {
     const filtered = data.filter((x: any) => x._id === rowData._id);
     setData(filtered);
     setSelectedRowId(rowData._id);
+    setSelectedProducts([]);
     // setSelectedRowData(rowData);
     // setDialogVisible(true);
   };

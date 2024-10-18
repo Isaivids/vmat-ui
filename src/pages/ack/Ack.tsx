@@ -409,6 +409,7 @@ const Ack = () => {
 
   const handleEdit = (rowData: any) => {
     setSelectedRowId(rowData._id);
+    setSelectedProducts([]);
     setBackupData(data);
     const filtered = data.filter((x: any) => x._id === rowData._id);
     setData(filtered);
@@ -712,11 +713,11 @@ const Ack = () => {
           header="By To Pay Transport Balance."
           style={{ minWidth: "200px" }}
         ></Column> */}
-        <Column
+        {type ===2 && <Column
           field="pendingamountfromtruckowner"
           header="Pending Amount From Truck Owner"
           style={{ minWidth: "200px" }}
-        ></Column>
+        ></Column>}
         <Column
           field="finaltotaltotruckowner"
           header="Final Payment to Truck Owner"
@@ -785,6 +786,7 @@ const Ack = () => {
         footer={footerContent}
       >
         <div className="flex flex-column gap-3">
+        <h4>Total : {selectedProducts.reduce((n, {finaltotaltotruckowner}) => n + finaltotaltotruckowner, 0)}</h4>
           <div className="flex flex-column gap-3">
             {formData.map((row, index) => (
               <div className="flex gap-2 my-2" key={index}>

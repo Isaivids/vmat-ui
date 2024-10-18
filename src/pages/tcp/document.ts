@@ -100,6 +100,10 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
     style: "tableHeader",
     alignment: "center",
   }));
+  let total = 0;
+  if(ack){
+    total = data.reduce((n:any, {finaltotaltotruckowner}:any) => n + Number(finaltotaltotruckowner), 0);
+  }
   const tableBody = [
     tableHeaders,
     ...data.map((row: any) =>
@@ -144,12 +148,12 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
     text: 'Grand Total :' + totalColumns.map((column:any) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const columnName = columns.find((col: any) => col.field === column)?.header || column;
-      let amount = 0
-      if(ack && ack.length > 0){
-        amount = totals[column] - (Number(ack[0]?.amount)|| 0)- (Number(ack[1]?.amount)|| 0)- (Number(ack[2]?.amount)|| 0);
-      }else{
-        amount = totals[column]
-      }
+      const amount = totals[column]
+      // if(ack && ack.length > 0){
+      //   amount = totals[column] - (Number(ack[0]?.amount)|| 0)- (Number(ack[1]?.amount)|| 0)- (Number(ack[2]?.amount)|| 0);
+      // }else{
+      //   amount = totals[column]
+      // }
       return `₹ ${amount.toFixed(2)} `;
     }).join('\n'),
     style: 'grandTotal',
@@ -202,10 +206,11 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
           vLineColor: function(i: number) { return 'gray'; },
         },
       },
+      [8].includes(type) ? '' : grandTotalContent,
       ack && (ack[0].remark || ack[0].amount) ? {text : `${ack[0].remark} : ${ack[0].amount}`,alignment: 'right',style : 'header'} : "",
       ack && (ack[1].remark || ack[1].amount) ? {text : `${ack[1].remark} : ${ack[1].amount}`,alignment: 'right',style : 'header'} : "",
       ack && (ack[2].remark || ack[2].amount) ? {text : `${ack[2].remark} : ${ack[2].amount}`,alignment: 'right',style : 'header'} : "",
-      [8].includes(type) ? '' : grandTotalContent,
+      ack && ack.length > 0 && {text : `Balance : ${total - ack.reduce((n:any, {amount}:any) => n + Number(amount), 0)}`,alignment: 'right',style: 'grandTotal'},
       ...(type === 5 ? [{ image: messages.gpay, width: 150, alignment: "center" }] : []),
     ],
     styles: {
