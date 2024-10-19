@@ -718,6 +718,10 @@ const Ack = () => {
           header="Pending Amount From Truck Owner"
           style={{ minWidth: "200px" }}
         ></Column>}
+        {type === 1 && <Column
+          field="vmatcommision"
+          header="Commission"
+        ></Column>}
         <Column
           field="finaltotaltotruckowner"
           header="Final Payment to Truck Owner"
