@@ -81,7 +81,8 @@ const Payment = () => {
           Number(updatedRow.loadunloadchar) +
           Number(updatedRow.loadingwagespending) +
           Number(updatedRow.extraloadingwagespaidbydriver) -
-          Math.abs(Number(updatedRow.tdstbp));
+          Math.abs(Number(updatedRow.tdstbp)) +
+          Number(updatedRow.others || 0);
         return updatedRow;
       }
       return row;
@@ -189,6 +190,7 @@ const Payment = () => {
       trpaidtotruck: Number(rowData.trpaidtotruck),
       diffto: Number(rowData.diffto),
       difffrom: Number(rowData.difffrom),
+      others: Number(rowData.others) || 0,
       atsid: rowData.ats._id,
     };
     try {
@@ -219,6 +221,7 @@ const Payment = () => {
                   trpaidtotruck: Number(response.payload.data.trpaidtotruck),
                   diffto: Number(response.payload.data.diffto),
                   difffrom: Number(response.payload.data.difffrom),
+                  others: Number(response.payload.data.others),
                   loadingwagespending: Number(
                     response.payload.data.loadingwagespending
                   ),
@@ -392,10 +395,11 @@ const Payment = () => {
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
-      <div className="flex justify-content-between">
+      <div className="flex justify-content-between align-items-center">
         <Button
           label="Download"
           severity="secondary"
+          style={{height : '30px'}}
           onClick={() =>
             downloadPDF(selectedProducts, type ===1 ? getTBP() : getTBP2(), searchQuery, type ===1 ? 7 : 10)
           }
@@ -485,6 +489,7 @@ const Payment = () => {
           header="TDS Dedcution 1%"
           body={renderInput}
         ></Column>
+        {type === 2 && <Column field="others" header="Others" body={renderInput}></Column>}
         <Column
           field="loadingwagespending"
           header="Loading Wages Pending"
@@ -511,27 +516,21 @@ const Payment = () => {
           style={{ minWidth: "200px" }}
         ></Column>
         <Column field="remarks" header="Remarks" body={renderTextArea}></Column>
-        {type === 2 && (
-          <Column
-            field="trpaidtotruck"
-            header="Transporter Paid To Truck"
-            body={renderInput}
-          ></Column>
-        )}
-        {type === 2 && (
-          <Column
-            field="diffto"
-            header="Difference Amount to Transporter"
-            style={{ minWidth: "200px" }}
-          ></Column>
-        )}
-        {type === 2 && (
-          <Column
-            field="difffrom"
-            header="Difference Amount from Transporter"
-            style={{ minWidth: "200px" }}
-          ></Column>
-        )}
+        <Column
+          field="trpaidtotruck"
+          header={type===1 ? "Transporter Paid To VMAT" : "Transporter Paid To Truck"}
+          body={renderInput}
+        ></Column>
+        <Column
+          field="diffto"
+          header="Difference Amount to Transporter"
+          style={{ minWidth: "200px" }}
+        ></Column>
+        <Column
+          field="difffrom"
+          header="Difference Amount from Transporter"
+          style={{ minWidth: "200px" }}
+        ></Column>
         <Column
           field="paymentreceiveddate"
           header="Payment Received Date"

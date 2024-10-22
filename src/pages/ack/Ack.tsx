@@ -713,11 +713,11 @@ const Ack = () => {
           header="By To Pay Transport Balance."
           style={{ minWidth: "200px" }}
         ></Column> */}
-        {type ===2 && <Column
+        {/* {type ===2 && <Column
           field="pendingamountfromtruckowner"
           header="Pending Amount From Truck Owner"
           style={{ minWidth: "200px" }}
-        ></Column>}
+        ></Column>} */}
         {type === 1 && <Column
           field="vmatcommision"
           header="Commission"
@@ -745,7 +745,7 @@ const Ack = () => {
         {type === 2 && (
           <Column
             field="difffrom"
-            header="Difference Amount from Truck Owner"
+            header="Difference Amount to Truck Owner"
             style={{ minWidth: "200px" }}
           ></Column>
         )}

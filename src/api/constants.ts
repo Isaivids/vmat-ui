@@ -285,26 +285,7 @@ export const getTBP = () => {
     { field: "loadunloadchar", header: "Unloading Wages" },
     { field: "plusorminus", header: "Unloading Charge" },
     { field: "tyrasporterpaidamt", header: "Transporter to be Paid" },
-    { field : "tdstbp" , header : "TDS Deduction 1%"},
-    { field: "remarks", header: "Remarks" },
-    { field: "paymentreceiveddate", header: "Payment Received Date" },
-    { field: "modeofpayment", header: "Mode Of Payment" },
-    { field: "rtgsnumber", header: "RTGS Number" },
-  ];
-}
-export const tbpWidths = [70,'*',50,50,50,50,50,50,50,50,50,70,50]
-
-export const getTBP2 = () => {
-  return [
-    { field: "ats.date", header: "Date" },
-    { field: "ats.trucknumber", header: "Truck Number" },
-    { field: "ats.transbln", header: "Transport balance" },
-    { field: "loadingwagespending", header: "Loading Wages Pending" },
-    { field: "extraloadingwagespaidbydriver", header: "Extra loading wages paid by driver" },
-    { field: "loadunloadchar", header: "Unloading Wages" },
-    { field: "plusorminus", header: "Unloading Charge" },
-    { field: "tyrasporterpaidamt", header: "Transporter to be Paid" },
-    { field: "trpaidtotruck", header: "Transporter Paid To Truck" },
+    { field: "trpaidtotruck", header: "Transporter Paid To VMAT" },
     { field: "diffto", header: "Difference Amount to Transporter" },
     { field: "difffrom", header: "Difference Amount from Transporter" },
     { field : "tdstbp" , header : "TDS Deduction 1%"},
@@ -314,7 +295,30 @@ export const getTBP2 = () => {
     { field: "rtgsnumber", header: "RTGS Number" },
   ];
 }
-export const tbpWidths2 = [70,'*',50,50,50,50,40,40,50,60,70,50,50,40,60,40]
+export const tbpWidths = [70,'*',50,50,50,50,50,50,70,70,70,50,50,50,70,50]
+
+export const getTBP2 = () => {
+  return [
+    { field: "ats.date", header: "Date" },
+    { field: "ats.trucknumber", header: "Truck Number" },
+    { field: "ats.transbln", header: "Transport balance" },
+    { field : "tdstbp" , header : "TDS Deduction 1%"},
+    { field : "others" , header : "Others"},
+    { field: "loadingwagespending", header: "Loading Wages Pending" },
+    { field: "extraloadingwagespaidbydriver", header: "Extra loading wages paid by driver" },
+    { field: "loadunloadchar", header: "Unloading Wages" },
+    { field: "plusorminus", header: "Unloading Charge" },
+    { field: "tyrasporterpaidamt", header: "Transporter to be Paid" },
+    { field: "trpaidtotruck", header: "Transporter Paid To Truck" },
+    { field: "diffto", header: "Difference Amount to Transporter" },
+    { field: "difffrom", header: "Difference Amount from Transporter" },
+    { field: "remarks", header: "Remarks" },
+    { field: "paymentreceiveddate", header: "Payment Received Date" },
+    { field: "modeofpayment", header: "Mode Of Payment" },
+    { field: "rtgsnumber", header: "RTGS Number" },
+  ];
+}
+export const tbpWidths2 = [70,'*',50,50,50,50,50,40,40,50,60,70,50,50,40,60,40]
 
 export const getACK = () => {
   return [
