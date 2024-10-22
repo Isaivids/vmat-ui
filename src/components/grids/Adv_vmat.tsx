@@ -20,6 +20,7 @@ import CustomButtonComponent from "../button/CustomButtonComponent";
 import { Button } from "primereact/button";
 import { downloadPDF } from "../../pages/tcp/document";
 import { Checkbox } from "primereact/checkbox";
+import { InputTextarea } from "primereact/inputtextarea";
 
 const AdvVmat = () => {
   const searchQuery = useSelector((state: any) => state.search);
@@ -44,7 +45,42 @@ const AdvVmat = () => {
     setFirst(event.first);
     setRows(event.rows);
   };
+  
   // ----------end of pagination
+
+  const onTextAreaChange = (e: any, id: any, field: any) => {
+    const { value } = e.target;
+    const newData: any = data.map((row: any) => {
+      if (row._id === id) {
+        return { ...row, [field]: value };
+      }
+      return row;
+    });
+    setData(newData);
+  };
+
+  const renderTextArea = (rowData: any, field: any) => {
+    return (
+      <div>
+        {rowData._id === selectedRowId ? (
+          <InputTextarea
+            disabled={rowData._id !== selectedRowId}
+            value={rowData[field.field] || ""}
+            onChange={(e) => onTextAreaChange(e, rowData._id, field.field)}
+            rows={1}
+            cols={30}
+            autoResize
+          />
+        ) : (
+          <span style={{ whiteSpace: "pre-wrap" }}>
+            {rowData[field.field] || ""}
+          </span>
+        )}
+      </div>
+    );
+  };
+
+
   const onInputChange = (e: any, id: any, field: any) => {
     const { value } = e.target;
     const newData: any = data.map((row: any) => {
@@ -372,7 +408,7 @@ const AdvVmat = () => {
         <Column
           field="othersreason"
           header="Reason"
-          body={renderInput}
+          body={renderTextArea}
         ></Column>
         <Column field="total" header="Advance Payment Paid to truck"></Column>
         <Column
