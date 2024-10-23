@@ -61,7 +61,7 @@ export const messages = {
       color: "whitemenu"
     },
     {
-       name: "Transport Advance",
+       name: "Transport Advance to Truck",
       to: "/transportadvance",
        image: require("../assets/ico5.svg").default,
        color: "yellowMenu"
@@ -322,7 +322,7 @@ export const tbpWidths2 = [70,'*',50,50,50,50,50,40,40,50,60,70,50,50,40,60,40]
 
 export const getACK = () => {
   return [
-    // { field: "ats.date", header: "Date" },
+    { field: "ats.date", header: "Date" },
     // { field: "acknowledgementReceivedDate", header: "Ack.Rec Date" },
     { field: "ats.truckname", header: "Truck Name" },
     { field: "ats.trucknumber", header: "Truck Number" },
@@ -344,12 +344,12 @@ export const getACK = () => {
   ];
 }
 
-export const ackWidths = ['*',80,80,80,50,50,50,50,50,50,50,80,80,80,80]
+export const ackWidths = [80,'*',80,80,80,50,50,50,50,50,50,50,80,80,80,80]
 
 
 export const getACK2 = () => {
   return [
-    // { field: "ats.date", header: "Date" },
+    { field: "ats.date", header: "Date" },
     // { field: "acknowledgementReceivedDate", header: "Ack.Rec Date" },
     { field: "ats.truckname", header: "Truck Name" },
     { field: "ats.trucknumber", header: "Truck Number" },
@@ -372,7 +372,7 @@ export const getACK2 = () => {
   ];
 }
 
-export const ackWidths2 = ['*',70,70,50,40,40,50,50,50,50,50,50,50,50,70,70,70,70]
+export const ackWidths2 = [70,'*',70,70,50,40,40,50,50,50,50,50,50,50,50,70,70,70,70]
 
 
 export const pageName = [
