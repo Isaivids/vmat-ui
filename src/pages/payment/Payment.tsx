@@ -207,8 +207,8 @@ const Payment = () => {
                   ...item,
                   modeofpayment: response.payload.data.modeofpayment,
                   rtgsnumber: response.payload.data.rtgsnumber,
-                  paymentReceivedDate:
-                    response.payload.data.paymentReceivedDate,
+                  paymentreceiveddate:
+                    response.payload.data.paymentreceiveddate,
                   loadunloadchar: Number(response.payload.data.loadunloadchar),
                   tyrasporterpaidamt: Number(
                     response.payload.data.tyrasporterpaidamt
