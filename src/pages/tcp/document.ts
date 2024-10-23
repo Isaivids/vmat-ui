@@ -144,13 +144,13 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
   const totalAmount = data.reduce((n: any, { finaltotaltotruckowner }: any) => n + Number(finaltotaltotruckowner), 0) || 0;
   if (ack && ack.length > 0) {
     ack = [{
-      remark: "GrandTotal", 
+      remark: "Total", 
       amount: `${totalAmount}`
     }, ...ack];
     const otherAmountsSum = ack
-      .filter(({ remark }: any) => remark !== "GrandTotal")
+      .filter(({ remark }: any) => remark !== "Total")
       .reduce((n: number, { amount }: any) => n + Number(amount), 0);
-    const balance = (totalAmount - otherAmountsSum).toFixed(2);
+    const balance = (totalAmount - otherAmountsSum);
     ack = [...ack, {
       remark: "Balance",
       amount: `${balance}`
@@ -158,11 +158,11 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
   }
 
   const grandTotalContent = {
-    text: 'Grand Total :' + totalColumns.map((column: any) => {
+    text: 'Total :' + totalColumns.map((column: any) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const columnName = columns.find((col: any) => col.field === column)?.header || column;
       const amount = totals[column]
-      return `₹ ${amount.toFixed(2)} `;
+      return ` ${amount} `;
     }).join('\n'),
     style: 'grandTotal',
     alignment: 'right',
@@ -174,12 +174,13 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
       { width: "*", text: '' },
       {
         width: 'auto',
+        margin: [0, 10, 100, 0],
         table: {
           widths: [100, 100],
           body: [
             [
               { text: remark, style: 'grandTotal' },
-              { text: `₹ ${amount}`, style: 'grandTotal', alignment: 'right' }
+              { text: `₹ ${amount || 0}`, style: 'grandTotal', alignment: 'right' }
             ]
           ]
         },
