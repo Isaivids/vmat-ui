@@ -372,7 +372,7 @@ const TransportAdvance = () => {
                 </div>
                 <div className="flex align-items-center">
                     <RadioButton inputId="type2" name="type2" value={2} onChange={(e) => setType(e.value)} checked={type === 2} />
-                    <label htmlFor="type2" className="ml-2">Transporter to pay Advance</label>
+                    <label htmlFor="type2" className="ml-2">Transport Advance to Truck</label>
                 </div>
             </div>
         </div>
