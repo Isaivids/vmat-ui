@@ -142,7 +142,6 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
 
 
   const totalAmount = data.reduce((n: any, { finaltotaltotruckowner }: any) => n + Number(finaltotaltotruckowner), 0) || 0;
-
   if (ack && ack.length > 0) {
     ack = ack.filter(({ amount }: any) => amount !== '' && amount !== null && amount !== undefined);
     ack = [{
@@ -153,7 +152,7 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
     const otherAmountsSum = ack
       .filter(({ remark }: any) => remark !== "Total")
       .reduce((n: number, { amount }: any) => n + Number(amount), 0);
-    const balance = (totalAmount - otherAmountsSum);
+    const balance = (totalAmount + otherAmountsSum);
     ack = [...ack, {
       remark: "Balance",
       amount: `${balance}`
