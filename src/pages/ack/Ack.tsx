@@ -96,13 +96,13 @@ const Ack = () => {
 
     if ([3, 4].includes(updatedRow.ats.modeofadvance)) {
       if (updatedRow.hidevc) {
-        addThree += updatedRow.vmatcrossing;
+        addThree -= updatedRow.vmatcrossing;
       }
       if (updatedRow.hidevcm) {
-        addThree += updatedRow.vmatcommision;
+        addThree -= updatedRow.vmatcommision;
       }
       if (updatedRow.hidetc) {
-        addThree += updatedRow.transcrossing;
+        addThree -= updatedRow.transcrossing;
       }
     } else {
       if ([1, 2].includes(updatedRow.ats.modeofadvance)) {
