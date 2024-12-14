@@ -55,7 +55,7 @@ const Amt = () => {
           updatedRow = { ...row, [field]: value };
           updatedRow.truckbln = Number(updatedRow.truckf) - Number(updatedRow.truckadv);
           if(updatedRow.transbalancetype === 'TOPAY'){
-            updatedRow.transbln = 0;
+            updatedRow.transbln = Number(updatedRow.transf) - Number(updatedRow.transadv);;
             updatedRow.twopay = Number(updatedRow.transf) - Number(updatedRow.transadv);
           }else if(updatedRow.transbalancetype === 'BALANCE'){
             updatedRow.transbln = Number(updatedRow.transf) - Number(updatedRow.transadv);
