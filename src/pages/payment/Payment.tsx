@@ -483,7 +483,7 @@ const Payment = () => {
         <Column field="ats.transname" header="Transport Name"></Column>
         <Column field="ats.from" header="From"></Column>
         <Column field="ats.to" header="To"></Column>
-        <Column field="ats.transbln" header="Transport balance"></Column>
+        <Column field="transbalance" header="Transport balance"></Column>
         <Column
           field="tdstbp"
           header="TDS Dedcution 1%"
