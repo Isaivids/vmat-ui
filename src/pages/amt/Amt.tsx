@@ -472,15 +472,12 @@ const Amt = () => {
     const { value } = e;
     const newData = data.map((row: any) => {
       if (row._id === id) {
-        // return { ...row, [field]: value.code };
         const updatedRow:any = { ...row, [field]: value.code };
         if ([1,2].includes(updatedRow.modeofadvance)) {
-          updatedRow.truckbalancetype = 'BALANCE';
           updatedRow.transbalancetype = 'BALANCE';
           updatedRow.transbln = Number(updatedRow.transf) - Number(updatedRow.transadv);
           updatedRow.twopay = 0;
-        }else if([3,4].includes(updatedRow.modeofadvance)){
-          updatedRow.truckbalancetype = 'TOPAY';
+        }else if([3,4,5].includes(updatedRow.modeofadvance)){
           updatedRow.transbalancetype = 'TOPAY'
           updatedRow.transbln = 0;
           updatedRow.twopay = Number(updatedRow.transf) - Number(updatedRow.transadv);
@@ -537,6 +534,18 @@ const Amt = () => {
     );
   };
 
+  const getTransBln = (data:any) =>{
+    return [3,4,5].includes(data.modeofadvance) ? 0 : Number(data.transf) - Number(data.transadv)
+  }
+
+  const getTwoPay = (data:any) =>{
+    return [1,2].includes(data.modeofadvance) ? 0 : Number(data.transf) - Number(data.transadv)
+  }
+
+  const gettransbalancetype = (data:any) =>{
+    return [3,4,5].includes(data.modeofadvance) ? "TOPAY" : "BALANCE"
+  }
+
   const fetchData = useCallback(async () => {
     try {
       const atsData = await dispatch(
@@ -548,6 +557,9 @@ const Amt = () => {
           date: new Date(item.date),
           repdate: item.repdate ? new Date(item.repdate) : null,
           unloaddate: item.unloaddate ? new Date(item.unloaddate) : null,
+          transbln : getTransBln(item),
+          transbalancetype : gettransbalancetype(item),
+          twopay : getTwoPay(item)
         }));
         setData(formattedData);
         setLatestSerial(atsData.payload.latestSerial.sno);
