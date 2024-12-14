@@ -479,11 +479,11 @@ const Amt = () => {
           updatedRow.twopay = 0;
         }else if([3,4,5].includes(updatedRow.modeofadvance)){
           updatedRow.transbalancetype = 'TOPAY'
-          updatedRow.transbln = 0;
+          updatedRow.transbln = Number(updatedRow.transf) - Number(updatedRow.transadv);
           updatedRow.twopay = Number(updatedRow.transf) - Number(updatedRow.transadv);
         }
         if(updatedRow.transbalancetype === 'TOPAY'){
-          updatedRow.transbln = 0;
+          updatedRow.transbln = Number(updatedRow.transf) - Number(updatedRow.transadv);
           updatedRow.twopay = Number(updatedRow.transf) - Number(updatedRow.transadv);
         }else if(updatedRow.transbalancetype === 'BALANCE'){
           updatedRow.transbln = Number(updatedRow.transf) - Number(updatedRow.transadv);
@@ -535,7 +535,8 @@ const Amt = () => {
   };
 
   const getTransBln = (data:any) =>{
-    return [3,4,5].includes(data.modeofadvance) ? 0 : Number(data.transf) - Number(data.transadv)
+    // return [3,4,5].includes(data.modeofadvance) ? 0 : Number(data.transf) - Number(data.transadv)
+    return Number(data.transf) - Number(data.transadv)
   }
 
   const getTwoPay = (data:any) =>{
