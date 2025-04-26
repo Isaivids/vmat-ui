@@ -8,7 +8,10 @@ import { InputTextarea } from "primereact/inputtextarea";
 import { Paginator } from "primereact/paginator";
 import { Toast } from "primereact/toast";
 import { initialrows, messages, paginationRows } from "../../api/constants";
-import { getTransportDetail, updateTransportDetail } from "../../store/slice/truckSlice";
+import {
+  getTransportDetail,
+  updateTransportDetail,
+} from "../../store/slice/truckSlice";
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
 
 const Transport = () => {
@@ -44,9 +47,9 @@ const Transport = () => {
     return (
       <InputTextarea
         disabled={rowData._id !== selectedRowId}
-        value={rowData[field.field] || ''}
+        value={rowData[field.field] || ""}
         onChange={(e) => onInputChange(e, rowData._id, field.field)}
-        rows={1} 
+        rows={1}
         cols={30}
         autoResize
       />
@@ -81,7 +84,9 @@ const Transport = () => {
       const response = await dispatch(updateTransportDetail(payload));
 
       if (!response.payload.error) {
-        const index = backupData.findIndex((item: any) => item._id === rowData._id);
+        const index = backupData.findIndex(
+          (item: any) => item._id === rowData._id
+        );
         if (index !== -1) {
           // data[index] = response.payload.data;
           const updatedBackupData = backupData.map((item: any) =>
@@ -104,8 +109,8 @@ const Transport = () => {
           setBackupData(updatedBackupData);
           setData([...updatedBackupData]);
         } else {
-          setBackupData([response.payload.data,...backupData]);
-          setData([response.payload.data,...backupData]);
+          setBackupData([response.payload.data, ...backupData]);
+          setData([response.payload.data, ...backupData]);
           // data.push(response.payload.data);
         }
 
@@ -159,7 +164,7 @@ const Transport = () => {
       unloadingaddress: "",
       location: "",
     };
-    setBackupData(data)
+    setBackupData(data);
     setData([newRow]);
     setSelectedRowId(newRow._id);
   };
@@ -179,7 +184,11 @@ const Transport = () => {
   const fetchData = useCallback(async () => {
     try {
       const trcukData = await dispatch(
-        getTransportDetail({ limit: rows, offset: page * rows, search: searchQuery })
+        getTransportDetail({
+          limit: rows,
+          offset: page * rows,
+          search: searchQuery,
+        })
       );
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
         setData(trcukData.payload.data);
@@ -215,19 +224,91 @@ const Transport = () => {
         <Column
           field="transportname"
           header="Transport Name"
-          body={renderInput}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
-        <Column field="address" header="Address" body={renderInput}></Column>
+        <Column
+          field="address"
+          header="Address"
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
+        ></Column>
         <Column
           field="phonenumber"
           header="Phone Number"
-          body={renderInput}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
-        <Column field="accountnumber" header="Account Number" body={renderInput}></Column>
-        <Column field="pannumber" header="PAN Number" body={renderInput}></Column>
-        <Column field="loadingaddress" header="Loading Address" body={renderInput}></Column>
-        <Column field="unloadingaddress" header="Unloading Address" body={renderInput}></Column>
-        <Column field="location" header="Location" body={renderInput}></Column>
+        <Column
+          field="accountnumber"
+          header="Account Number"
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
+        ></Column>
+        <Column
+          field="pannumber"
+          header="PAN Number"
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
+        ></Column>
+        <Column
+          field="loadingaddress"
+          header="Loading Address"
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
+        ></Column>
+        <Column
+          field="unloadingaddress"
+          header="Unloading Address"
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
+        ></Column>
+        <Column
+          field="location"
+          header="Location"
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
+        ></Column>
         <Column
           header="Actions"
           body={renderButton}

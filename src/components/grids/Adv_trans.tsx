@@ -18,6 +18,7 @@ import { Button } from "primereact/button";
 import { downloadPDF } from "../../pages/tcp/document";
 import { Checkbox } from "primereact/checkbox";
 import { InputTextarea } from "primereact/inputtextarea";
+import CommonDialog from "../common/CommonDialog";
 
 const AdvTrans = () => {
   const searchQuery = useSelector((state: any) => state.search);
@@ -41,6 +42,7 @@ const AdvTrans = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [data, setData]: any = useState([]);
   const [selectedRowId, setSelectedRowId]: any = useState(null);
+  const [visible, setVisible] = useState(false);
   const [backupData, setBackupData]: any = useState(null);
   const userDetails = useSelector((state: any) => state.user);
 
@@ -286,9 +288,7 @@ const AdvTrans = () => {
         <Button
           label="Download"
           severity="secondary"
-          onClick={() =>
-            downloadPDF(selectedProducts, getTransADV(), searchQuery, 2)
-          }
+          onClick={() => setVisible(true)}
           disabled={selectedProducts.length <= 0}
           className="mb-2"
         />
@@ -323,6 +323,7 @@ const AdvTrans = () => {
         rowClassName={rowClassName}
         selection={selectedProducts}
         onSelectionChange={(e: any) => setSelectedProducts(e.value)}
+        selectionMode={"checkbox"}
       >
         <Column selectionMode="multiple"></Column>
         <Column
@@ -387,6 +388,14 @@ const AdvTrans = () => {
         totalRecords={totalPage}
         onPageChange={onPageChange}
         rowsPerPageOptions={paginationRows}
+      />
+      <CommonDialog
+        visible={visible}
+        onHide={() => setVisible(false)}
+        getDetails={getTransADV()}
+        data={selectedProducts}
+        type={2}
+        searchQuery={searchQuery}
       />
     </div>
   );

@@ -11,9 +11,10 @@ import { AppDispatch } from "../../store/store";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Paginator } from "primereact/paginator";
 import { Toast } from "primereact/toast";
-import { getTruckDetails, initialrows, messages, paginationRows } from "../../api/constants";
+import { initialrows, messages, paginationRows } from "../../api/constants";
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
-import { downloadPDF } from "../tcp/document";
+import CommonDropdown from "../../components/dropdown/CommonDropdown";
+import { Dropdown } from "primereact/dropdown";
 
 const TruckDetail = () => {
   const searchQuery = useSelector((state: any) => state.search.query);
@@ -22,8 +23,10 @@ const TruckDetail = () => {
   const dispatch: any = useDispatch<AppDispatch>();
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
+  const [transportDetails, setTransportDetails] = useState([]);
   //seection
   const [selectedProducts, setSelectedProducts] = useState([]);
+  // const [visible, setVisible] = useState(false);
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(initialrows);
@@ -50,9 +53,9 @@ const TruckDetail = () => {
     return (
       <InputTextarea
         disabled={rowData._id !== selectedRowId}
-        value={rowData[field.field] || ''}
+        value={rowData[field.field] || ""}
         onChange={(e) => onInputChange(e, rowData._id, field.field)}
-        rows={1} 
+        rows={1}
         cols={30}
         autoResize
       />
@@ -62,6 +65,8 @@ const TruckDetail = () => {
   const handleSave = async (rowData: any) => {
     const payload = {
       truckname: rowData.truckname,
+      trucknumber: rowData.trucknumber,
+      transname: rowData.transname,
       address: rowData.address,
       phonenumber: rowData.phonenumber,
       accountnumber: rowData.accountnumber,
@@ -76,7 +81,9 @@ const TruckDetail = () => {
       const response = await dispatch(updateTruckDetail(payload));
 
       if (!response.payload.error) {
-        const index = backupData.findIndex((item: any) => item._id === rowData._id);
+        const index = backupData.findIndex(
+          (item: any) => item._id === rowData._id
+        );
         if (index !== -1) {
           // data[index] = response.payload.data;
           const updatedBackupData = backupData.map((item: any) =>
@@ -84,6 +91,8 @@ const TruckDetail = () => {
               ? {
                   ...item,
                   truckname: response.payload.data.truckname,
+                  trucknumber: response.payload.data.trucknumber,
+                  transname: response.payload.data.transname,
                   address: response.payload.data.address,
                   phonenumber: response.payload.data.phonenumber,
                   accountnumber: response.payload.data.accountnumber,
@@ -98,8 +107,8 @@ const TruckDetail = () => {
           setBackupData(updatedBackupData);
           setData([...updatedBackupData]);
         } else {
-          setBackupData([response.payload.data,...backupData]);
-          setData([response.payload.data,...backupData]);
+          setBackupData([response.payload.data, ...backupData]);
+          setData([response.payload.data, ...backupData]);
           // data.push(response.payload.data);
         }
 
@@ -121,6 +130,39 @@ const TruckDetail = () => {
     }
   };
 
+  const onDropdownChange = (e: any, id: any, field: any) => {
+    const { value } = e;
+    const newData: any = data.map((row: any) => {
+      if (row._id === id) {
+        return {
+          ...row,
+          [field]: value?.transportname,
+          pannumber: value?.pannumber,
+          accountnumber: value?.accountnumber,
+        };
+      }
+      return row;
+    });
+    setData(newData);
+  };
+
+  const renderDropdown = (rowData: any, field: any) => {
+    const selectedValue = transportDetails.find(
+      (option: any) => option.transportname === rowData?.transname
+    );
+    return (
+      <Dropdown
+        filter
+        value={selectedValue}
+        onChange={(e) => onDropdownChange(e, rowData._id, field.field)}
+        options={transportDetails}
+        optionLabel="transportname"
+        placeholder="Select"
+        style={{ width: "150px" }}
+      />
+    );
+  };
+
   const handleCancel = () => {
     if (backupData) {
       setData(backupData);
@@ -132,8 +174,6 @@ const TruckDetail = () => {
   };
 
   const handleEdit = (rowData: any) => {
-    // setSelectedRowId(rowData._id);
-    // setBackupData([...data]);
     setBackupData(data);
     const filtered = data.filter((x: any) => x._id === rowData._id);
     setData(filtered);
@@ -144,6 +184,7 @@ const TruckDetail = () => {
     const newRow = {
       _id: new Date(),
       truckname: "",
+      trucknumber: "",
       address: "",
       phonenumber: "",
       accountnumber: "",
@@ -152,7 +193,7 @@ const TruckDetail = () => {
       unloadingaddress: "",
       location: "",
     };
-    setBackupData(data)
+    setBackupData(data);
     setData([newRow]);
     setSelectedRowId(newRow._id);
   };
@@ -172,10 +213,15 @@ const TruckDetail = () => {
   const fetchData = useCallback(async () => {
     try {
       const trcukData = await dispatch(
-        gettruckdetail({ limit: rows, offset: page * rows, search: searchQuery })
+        gettruckdetail({
+          limit: rows,
+          offset: page * rows,
+          search: searchQuery,
+        })
       );
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
         setData(trcukData.payload.data);
+        setTransportDetails(trcukData.payload.transportDetails);
         setTotalPage(trcukData.payload.pagination.totalDocuments);
       }
     } catch (error) {
@@ -199,36 +245,134 @@ const TruckDetail = () => {
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
       <div className="flex my-2 gap-2">
-      <Button
-        label="Add New Row"
-        severity="info"
-        onClick={handleAddNewRow}
-      />
-      <Button
+        <Button label="Add New Row" severity="info" onClick={handleAddNewRow} />
+        {/* <Button
         label="Download"
         severity="secondary"
         onClick={() => downloadPDF(selectedProducts,getTruckDetails(),searchQuery,8)}
         disabled={selectedProducts.length <= 0}
-      />
+      /> */}
       </div>
-      <DataTable value={data} scrollable scrollHeight="80vh" showGridlines selection={selectedProducts} onSelectionChange={(e:any) => setSelectedProducts(e.value)}>
-        <Column selectionMode="multiple"></Column>
+      <DataTable
+        value={data}
+        scrollable
+        scrollHeight="80vh"
+        showGridlines
+        selection={selectedProducts}
+        onSelectionChange={(e: any) => setSelectedProducts(e.value)}
+        selectionMode={"checkbox"}
+      >
+        {/* <Column selectionMode="multiple"></Column> */}
         <Column
           field="truckname"
           header="Truck Name"
-          body={renderInput}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
-        <Column field="address" header="Address" body={renderInput}></Column>
+        <Column
+          field="trucknumber"
+          header="Truck Number"
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
+        ></Column>
+        <Column
+          field="transname"
+          header="Transport Name"
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderDropdown(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
+        ></Column>
+        <Column
+          field="address"
+          header="Address"
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
+        ></Column>
         <Column
           field="phonenumber"
           header="Phone Number"
-          body={renderInput}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
-        <Column field="accountnumber" header="Account Number" body={renderInput}></Column>
-        <Column field="pannumber" header="PAN Number" body={renderInput}></Column>
-        <Column field="loadingaddress" header="Loading Address" body={renderInput}></Column>
-        <Column field="unloadingaddress" header="Unloading Address" body={renderInput}></Column>
-        <Column field="location" header="Location" body={renderInput}></Column>
+        <Column
+          field="accountnumber"
+          header="Account Number"
+          // body={(rowData: any, field: any) =>
+          //   selectedRowId === rowData._id ? (
+          //     renderInput(rowData, field)
+          //   ) : (
+          //     <span>{rowData[field.field] || ""}</span>
+          //   )
+          // }
+        ></Column>
+        <Column
+          field="pannumber"
+          header="PAN Number"
+          // body={(rowData: any, field: any) =>
+          //   selectedRowId === rowData._id ? (
+          //     renderInput(rowData, field)
+          //   ) : (
+          //     <span>{rowData[field.field] || ""}</span>
+          //   )
+          // }
+        ></Column>
+        <Column
+          field="loadingaddress"
+          header="Loading Address"
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
+        ></Column>
+        <Column
+          field="unloadingaddress"
+          header="Unloading Address"
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
+        ></Column>
+        <Column
+          field="location"
+          header="Location"
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
+        ></Column>
         <Column
           header="Actions"
           body={renderButton}

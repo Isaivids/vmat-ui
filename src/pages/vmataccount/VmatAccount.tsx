@@ -279,7 +279,7 @@ const VmatAccount = () => {
         <Column
           field="vmatexpense"
           header="Vmat Expense"
-          body={renderInput}
+          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderInput(rowData, field) : rowData.vmatexpense}
           footer={totals?.totalVmatExpense || 0}
         ></Column>
         <Column field="reason" header="Reason" body={renderInput2}></Column>

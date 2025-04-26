@@ -21,6 +21,8 @@ import { Button } from "primereact/button";
 import { downloadPDF } from "../../pages/tcp/document";
 import { Checkbox } from "primereact/checkbox";
 import { InputTextarea } from "primereact/inputtextarea";
+import BulkUpdate from "../dialogamt/BulkUpdate";
+import CommonDialog from "../common/CommonDialog";
 
 const AdvVmat = () => {
   const searchQuery = useSelector((state: any) => state.search);
@@ -30,6 +32,8 @@ const AdvVmat = () => {
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
   const [selectedProducts, setSelectedProducts] = useState([]);
+  const [showBulkUpdateDialog, setShowBulkUpdateDialog] = useState(false);
+  const [visible, setVisible] = useState(false);
   // chekcbox
   const [showPending, setShowPending] = useState(true);
   const [showCompleted, setShowCompleted] = useState(true);
@@ -45,7 +49,7 @@ const AdvVmat = () => {
     setFirst(event.first);
     setRows(event.rows);
   };
-  
+
   // ----------end of pagination
 
   const onTextAreaChange = (e: any, id: any, field: any) => {
@@ -79,7 +83,6 @@ const AdvVmat = () => {
       </div>
     );
   };
-
 
   const onInputChange = (e: any, id: any, field: any) => {
     const { value } = e.target;
@@ -130,15 +133,25 @@ const AdvVmat = () => {
     try {
       const response = await dispatch(updateByVmat(payload));
       if (!response.payload.error) {
-        const index = backupData.findIndex((item: any) => item._id === rowData._id);
+        const index = backupData.findIndex(
+          (item: any) => item._id === rowData._id
+        );
         if (index !== -1) {
           // data[index]._id = response.payload.data._id;
           const index = backupData.findIndex(
             (item: any) => item._id === rowData._id
           );
           const {
-            pendinglabourwages,extlabourwages,others,othersreason,
-            advanceamount,total,paymentreceiveddate,modeofpayment,rtgsnumber,_id
+            pendinglabourwages,
+            extlabourwages,
+            others,
+            othersreason,
+            advanceamount,
+            total,
+            paymentreceiveddate,
+            modeofpayment,
+            rtgsnumber,
+            _id,
           } = response.payload.data;
           if (index !== -1) {
             const updatedBackupData = backupData.map((item: any) =>
@@ -335,14 +348,20 @@ const AdvVmat = () => {
       <Toast ref={toast} />
       <div className="flex justify-content-between align-items-center">
         <Button
-          style={{height : '30px'}}
+          style={{ height: "30px" }}
           className="mb-1"
           label="Download"
           severity="secondary"
-          onClick={() =>
-            downloadPDF(selectedProducts, getVMAT(), searchQuery, 1)
-          }
+          onClick={() => setVisible(true)}
           disabled={selectedProducts.length <= 0}
+        />
+        <Button
+          style={{ height: "30px" }}
+          className="mb-1"
+          label="Bulk Update"
+          severity="warning"
+          disabled={selectedProducts.length <= 0}
+          onClick={() => setShowBulkUpdateDialog(true)}
         />
         <div className="flex align-items-center my-3">
           <Checkbox
@@ -375,6 +394,7 @@ const AdvVmat = () => {
         rowClassName={rowClassName}
         selection={selectedProducts}
         onSelectionChange={(e: any) => setSelectedProducts(e.value)}
+        selectionMode={"checkbox"}
       >
         <Column selectionMode="multiple"></Column>
         <Column
@@ -398,34 +418,80 @@ const AdvVmat = () => {
         <Column
           field="pendinglabourwages"
           header="Loading Wages Pending"
-          body={renderInput}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
         <Column
           field="extlabourwages"
           header="Extra loading wages paid by driver"
-          body={renderInput}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
-        <Column field="others" header="Others" body={renderInput}></Column>
+        <Column
+          field="others"
+          header="Others"
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
+        ></Column>
         <Column
           field="othersreason"
           header="Reason"
-          body={renderTextArea}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderTextArea(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
         <Column field="total" header="Advance Payment Paid to truck"></Column>
         <Column
           field="paymentreceiveddate"
           header="Payment RTGS Date"
-          body={renderDatePicker}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderDatePicker(rowData, field)
+            ) : (
+              <span>{formatDate(rowData[field.field]) || ""}</span>
+            )
+          }
         ></Column>
         <Column
           field="modeofpayment"
           header="Mode Of Payment"
-          body={renderDropdown}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderDropdown(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
         <Column
           field="rtgsnumber"
           header="RTGS Number"
-          body={renderInput}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
         <Column
           header="Actions"
@@ -439,6 +505,31 @@ const AdvVmat = () => {
         totalRecords={totalPage}
         onPageChange={onPageChange}
         rowsPerPageOptions={paginationRows}
+      />
+      <BulkUpdate
+        visible={showBulkUpdateDialog}
+        onHide={() => setShowBulkUpdateDialog(false)}
+        data={selectedProducts}
+        type={1}
+        onSuccess={async (updated) => {
+          await fetchData();
+          setSelectedProducts([]);
+          setShowBulkUpdateDialog(false);
+          toast.current?.show({
+            severity: "success",
+            summary: messages.success,
+            detail: messages.updateoraddsuccess,
+            life: 3000,
+          });
+        }}
+      />
+      <CommonDialog
+        visible={visible}
+        onHide={() => setVisible(false)}
+        getDetails={getVMAT()}
+        data={selectedProducts}
+        type={1}
+        searchQuery={searchQuery}
       />
     </div>
   );

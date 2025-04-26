@@ -26,6 +26,8 @@ import { downloadPDF } from "../tcp/document";
 import { Checkbox } from "primereact/checkbox";
 import { RadioButton } from "primereact/radiobutton";
 import { InputTextarea } from "primereact/inputtextarea";
+import BulkUpdate from "../../components/dialogamt/BulkUpdate";
+import CommonDialog from "../../components/common/CommonDialog";
 const Payment = () => {
   const dispatch = useDispatch<AppDispatch>();
   const toast = useRef<Toast>(null);
@@ -41,6 +43,8 @@ const Payment = () => {
   // chekcbox
   const [showPending, setShowPending] = useState(true);
   const [showCompleted, setShowCompleted] = useState(true);
+  const [showBulkUpdateDialog, setShowBulkUpdateDialog] = useState(false);
+  const [visible, setVisible] = useState(false);
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(initialrows);
@@ -60,7 +64,8 @@ const Payment = () => {
         const currentPlusOrMinus = Number(row.plusorminus) || 0;
         const newPlusOrMinusValue = Number(value) || 0;
         if (field === "trpaidtotruck" && updatedRow.trpaidtotruck) {
-          const diffto = updatedRow.trpaidtotruck - updatedRow.tyrasporterpaidamt;
+          const diffto =
+            updatedRow.trpaidtotruck - updatedRow.tyrasporterpaidamt;
           if (Math.sign(diffto) === 1) {
             updatedRow.diffto = diffto;
             updatedRow.difffrom = 0;
@@ -109,7 +114,7 @@ const Payment = () => {
       <InputText
         disabled={rowData._id !== selectedRowId}
         value={rowData[field.field] || ""}
-        onChange={(e:any) => onInputChange(e, rowData._id, field.field)}
+        onChange={(e: any) => onInputChange(e, rowData._id, field.field)}
         keyfilter={isStringField ? undefined : "num"}
         onBlur={() => onInputBlur(rowData._id, field.field)}
         autoComplete="off"
@@ -146,14 +151,16 @@ const Payment = () => {
         {rowData._id === selectedRowId ? (
           <InputTextarea
             disabled={rowData._id !== selectedRowId}
-            value={rowData[field.field] || ''}
+            value={rowData[field.field] || ""}
             onChange={(e) => onTextAreaChange(e, rowData._id, field.field)}
             rows={1}
             cols={30}
             autoResize
           />
         ) : (
-          <span style={{ whiteSpace: 'pre-wrap' }}>{rowData[field.field] || ''}</span>
+          <span style={{ whiteSpace: "pre-wrap" }}>
+            {rowData[field.field] || ""}
+          </span>
         )}
       </div>
     );
@@ -399,12 +406,18 @@ const Payment = () => {
         <Button
           label="Download"
           severity="secondary"
-          style={{height : '30px'}}
-          onClick={() =>
-            downloadPDF(selectedProducts, type ===1 ? getTBP() : getTBP2(), searchQuery, type ===1 ? 7 : 10)
-          }
+          style={{ height: "30px" }}
+          onClick={() => setVisible(true)}
           disabled={selectedProducts.length <= 0}
           className="mb-2"
+        />
+        <Button
+          style={{ height: "30px" }}
+          className="mb-1"
+          label="Bulk Update"
+          severity="warning"
+          disabled={selectedProducts.length <= 0}
+          onClick={() => setShowBulkUpdateDialog(true)}
         />
         <div className="card flex justify-content-center">
           <div className="flex flex-wrap gap-3">
@@ -465,6 +478,7 @@ const Payment = () => {
         rowClassName={rowClassName}
         selection={selectedProducts}
         onSelectionChange={(e: any) => setSelectedProducts(e.value)}
+        selectionMode={"checkbox"}
       >
         <Column selectionMode="multiple"></Column>
         <Column
@@ -487,18 +501,48 @@ const Payment = () => {
         <Column
           field="tdstbp"
           header="TDS Dedcution 1%"
-          body={renderInput}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
-        {type === 2 && <Column field="others" header="Others" body={renderInput}></Column>}
+        {type === 2 && (
+          <Column
+            field="others"
+            header="Others"
+            body={(rowData: any, field: any) =>
+              selectedRowId === rowData._id ? (
+                renderInput(rowData, field)
+              ) : (
+                <span>{rowData[field.field] || ""}</span>
+              )
+            }
+          ></Column>
+        )}
         <Column
           field="loadingwagespending"
           header="Loading Wages Pending"
-          body={renderInput}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
         <Column
           field="extraloadingwagespaidbydriver"
           header="Extra loading wages paid by driver"
-          body={renderInput}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
         <Column
           field="loadunloadchar"
@@ -508,18 +552,28 @@ const Payment = () => {
         <Column
           field="plusorminus"
           header="Unloading Charge"
-          body={renderInput}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
         <Column
           field="tyrasporterpaidamt"
           header="Transporter to be Paid"
           style={{ minWidth: "200px" }}
         ></Column>
-        <Column field="remarks" header="Remarks" body={renderTextArea}></Column>
+        <Column field="remarks" header="Remarks" body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderTextArea(rowData, field) : <span>{rowData[field.field] || ''}</span>}></Column>
         <Column
           field="trpaidtotruck"
-          header={type===1 ? "Transporter Paid To VMAT" : "Transporter Paid To Truck"}
-          body={renderInput}
+          header={
+            type === 1
+              ? "Transporter Paid To VMAT"
+              : "Transporter Paid To Truck"
+          }
+          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderInput(rowData, field) : <span>{rowData[field.field] || ''}</span>}
         ></Column>
         <Column
           field="diffto"
@@ -534,17 +588,17 @@ const Payment = () => {
         <Column
           field="paymentreceiveddate"
           header="Payment Received Date"
-          body={renderDatePicker}
+          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderDatePicker(rowData, field) : <span>{formatDate(rowData[field.field]) || ''}</span>}
         ></Column>
         <Column
           field="modeofpayment"
           header="Mode Of Payment"
-          body={renderDropdown}
+          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderDropdown(rowData, field) : <span>{rowData[field.field] || ''}</span>}
         ></Column>
         <Column
           field="rtgsnumber"
           header="RTGS Number"
-          body={renderInput}
+          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderInput(rowData, field) : <span>{rowData[field.field] || ''}</span>}
         ></Column>
         <Column
           header="Actions"
@@ -558,6 +612,31 @@ const Payment = () => {
         totalRecords={totalPage}
         onPageChange={onPageChange}
         rowsPerPageOptions={paginationRows}
+      />
+      <BulkUpdate
+        visible={showBulkUpdateDialog}
+        onHide={() => setShowBulkUpdateDialog(false)}
+        data={selectedProducts}
+        type={6}
+        onSuccess={async (updated) => {
+          await fetchData();
+          setSelectedProducts([]);
+          setShowBulkUpdateDialog(false);
+          toast.current?.show({
+            severity: "success",
+            summary: messages.success,
+            detail: messages.updateoraddsuccess,
+            life: 3000,
+          });
+        }}
+      />
+      <CommonDialog
+        visible={visible}
+        onHide={() => setVisible(false)}
+        getDetails={type === 1 ? getTBP() : getTBP2()}
+        data={selectedProducts}
+        type={type === 1 ? 7 : 10}
+        searchQuery={searchQuery}
       />
     </div>
   );

@@ -3,14 +3,24 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
-import { addAts, deleteAts, getAts, updateats } from "../../store/slice/atsSlice";
+import {
+  addAts,
+  deleteAts,
+  getAts,
+  updateats,
+} from "../../store/slice/atsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { validateFields } from "./validations";
 import { Toast } from "primereact/toast";
 import { Paginator } from "primereact/paginator";
 import { Dropdown } from "primereact/dropdown";
-import { initialrows, messages, paginationRows } from "../../api/constants";
+import {
+  formatDate,
+  initialrows,
+  messages,
+  paginationRows,
+} from "../../api/constants";
 import DialogAmt from "../../components/dialogamt/DialogAmt";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
@@ -24,14 +34,17 @@ const Amt = () => {
   const toast = useRef<Toast>(null);
   const [data, setData]: any = useState([]);
   const [selectedRowId, setSelectedRowId]: any = useState(null);
-  const [originalData, setOriginalData]:any = useState();
+  const [originalData, setOriginalData]: any = useState();
   const [newRowAdded, setNewRowAdded] = useState(false);
   const searchQuery = useSelector((state: any) => state.search);
   const [visible, setVisible] = useState<boolean>(false);
   const [selectedData, setSelectedData]: any = useState({});
   const userDetails = useSelector((state: any) => state.user);
   const [receipt, setReceipt] = useState(false);
-  const [latestSerial, setLatestSerial] = useState('');
+  const [latestSerial, setLatestSerial] = useState("");
+  const [transportDetails, setTransportDetails]: any = useState([]);
+  const [originalTrucks, setOriginalTrucks] = useState([]);
+  const [selectedProducts, setSelectedProducts] = useState([]);
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(initialrows);
@@ -43,7 +56,7 @@ const Amt = () => {
     setRows(event.rows);
   };
   // ----------end of pagination
-  const tableContainerRef:any = useRef(null);
+  const tableContainerRef: any = useRef(null);
 
   const onInputChange = (e: any, id: any, field: any) => {
     const { value } = e.target;
@@ -53,12 +66,16 @@ const Amt = () => {
         let updatedRow = { ...row, [field]: value };
         if (calcField.includes(field)) {
           updatedRow = { ...row, [field]: value };
-          updatedRow.truckbln = Number(updatedRow.truckf) - Number(updatedRow.truckadv);
-          if(updatedRow.transbalancetype === 'TOPAY'){
-            updatedRow.transbln = Number(updatedRow.transf) - Number(updatedRow.transadv);;
-            updatedRow.twopay = Number(updatedRow.transf) - Number(updatedRow.transadv);
-          }else if(updatedRow.transbalancetype === 'BALANCE'){
-            updatedRow.transbln = Number(updatedRow.transf) - Number(updatedRow.transadv);
+          updatedRow.truckbln =
+            Number(updatedRow.truckf) - Number(updatedRow.truckadv);
+          if (updatedRow.transbalancetype === "TOPAY") {
+            updatedRow.transbln =
+              Number(updatedRow.transf) - Number(updatedRow.transadv);
+            updatedRow.twopay =
+              Number(updatedRow.transf) - Number(updatedRow.transadv);
+          } else if (updatedRow.transbalancetype === "BALANCE") {
+            updatedRow.transbln =
+              Number(updatedRow.transf) - Number(updatedRow.transadv);
             updatedRow.twopay = 0;
           }
         }
@@ -127,10 +144,10 @@ const Amt = () => {
     setSelectedData(rowData);
   };
 
-  const accept = async(id:any) => {
+  const accept = async (id: any) => {
     try {
       const response = await dispatch(deleteAts(id));
-      if(response.payload.error === false){
+      if (response.payload.error === false) {
         toast.current?.show({
           severity: "info",
           summary: "Confirmed",
@@ -143,29 +160,29 @@ const Amt = () => {
       toast.current?.show({
         severity: "error",
         summary: "Error",
-        detail: 'Unable to do this operation now',
+        detail: "Unable to do this operation now",
         life: 3000,
       });
     }
   };
 
-  const confirm2 = (event: any,id:any) => {
+  const confirm2 = (event: any, id: any) => {
     confirmPopup({
       target: event.currentTarget,
       message: "Do you want to delete this record?",
       icon: "pi pi-info-circle",
       defaultFocus: "reject",
       acceptClassName: "p-button-danger",
-      accept : () => accept(id),
+      accept: () => accept(id),
     });
   };
 
-  const getMemoOpen = async(rowData:any) =>{
+  const getMemoOpen = async (rowDataArray: any[]) => {
     try {
-      const body = {serialnumber : rowData.sno}
+      const body = rowDataArray.map(row => ({ serialnumber: row.sno }));
       const response = await dispatch(updaterecentbill(body));
-      if(!response.payload.error){
-        generatePDF(rowData,response.payload);
+      if (!response.payload.error) {
+        generatePDF(rowDataArray, response.payload.savedBills);
       }
     } catch (error) {
       toast.current?.show({
@@ -175,7 +192,8 @@ const Amt = () => {
         life: 3000,
       });
     }
-  }
+  };
+  
 
   const renderButton = (rowData: any) => {
     return (
@@ -187,9 +205,17 @@ const Amt = () => {
               severity="warning"
               onClick={() => handleEdit(rowData._id)}
             />
-            <Button severity="danger" onClick={(event:any) => confirm2(event,rowData._id)}><i className="pi pi-trash"></i></Button>
-            <Button label="Bill" severity="secondary" onClick={() => openReceiptDialog(rowData)}/>
-            <Button label="Memo" onClick={() => getMemoOpen(rowData)} />
+            <Button
+              severity="danger"
+              onClick={(event: any) => confirm2(event, rowData._id)}
+            >
+              <i className="pi pi-trash"></i>
+            </Button>
+            <Button
+              label="Bill"
+              severity="secondary"
+              onClick={() => openReceiptDialog(rowData)}
+            />
           </>
         )}
         {selectedRowId === rowData._id && (
@@ -259,6 +285,8 @@ const Amt = () => {
       transbln: Number(inputObject.transbln),
       twopay: Number(inputObject.twopay),
       truckloadwt: Number(inputObject.truckloadwt),
+      pannumber: inputObject.pannumber,
+      accountnumber: inputObject.accountnumber,
     };
     return outputObject;
   };
@@ -269,9 +297,9 @@ const Amt = () => {
       const response = await dispatch(addAts(payload));
       if (response.payload.data && !response.payload.error) {
         setSelectedRowId(null);
-        setOriginalData([response.payload.data,...originalData]);
+        setOriginalData([response.payload.data, ...originalData]);
         setLatestSerial(response.payload.latestSerial.sno);
-        setData([response.payload.data,...originalData]);
+        setData([response.payload.data, ...originalData]);
         toast.current?.show({
           severity: "success",
           summary: messages.success,
@@ -279,15 +307,7 @@ const Amt = () => {
           life: 3000,
         });
       }
-
-    } catch (error: any) {
-      // toast.current?.show({
-      //   severity: "error",
-      //   summary: messages.error,
-      //   detail: messages.updateoraddfailure,
-      //   life: 3000,
-      // });
-    }
+    } catch (error: any) {}
   };
 
   const handleSave = async (id: any) => {
@@ -316,43 +336,70 @@ const Amt = () => {
         const response = await dispatch(updateats(payload));
         if (response.payload.data && !response.payload.error) {
           const {
-            sno,date,truckname,trucknumber,transname,from,to,truckadv,transaddvtype,repdate,
-            unloaddate,deliverydate,reportingdate,lateday,halting,truckf,
-            transf,vmatf,modeofadvance,transbalancetype,truckbalancetype,
-            transadv,truckbln,transbln,twopay,truckloadwt,_id
+            sno,
+            date,
+            truckname,
+            trucknumber,
+            transname,
+            from,
+            to,
+            truckadv,
+            transaddvtype,
+            repdate,
+            unloaddate,
+            deliverydate,
+            reportingdate,
+            lateday,
+            halting,
+            truckf,
+            transf,
+            vmatf,
+            modeofadvance,
+            transbalancetype,
+            truckbalancetype,
+            transadv,
+            truckbln,
+            transbln,
+            twopay,
+            truckloadwt,
+            _id,
+            pannumber,
+            accountnumber
           } = response.payload.data;
           setSelectedRowId(null);
           const updatedBackupData = originalData.map((item: any) =>
             item._id === response.payload.data._id
               ? {
-                _id : _id,
-                sno: sno,
-                date: date,
-                truckname: truckname,
-                trucknumber: trucknumber,
-                transname: transname,
-                from: from,
-                to: to,
-                truckadv: Number(truckadv),
-                transaddvtype: Number(transaddvtype),
-                repdate: repdate,
-                unloaddate: unloaddate,
-                deliverydate: deliverydate,
-                reportingdate: reportingdate,
-                lateday: lateday,
-                halting: halting,
-                truckf: Number(truckf),
-                transf: Number(transf),
-                vmatf: Number(vmatf),
-                modeofadvance: Number(modeofadvance),
-                transbalancetype: transbalancetype,
-                truckbalancetype: truckbalancetype,
-                transadv: Number(transadv),
-                truckbln: Number(truckbln),
-                transbln: Number(transbln),
-                twopay: Number(twopay),
-                truckloadwt: Number(truckloadwt),
-               }
+                  _id: _id,
+                  sno: sno,
+                  date: date,
+                  truckname: truckname,
+                  trucknumber: trucknumber,
+                  transname: transname,
+                  from: from,
+                  to: to,
+                  truckadv: Number(truckadv),
+                  transaddvtype: Number(transaddvtype),
+                  repdate: repdate,
+                  unloaddate: unloaddate,
+                  deliverydate: deliverydate,
+                  reportingdate: reportingdate,
+                  lateday: lateday,
+                  halting: halting,
+                  truckf: Number(truckf),
+                  transf: Number(transf),
+                  vmatf: Number(vmatf),
+                  modeofadvance: Number(modeofadvance),
+                  transbalancetype: transbalancetype,
+                  truckbalancetype: truckbalancetype,
+                  transadv: Number(transadv),
+                  truckbln: Number(truckbln),
+                  transbln: Number(transbln),
+                  twopay: Number(twopay),
+                  truckloadwt: Number(truckloadwt),
+                  pannumber: pannumber,
+                  accountnumber: accountnumber,
+                }
               : item
           );
           setOriginalData(updatedBackupData);
@@ -392,38 +439,49 @@ const Amt = () => {
 
   function generateUniqueId() {
     const now = new Date();
-    const datePart = now.getFullYear().toString() + 
-                     (now.getMonth() + 1).toString().padStart(2, '0') + 
-                     now.getDate().toString().padStart(2, '0') + 
-                     now.getHours().toString().padStart(2, '0') + 
-                     now.getMinutes().toString().padStart(2, '0') + 
-                     now.getSeconds().toString().padStart(2, '0') + 
-                     now.getMilliseconds().toString().padStart(3, '0');
-    const alphabets = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-    const randomPart = Array.from({ length: 5 }, () => alphabets[Math.floor(Math.random() * alphabets.length)]).join('');
+    const datePart =
+      now.getFullYear().toString() +
+      (now.getMonth() + 1).toString().padStart(2, "0") +
+      now.getDate().toString().padStart(2, "0") +
+      now.getHours().toString().padStart(2, "0") +
+      now.getMinutes().toString().padStart(2, "0") +
+      now.getSeconds().toString().padStart(2, "0") +
+      now.getMilliseconds().toString().padStart(3, "0");
+    const alphabets = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    const randomPart = Array.from(
+      { length: 5 },
+      () => alphabets[Math.floor(Math.random() * alphabets.length)]
+    ).join("");
     return datePart + randomPart;
   }
 
-  const getNextSerialNumber = (sno:string) => {
-    const [currentSerialNumber, currentMonth] = sno.split('-').map(Number);
+  const getNextSerialNumber = (sno: string) => {
+    const [currentSerialNumber, currentMonth] = sno.split("-").map(Number);
     const date = new Date();
-    const currentMonthFromSystem = (date.getMonth() + 1).toString().padStart(2, '0');
-    let newSerialNumber,newMonth;
-    if (currentMonthFromSystem !== currentMonth.toString().padStart(2, '0')) {
+    const currentYearFromSystem = date.getFullYear();
+    const currentMonthFromSystem = (date.getMonth() + 1)
+      .toString()
+      .padStart(2, "0");
+    let newSerialNumber, newMonth, newYear;
+    if (currentMonthFromSystem !== currentMonth.toString().padStart(2, "0")) {
       newSerialNumber = 1;
       newMonth = currentMonthFromSystem;
+      newYear = currentYearFromSystem;
     } else {
       newSerialNumber = currentSerialNumber + 1;
-      newMonth = currentMonth.toString().padStart(2, '0');
+      newMonth = currentMonth.toString().padStart(2, "0");
+      newYear = currentYearFromSystem; // The year remains the same
     }
-    const newSno = `${newSerialNumber.toString().padStart(2, '0')}-${newMonth}`;
+    const newSno = `${newSerialNumber
+      .toString()
+      .padStart(2, "0")}-${newMonth}-${newYear}`;
     return newSno;
-  }
+  };
 
   const addNewRow = () => {
     const newRow = {
-      _id : generateUniqueId(),
-      sno: getNextSerialNumber(latestSerial),      
+      _id: generateUniqueId(),
+      sno: getNextSerialNumber(latestSerial),
       date: "",
       truckname: "",
       trucknumber: "",
@@ -449,8 +507,10 @@ const Amt = () => {
       truckloadwt: 0,
       deliverydate: "",
       reportingdate: "",
+      pannumber: "",
+      accountnumber: "",
     };
-    setOriginalData(data)
+    setOriginalData(data);
     setData([newRow]);
     setSelectedRowId(newRow._id);
     setNewRowAdded(true);
@@ -472,21 +532,38 @@ const Amt = () => {
     const { value } = e;
     const newData = data.map((row: any) => {
       if (row._id === id) {
-        const updatedRow:any = { ...row, [field]: value.code };
-        if ([1,2].includes(updatedRow.modeofadvance)) {
-          updatedRow.transbalancetype = 'BALANCE';
-          updatedRow.transbln = Number(updatedRow.transf) - Number(updatedRow.transadv);
-          updatedRow.twopay = 0;
-        }else if([3,4,5].includes(updatedRow.modeofadvance)){
-          updatedRow.transbalancetype = 'TOPAY'
-          updatedRow.transbln = Number(updatedRow.transf) - Number(updatedRow.transadv);
-          updatedRow.twopay = Number(updatedRow.transf) - Number(updatedRow.transadv);
+        const updatedRow: any = { ...row, [field]: value.code || value };
+        if (field === 'truckname') {
+          const matchedTruck:any = originalTrucks.find(
+            (t: any) => t.truckname === (value.code || value)
+          );
+          if (matchedTruck) {
+            updatedRow.pannumber = matchedTruck.pannumber || '';
+            updatedRow.accountnumber = matchedTruck.accountnumber || '';
+            updatedRow.transname = matchedTruck.transname || '';
+            updatedRow.trucknumber = matchedTruck.trucknumber || '';
+          }
         }
-        if(updatedRow.transbalancetype === 'TOPAY'){
-          updatedRow.transbln = Number(updatedRow.transf) - Number(updatedRow.transadv);
-          updatedRow.twopay = Number(updatedRow.transf) - Number(updatedRow.transadv);
-        }else if(updatedRow.transbalancetype === 'BALANCE'){
-          updatedRow.transbln = Number(updatedRow.transf) - Number(updatedRow.transadv);
+        if ([1, 2].includes(updatedRow.modeofadvance)) {
+          updatedRow.transbalancetype = "BALANCE";
+          updatedRow.transbln =
+            Number(updatedRow.transf) - Number(updatedRow.transadv);
+          updatedRow.twopay = 0;
+        } else if ([3, 4, 5].includes(updatedRow.modeofadvance)) {
+          updatedRow.transbalancetype = "TOPAY";
+          updatedRow.transbln =
+            Number(updatedRow.transf) - Number(updatedRow.transadv);
+          updatedRow.twopay =
+            Number(updatedRow.transf) - Number(updatedRow.transadv);
+        }
+        if (updatedRow.transbalancetype === "TOPAY") {
+          updatedRow.transbln =
+            Number(updatedRow.transf) - Number(updatedRow.transadv);
+          updatedRow.twopay =
+            Number(updatedRow.transf) - Number(updatedRow.transadv);
+        } else if (updatedRow.transbalancetype === "BALANCE") {
+          updatedRow.transbln =
+            Number(updatedRow.transf) - Number(updatedRow.transadv);
           updatedRow.twopay = 0;
         }
         return updatedRow;
@@ -519,10 +596,21 @@ const Amt = () => {
         (option) => option.code === rowData.transbalancetype
       );
       dropdownValue = messages.modeofbalance;
+    } else if (type === "truckname") {
+      selectedValue = rowData.truckname;
+      const combined = transportDetails[0].map((name: any) => ({
+        name,
+        value: name,
+      }));
+      const uniqueArray = combined.filter(
+        (item: String, index: number) => combined.indexOf(item) === index
+      );
+      dropdownValue = uniqueArray;
     }
 
     return (
       <Dropdown
+        filter
         value={selectedValue}
         onChange={(e) => onDropdownChange(e, rowData._id, field.field)}
         options={dropdownValue}
@@ -534,18 +622,28 @@ const Amt = () => {
     );
   };
 
-  const getTransBln = (data:any) =>{
-    // return [3,4,5].includes(data.modeofadvance) ? 0 : Number(data.transf) - Number(data.transadv)
-    return Number(data.transf) - Number(data.transadv)
-  }
+  const renderPANorACC = (rowData: any, field: any) => {
+    const row: any = originalTrucks.find(
+      (x: any) => x.truckname === rowData.truckname
+    );
+    return field.field === "pannumber"
+      ? row?.pannumber || ""
+      : row?.accountnumber || "";
+  };
 
-  const getTwoPay = (data:any) =>{
-    return [1,2].includes(data.modeofadvance) ? 0 : Number(data.transf) - Number(data.transadv)
-  }
+  const getTransBln = (data: any) => {
+    return Number(data.transf) - Number(data.transadv);
+  };
 
-  const gettransbalancetype = (data:any) =>{
-    return [3,4,5].includes(data.modeofadvance) ? "TOPAY" : "BALANCE"
-  }
+  const getTwoPay = (data: any) => {
+    return [1, 2].includes(data.modeofadvance)
+      ? 0
+      : Number(data.transf) - Number(data.transadv);
+  };
+
+  const gettransbalancetype = (data: any) => {
+    return [3, 4, 5].includes(data.modeofadvance) ? "TOPAY" : "BALANCE";
+  };
 
   const fetchData = useCallback(async () => {
     try {
@@ -558,11 +656,17 @@ const Amt = () => {
           date: new Date(item.date),
           repdate: item.repdate ? new Date(item.repdate) : null,
           unloaddate: item.unloaddate ? new Date(item.unloaddate) : null,
-          transbln : getTransBln(item),
-          transbalancetype : gettransbalancetype(item),
-          twopay : getTwoPay(item)
+          transbln: getTransBln(item),
+          transbalancetype: gettransbalancetype(item),
+          twopay: getTwoPay(item),
         }));
         setData(formattedData);
+        const transname = formattedData.map((doc: any) => doc.truckname);
+        const transport = atsData?.payload?.transportDetail?.map(
+          (doc: any) => doc.truckname
+        );
+        setOriginalTrucks(atsData?.payload?.transportDetail);
+        setTransportDetails([[...transport, ...transname]]);
         setLatestSerial(atsData.payload.latestSerial.sno);
         setTotalPage(atsData.payload.pagination.totalDocuments);
       }
@@ -596,22 +700,38 @@ const Amt = () => {
         receipt={receipt}
         setReceipt={setReceipt}
         selectedData={selectedData}
-      /> 
-        <div className="p-2" style={{ overflowX: "auto" }} ref={tableContainerRef}>
-        <Button
-          label="New"
-          severity="success"
-          onClick={addNewRow}
-          className="mb-2"
-          disabled = {selectedRowId}
-        />
+      />
+      <div
+        className="p-2"
+        style={{ overflowX: "auto" }}
+        ref={tableContainerRef}
+      >
+        <div className="flex alg-items-center gap-3">
+          <Button
+            label="New"
+            severity="success"
+            onClick={addNewRow}
+            className="mb-2"
+            disabled={selectedRowId}
+          />
+          <Button
+            label="Memo"
+            onClick={() => getMemoOpen(selectedProducts)}
+            className="mb-2"
+            disabled={selectedProducts.length === 0}
+          />
+        </div>
         <DataTable
           value={data}
           showGridlines
           scrollable
           scrollHeight="70vh"
           emptyMessage="No records found"
+          selection={selectedProducts}
+          onSelectionChange={(e: any) => setSelectedProducts(e.value)}
+          selectionMode={"checkbox"}
         >
+          <Column selectionMode="multiple"></Column>
           <Column
             field="sno"
             body={renderLinkToDialog}
@@ -622,118 +742,196 @@ const Amt = () => {
             field="date"
             style={{ minWidth: "100px" }}
             header="Date"
-            body={renderDatePicker}
+            body={(rowData: any, field: any) =>
+              selectedRowId === rowData._id
+                ? renderDatePicker(rowData, field)
+                : formatDate(rowData.date)
+            }
           ></Column>
           <Column
             field="truckname"
             header="Truck Name"
-            body={renderInput}
+            body={(rowData, field) =>
+              selectedRowId === rowData._id
+                ? renderDropdown(rowData, field, "truckname")
+                : rowData.truckname
+            }
           ></Column>
           <Column
             field="trucknumber"
             header="Truck Number"
-            body={renderInput}
+            // body={(rowData: any, field: any) =>
+            //   selectedRowId === rowData._id
+            //     ? renderInput(rowData, field)
+            //     : rowData.trucknumber
+            // }
           ></Column>
           <Column
             field="transname"
             header="Transport Name"
-            body={renderInput}
+            // body={(rowData: any, field: any) =>
+            //   selectedRowId === rowData._id
+            //     ? renderInput(rowData, field)
+            //     : rowData.transname
+            // }
           ></Column>
           <Column
             field="from"
             header="From"
-            body={renderInput}
+            body={(rowData: any, field: any) =>
+              selectedRowId === rowData._id
+                ? renderInput(rowData, field)
+                : rowData.from
+            }
           ></Column>
           <Column
             field="to"
             header="To"
-            body={renderInput}
+            body={(rowData: any, field: any) =>
+              selectedRowId === rowData._id
+                ? renderInput(rowData, field)
+                : rowData.to
+            }
           ></Column>
           <Column
             field="truckf"
             header="Truck Freight"
-            body={renderInput}
+            body={(rowData: any, field: any) =>
+              selectedRowId === rowData._id
+                ? renderInput(rowData, field)
+                : rowData.truckf
+            }
           ></Column>
           <Column
             field="vmatf"
             header="VMAT Freight"
-            body={renderInput}
+            body={(rowData: any, field: any) =>
+              selectedRowId === rowData._id
+                ? renderInput(rowData, field)
+                : rowData.vmatf
+            }
           ></Column>
           <Column
             field="transf"
             header="Transport Freight"
-            body={renderInput}
+            body={(rowData: any, field: any) =>
+              selectedRowId === rowData._id
+                ? renderInput(rowData, field)
+                : rowData.transf
+            }
           ></Column>
           <Column
             field="transaddvtype"
             header="Transporter Advance type to Truck"
             body={(rowData, field) =>
-              renderDropdown(rowData, field, "transaddvtype")
+              selectedRowId === rowData?._id
+                ? renderDropdown(rowData, field, "transaddvtype")
+                : rowData.transaddvtype
             }
           ></Column>
           <Column
             field="transadv"
             header="Advance from transporter to VMAT/Truck"
-            body={renderInput}
+            body={(rowData: any, field: any) =>
+              selectedRowId === rowData._id
+                ? renderInput(rowData, field)
+                : rowData.transadv
+            }
           ></Column>
           <Column
             field="modeofadvance"
             header="Mode of Advance to Truck"
             body={(rowData, field) =>
-              renderDropdown(rowData, field, "modeofadvance")
+              selectedRowId === rowData?._id
+                ? renderDropdown(rowData, field, "modeofadvance")
+                : rowData.modeofadvance
             }
           ></Column>
           <Column
             field="truckadv"
             header="Truck Advance"
-            body={renderInput}
+            body={(rowData: any, field: any) =>
+              selectedRowId === rowData._id
+                ? renderInput(rowData, field)
+                : rowData.truckadv
+            }
           ></Column>
           <Column
             field="truckbalancetype"
             header="Truck Balance Type"
             body={(rowData, field) =>
-              renderDropdown(rowData, field, "truckbalancetype")
+              selectedRowId === rowData?._id
+                ? renderDropdown(rowData, field, "truckbalancetype")
+                : rowData.truckbalancetype
             }
           ></Column>
-          <Column
-            field="truckbln"
-            header="Truck Balance"
-            // body={renderInput}
-          ></Column>
+          <Column field="truckbln" header="Truck Balance"></Column>
           <Column
             field="transbalancetype"
             header="Transport Balance Type"
             body={(rowData, field) =>
-              renderDropdown(rowData, field, "transbalancetype")
+              selectedRowId === rowData?._id
+                ? renderDropdown(rowData, field, "transbalancetype")
+                : rowData.transbalancetype
             }
           ></Column>
-          <Column
-            field="transbln"
-            header="Transport Balance"
-            // body={renderInput}
-          ></Column>
+          <Column field="transbln" header="Transport Balance"></Column>
           <Column field="twopay" header="By To Pay"></Column>
           <Column
             field="truckloadwt"
             header="Truck Load Weight"
-            body={renderInput}
+            body={(rowData: any, field: any) =>
+              selectedRowId === rowData._id
+                ? renderInput(rowData, field)
+                : rowData.truckloadwt
+            }
           ></Column>
           <Column
             field="reportingdate"
             header="Reporting Date"
-            body={renderDatePicker}
+            body={(rowData: any, field: any) =>
+              selectedRowId === rowData._id
+                ? renderDatePicker(rowData, field)
+                : rowData.reportingdate
+            }
           ></Column>
           <Column
             field="deliverydate"
             header="Delivery Date"
-            body={renderDatePicker}
+            body={(rowData: any, field: any) =>
+              selectedRowId === rowData._id
+                ? renderDatePicker(rowData, field)
+                : rowData.deliverydate
+            }
           ></Column>
           <Column
             field="lateday"
             header="Late delivery"
-            body={renderInput}
+            body={(rowData: any, field: any) =>
+              selectedRowId === rowData._id
+                ? renderInput(rowData, field)
+                : rowData.lateday
+            }
           ></Column>
-          <Column field="halting" header="Halting" body={renderInput}></Column>
+          <Column
+            field="halting"
+            header="Halting"
+            body={(rowData: any, field: any) =>
+              selectedRowId === rowData._id
+                ? renderInput(rowData, field)
+                : rowData.halting
+            }
+          ></Column>
+          <Column
+            field="pannumber"
+            header="PAN Number"
+            // body={renderPANorACC}
+          ></Column>
+          <Column
+            field="accountnumber"
+            header="Acc Number"
+            // body={renderPANorACC}
+          ></Column>
           <Column
             header="Actions"
             body={renderButton}

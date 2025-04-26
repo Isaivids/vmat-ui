@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Paginator } from "primereact/paginator";
-import { initialrows, messages, paginationRows } from "../../api/constants";
+import { formatDate, initialrows, messages, paginationRows } from "../../api/constants";
 import { Toast } from "primereact/toast";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import { InputText } from "primereact/inputtext";
@@ -312,34 +312,34 @@ const Courier = () => {
         <Column
           field="date"
           header="Date"
-          body={renderDatePicker}
+          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderDatePicker(rowData, field) : formatDate(rowData.date)}
         ></Column>
         <Column
           field="couriersendingname"
           header="Courier Address"
-          body={renderTextarea}
+          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderTextarea(rowData, field) : <span>{rowData[field.field] || ''}</span>}
         ></Column>
         <Column
           field="courierdetail"
           header="Courier Name & Number"
-          body={renderTextarea}
+          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderTextarea(rowData, field) : <span>{rowData[field.field] || ''}</span>}
           style={{minWidth : '200px'}}
         ></Column>
         <Column
           field="remarks"
           header="Remarks"
-          body={renderTextarea}
+          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderTextarea(rowData, field) : <span>{rowData[field.field] || ''}</span>}
         ></Column>
         <Column
           field="debitamount"
           header="Debit Amount"
-          body={renderInput}
+          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderInput(rowData, field) : <span>{rowData[field.field] || ''}</span>}
           footer={`Balance : ${calculateNetTotal()}`}
         ></Column>
         <Column
           field="creditamount"
           header="Credit Amount"
-          body={renderInput}
+          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderInput(rowData, field) : <span>{rowData[field.field] || ''}</span>}
         ></Column>
         <Column
           header="Actions"

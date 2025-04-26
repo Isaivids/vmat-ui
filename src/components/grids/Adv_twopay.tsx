@@ -15,6 +15,7 @@ import { Button } from "primereact/button";
 import { downloadPDF } from "../../pages/tcp/document";
 import { Checkbox } from "primereact/checkbox";
 import { InputTextarea } from "primereact/inputtextarea";
+import CommonDialog from "../common/CommonDialog";
 
 const AdvTwopay = () => {
   const searchQuery = useSelector((state: any) => state.search);
@@ -31,6 +32,7 @@ const AdvTwopay = () => {
   const [showCompleted, setShowCompleted] = useState(true);
   //seection
   const [selectedProducts, setSelectedProducts] = useState([]);
+  const [visible, setVisible] = useState(false);
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(initialrows);
@@ -320,9 +322,7 @@ const AdvTwopay = () => {
           label="Download"
           severity="secondary"
           className="my-3 text-bold"
-          onClick={() =>
-            downloadPDF(selectedProducts, getTwoPayDetails(), searchQuery, 3)
-          }
+          onClick={() => setVisible(true) }
           disabled={selectedProducts.length <= 0}
         />
         <div className="flex align-items-center my-3">
@@ -356,6 +356,7 @@ const AdvTwopay = () => {
         rowClassName={rowClassName}
         selection={selectedProducts}
         onSelectionChange={(e: any) => setSelectedProducts(e.value)}
+        selectionMode={"checkbox"}
       >
         <Column selectionMode="multiple"></Column>
         <Column
@@ -423,6 +424,14 @@ const AdvTwopay = () => {
         totalRecords={totalPage}
         onPageChange={onPageChange}
         rowsPerPageOptions={paginationRows}
+      />
+      <CommonDialog
+        visible={visible}
+        onHide={() => setVisible(false)}
+        getDetails={getTwoPayDetails()}
+        data={selectedProducts}
+        type={3}
+        searchQuery={searchQuery}
       />
     </div>
   );

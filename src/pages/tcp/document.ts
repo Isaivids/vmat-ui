@@ -87,14 +87,7 @@ const getNameByType = (type: number) => {
   return page ? page.name : null;
 };
 
-const calculateColumnTotal = (data: any, columnField: any) => {
-  return data.reduce((total: number, row: any) => {
-    const value = getNestedValue(row, columnField);
-    return total + (isNaN(value) ? 0 : parseFloat(value));
-  }, 0);
-};
-
-export const downloadPDF = (data: any, columns: any, searchQuery: any, type: number, ack?: any) => {
+export const downloadPDF = (data: any, columns: any, searchQuery: any, type: number,totalValue?:number, ack?: any) => {
   const tableHeaders = columns.map((col: any) => ({
     text: col.header,
     style: "tableHeader",
@@ -111,48 +104,17 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
     ),
   ];
 
-  // Calculate totals for the specified columns with error handling
-  const totals: { [key: string]: number } = {};
-  let totalColumns: any = []
-  if (type === 6) {
-    totalColumns = ['total']
-  } else if (type === 4) {
-    totalColumns = ['finaltotaltotruckowner']
-  } else if (type === 1) {
-    totalColumns = ['total']
-  } else if (type === 2) {
-    totalColumns = ['transadvtotruck']
-  } else if (type === 3) {
-    totalColumns = ['total']
-  } else if (type === 5) {
-    totalColumns = ['pending']
-  } else if (type === 7) {
-    totalColumns = ['tyrasporterpaidamt']
-  } else if (type === 9) {
-    totalColumns = ['transporterpaidadvanceamount']
-  }
-  totalColumns.forEach((column: any) => {
-    try {
-      totals[column] = calculateColumnTotal(data, column);
-    } catch (error) {
-      console.error(`Error calculating total for column ${column}`, error);
-      totals[column] = 0;
-    }
-  });
-
-
-  const totalAmount = data.reduce((n: any, { finaltotaltotruckowner }: any) => n + Number(finaltotaltotruckowner), 0) || 0;
   if (ack && ack.length > 0) {
     ack = ack.filter(({ amount }: any) => amount !== '' && amount !== null && amount !== undefined);
     ack = [{
       remark: "Total", 
-      amount: `${totalAmount}`
+      amount: `${totalValue}`
     }, ...ack];
   
     const otherAmountsSum = ack
       .filter(({ remark }: any) => remark !== "Total")
       .reduce((n: number, { amount }: any) => n + Number(amount), 0);
-    const balance = (totalAmount + otherAmountsSum);
+    const balance = (totalValue + otherAmountsSum);
     ack = [...ack, {
       remark: "Balance",
       amount: `${balance}`
@@ -161,12 +123,7 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
   
 
   const grandTotalContent = {
-    text: 'Total :' + totalColumns.map((column: any) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const columnName = columns.find((col: any) => col.field === column)?.header || column;
-      const amount = totals[column]
-      return ` ${amount} `;
-    }).join('\n'),
+    text: 'Total :' + ` ${totalValue} `,
     style: 'grandTotal',
     alignment: 'right',
     margin: [0, 10, 0, 0],
@@ -226,7 +183,6 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
       {
         table: {
           headerRows: 1,
-          // widths: [6].includes(type) ? tcpWidths : columns.map(() => [5,6,8].includes(type) ? '*' : 'auto'),
           widths: getWidths(type),
           body: tableBody,
           style: "details",
@@ -239,10 +195,6 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
         },
       },
       (ack || ack?.length >0 || [8].includes(type)) ? ackContent : grandTotalContent,
-      // ack && (ack[0].remark || ack[0].amount) ? { text: `${ack[0].remark} : ${ack[0].amount}`, alignment: 'right', style: 'header' } : "",
-      // ack && (ack[1].remark || ack[1].amount) ? { text: `${ack[1].remark} : ${ack[1].amount}`, alignment: 'right', style: 'header' } : "",
-      // ack && (ack[2].remark || ack[2].amount) ? { text: `${ack[2].remark} : ${ack[2].amount}`, alignment: 'right', style: 'header' } : "",
-      // ack && ack.length > 0 && { text: `Balance : ${total - ack.reduce((n: any, { amount }: any) => n + Number(amount), 0)}`, alignment: 'right', style: 'grandTotal' },
       ...(type === 5 ? [{ image: messages.gpay, width: 150, alignment: "center" }] : []),
     ],
     styles: {

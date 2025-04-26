@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Paginator } from "primereact/paginator";
-import { initialrows, messages, paginationRows } from "../../api/constants";
+import { formatDate, initialrows, messages, paginationRows } from "../../api/constants";
 import { Toast } from "primereact/toast";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import { InputText } from "primereact/inputtext";
@@ -295,27 +295,27 @@ const BankDetails = () => {
         <Column
           field="paymentdate"
           header="Payment Date"
-          body={renderDatePicker}
+          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderDatePicker(rowData, field) : formatDate(rowData[field.field] || '')}
         ></Column>
         <Column
           field="advanceamount"
           header="Advance Amount"
-          body={renderInput}
+          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderInput(rowData, field) : <span>{rowData[field.field] || ''}</span>}
         ></Column>
         <Column
           field="balanceamount"
           header="Balance Amount"
-          body={renderInput}
+          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderInput(rowData, field) : <span>{rowData[field.field] || ''}</span>}
         ></Column>
         <Column
           field="transportbranches"
           header="Transport Branches"
-          body={renderTextarea}
+          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderTextarea(rowData, field) : <span>{rowData[field.field] || ''}</span>}
         ></Column>
         <Column
           field="rtgsnumber"
           header="RTGS Number"
-          body={renderInput}
+          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderInput(rowData, field) : <span>{rowData[field.field] || ''}</span>}
         ></Column>
         <Column
           header="Actions"

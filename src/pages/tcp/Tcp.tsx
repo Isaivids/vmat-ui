@@ -6,7 +6,13 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Button } from "primereact/button";
-import { formatDate, getTCPDoc, initialrows, messages, paginationRows } from "../../api/constants";
+import {
+  formatDate,
+  getTCPDoc,
+  initialrows,
+  messages,
+  paginationRows,
+} from "../../api/constants";
 import { InputText } from "primereact/inputtext";
 import { gettcp, updatetcp } from "../../store/slice/tcpSlice";
 import { downloadPDF } from "./document";
@@ -15,6 +21,8 @@ import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import CommonDropdown from "../../components/dropdown/CommonDropdown";
 import { Checkbox } from "primereact/checkbox";
 import { InputTextarea } from "primereact/inputtextarea";
+import BulkUpdate from "../../components/dialogamt/BulkUpdate";
+import CommonDialog from "../../components/common/CommonDialog";
 
 const Tcp = () => {
   const searchQuery = useSelector((state: any) => state.search);
@@ -23,6 +31,8 @@ const Tcp = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
+  const [showBulkUpdateDialog, setShowBulkUpdateDialog] = useState(false);
+  const [visible, setVisible] = useState(false);
   const userDetails = useSelector((state: any) => state.user);
   // chekcbox
   const [showPending, setShowPending] = useState(true);
@@ -35,7 +45,7 @@ const Tcp = () => {
   const [rows, setRows] = useState(initialrows);
   const [totalPage, setTotalPage] = useState(0);
   const [page, setPage] = useState(0);
-  const [rowColor, setRowColor]:any = useState([])
+  const [rowColor, setRowColor]: any = useState([]);
   const onPageChange = (event: any) => {
     setPage(event.page);
     setFirst(event.first);
@@ -59,14 +69,16 @@ const Tcp = () => {
         {rowData._id === selectedRowId ? (
           <InputTextarea
             disabled={rowData._id !== selectedRowId}
-            value={rowData[field.field] || ''}
+            value={rowData[field.field] || ""}
             onChange={(e) => onTextAreaChange(e, rowData._id, field.field)}
             rows={1}
             cols={30}
             autoResize
           />
         ) : (
-          <span style={{ whiteSpace: 'pre-wrap' }}>{rowData[field.field] || ''}</span>
+          <span style={{ whiteSpace: "pre-wrap" }}>
+            {rowData[field.field] || ""}
+          </span>
         )}
       </div>
     );
@@ -77,8 +89,13 @@ const Tcp = () => {
     const newData = data.map((row: any) => {
       if (row._id === id) {
         const updatedRow = { ...row, [field]: value };
+        const diffto = Number(updatedRow.transadvance.diffto) || 0;
+        const difffrom = Number(updatedRow.transadvance.difffrom) || 0;
         updatedRow.total =
-          Number(updatedRow.transcrossing) + Number(updatedRow.others);
+          Number(updatedRow.transcrossing) +
+          Number(updatedRow.others) +
+          diffto -
+          difffrom;
         return updatedRow;
       }
       return row;
@@ -92,7 +109,7 @@ const Tcp = () => {
       <div className="flex align-items-center rel">
         <InputText
           disabled={rowData._id !== selectedRowId}
-          value={rowData[field.field] || ''}
+          value={rowData[field.field] || ""}
           onChange={(e) => onInputChange(e, rowData._id, field.field)}
           keyfilter={isStringField ? undefined : "num"}
           style={{ width: "150px" }}
@@ -142,12 +159,16 @@ const Tcp = () => {
       paymentReceivedDate: getFormattedDate(rowData.paymentReceivedDate),
       modeofpayment: rowData.modeofpayment,
       rtgsnumber: rowData.rtgsnumber,
+      diffto: Number(rowData.diffto),
+      difffrom: Number(rowData.difffrom),
       _id: rowData._id,
     };
     try {
       const response = await dispatch(updatetcp(payload));
       if (!response.payload.error) {
-        const index = backupData.findIndex((item: any) => item._id === rowData._id);
+        const index = backupData.findIndex(
+          (item: any) => item._id === rowData._id
+        );
         if (index !== -1) {
           // data[index]._id = response.payload.data._id;
           const updatedBackupData = backupData.map((item: any) =>
@@ -156,7 +177,8 @@ const Tcp = () => {
                   ...item,
                   modeofpayment: response.payload.data.modeofpayment,
                   rtgsnumber: response.payload.data.rtgsnumber,
-                  paymentReceivedDate: response.payload.data.paymentReceivedDate,
+                  paymentReceivedDate:
+                    response.payload.data.paymentReceivedDate,
                   total: response.payload.data.total,
                   others: response.payload.data.others,
                   remarks: response.payload.data.remarks,
@@ -167,10 +189,13 @@ const Tcp = () => {
           setBackupData(updatedBackupData);
           const updatedRowColor = rowColor.map((item: any) => {
             if (item._id === rowData._id) {
-              return { ...item, modeofpayment: response.payload.data.modeofpayment };
+              return {
+                ...item,
+                modeofpayment: response.payload.data.modeofpayment,
+              };
             }
             return item;
-          });   
+          });
           setRowColor(updatedRowColor);
           setData([...updatedBackupData]);
         }
@@ -256,20 +281,25 @@ const Tcp = () => {
 
   const getType = useCallback(() => {
     if (showPending && showCompleted) {
-        return 3;
+      return 3;
     } else if (showCompleted) {
-        return 2;
+      return 2;
     } else if (showPending) {
-        return 1;
+      return 1;
     } else {
-        return 0;
+      return 0;
     }
   }, [showCompleted, showPending]);
 
   const fetchData = useCallback(async () => {
     try {
       const trcukData = await dispatch(
-        gettcp({ limit: rows, offset: page * rows, search: searchQuery, ftype : getType()})
+        gettcp({
+          limit: rows,
+          offset: page * rows,
+          search: searchQuery,
+          ftype: getType(),
+        })
       );
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
         setData(trcukData.payload.data);
@@ -294,8 +324,8 @@ const Tcp = () => {
   }, [fetchData]);
 
   const rowClassName = (rowData: any) => {
-    const color:any = rowColor.filter((x:any) => x._id === rowData._id);
-    if(color.length){
+    const color: any = rowColor.filter((x: any) => x._id === rowData._id);
+    if (color.length) {
       if (["PENDING"].includes(color[0].modeofpayment)) {
         return "red";
       }
@@ -315,15 +345,21 @@ const Tcp = () => {
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
-      <div className="flex justify-content-between">
+      <div className="flex justify-content-between align-items-center">
         <Button
           label="Download"
           severity="secondary"
           className="my-3 text-bold"
-          onClick={() =>
-            downloadPDF(selectedProducts, getTCPDoc(), searchQuery, 6)
-          }
+          onClick={() => setVisible(true)}
           disabled={selectedProducts.length <= 0}
+        />
+        <Button
+          style={{ height: "30px" }}
+          className="mb-1"
+          label="Bulk Update"
+          severity="warning"
+          disabled={selectedProducts.length <= 0}
+          onClick={() => setShowBulkUpdateDialog(true)}
         />
         <div className="flex align-items-center my-3">
           <Checkbox
@@ -356,6 +392,7 @@ const Tcp = () => {
         scrollHeight="70vh"
         selection={selectedProducts}
         onSelectionChange={(e: any) => setSelectedProducts(e.value)}
+        selectionMode={"checkbox"}
       >
         <Column selectionMode="multiple"></Column>
         <Column field="ats.sno" header="S.No"></Column>
@@ -369,23 +406,71 @@ const Tcp = () => {
         <Column field="ats.from" header="From"></Column>
         <Column field="ats.to" header="To"></Column>
         <Column field="transcrossing" header="Trans Crossing"></Column>
-        <Column field="others" body={renderInput} header="Others"></Column>
-        <Column field="remarks" body={renderTextArea} header="Remarks"></Column>
+        <Column
+          field="others"
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
+          header="Others"
+        ></Column>
+        <Column
+          field="remarks"
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderTextArea(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
+          header="Remarks"
+        ></Column>
+        <Column
+          field="transadvance.diffto"
+          header="Difference Amount to Transporter"
+          style={{ minWidth: "200px" }}
+        ></Column>
+        <Column
+          field="transadvance.difffrom"
+          header="Difference Amount from Transporter"
+          style={{ minWidth: "200px" }}
+        ></Column>
         <Column field="total" header="Total"></Column>
         <Column
           field="paymentReceivedDate"
           header="Payment Received Date"
-          body={renderDatePicker}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderDatePicker(rowData, field)
+            ) : (
+              <span>{formatDate(rowData[field.field]) || ""}</span>
+            )
+          }
         ></Column>
         <Column
           field="modeofpayment"
           header="Mode Of Payment"
-          body={renderDropdown}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderDropdown(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
         <Column
           field="rtgsnumber"
           header="RTGS Number"
-          body={renderInput}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
         <Column
           header="Actions"
@@ -399,6 +484,31 @@ const Tcp = () => {
         totalRecords={totalPage}
         onPageChange={onPageChange}
         rowsPerPageOptions={paginationRows}
+      />
+      <BulkUpdate
+        visible={showBulkUpdateDialog}
+        onHide={() => setShowBulkUpdateDialog(false)}
+        data={selectedProducts}
+        type={5}
+        onSuccess={async (updated) => {
+          await fetchData();
+          setSelectedProducts([]);
+          setShowBulkUpdateDialog(false);
+          toast.current?.show({
+            severity: "success",
+            summary: messages.success,
+            detail: messages.updateoraddsuccess,
+            life: 3000,
+          });
+        }}
+      />
+      <CommonDialog
+        visible={visible}
+        onHide={() => setVisible(false)}
+        getDetails={getTCPDoc()}
+        data={selectedProducts}
+        type={6}
+        searchQuery={searchQuery}
       />
     </div>
   );

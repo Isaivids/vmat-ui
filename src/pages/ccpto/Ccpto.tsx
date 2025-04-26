@@ -20,6 +20,8 @@ import CustomButtonComponent from "../../components/button/CustomButtonComponent
 import { Button } from "primereact/button";
 import { downloadPDF } from "../tcp/document";
 import { Checkbox } from "primereact/checkbox";
+import BulkUpdate from "../../components/dialogamt/BulkUpdate";
+import CommonDialog from "../../components/common/CommonDialog";
 
 const Ccpto = () => {
   const searchQuery = useSelector((state: any) => state.search);
@@ -31,6 +33,9 @@ const Ccpto = () => {
   const modeOfPayments = messages.modeofpayments;
   const userDetails = useSelector((state: any) => state.user);
   const [rowColor, setRowColor]: any = useState([]);
+  const [showBulkUpdateDialog, setShowBulkUpdateDialog] = useState(false);
+  const [visible, setVisible] = useState(false);
+
   // chekcbox
   const [showPending, setShowPending] = useState(true);
   const [showCompleted, setShowCompleted] = useState(true);
@@ -51,7 +56,17 @@ const Ccpto = () => {
     const { value } = e.target;
     const newData: any = data.map((row: any) => {
       if (row._id === id) {
-        return { ...row, [field]: value };
+        const updatedRow = { ...row, [field]: value };
+        const diffto = Number(updatedRow.ack.diffto) || 0;
+        const difffrom = Number(updatedRow.ack.difffrom) || 0;
+        const expense = Number(updatedRow.expense) || 0;
+        updatedRow.pending =
+          Number(updatedRow.vmatcommision) +
+          Number(updatedRow.totalcrossing) +
+          diffto -
+          difffrom -
+          expense;
+        return updatedRow;
       }
       return row;
     });
@@ -59,12 +74,15 @@ const Ccpto = () => {
   };
 
   const renderInput = (rowData: any, field: any) => {
+    const isExpenseField = field.field === "expense";
     return (
       <InputText
         disabled={rowData._id !== selectedRowId}
         value={rowData[field.field] || ""}
         onChange={(e: any) => onInputChange(e, rowData._id, field.field)}
         autoComplete="off"
+        type={isExpenseField ? "number" : "text"}
+        min={isExpenseField ? 0 : undefined}
       />
     );
   };
@@ -153,7 +171,8 @@ const Ccpto = () => {
                   ...item,
                   modeofpayment: response.payload.data.modeofpayment,
                   rtgsnumber: response.payload.data.rtgsnumber,
-                  paymentReceivedDate: response.payload.data.paymentReceivedDate,
+                  paymentReceivedDate:
+                    response.payload.data.paymentReceivedDate,
                 }
               : item
           );
@@ -285,15 +304,21 @@ const Ccpto = () => {
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
-      <div className="flex justify-content-between">
+      <div className="flex justify-content-between align-items-center">
         <Button
           label="Download"
           severity="secondary"
           className="my-3 text-bold"
-          onClick={() =>
-            downloadPDF(selectedProducts, getCCPTODetails(), searchQuery, 5)
-          }
+          onClick={() => setVisible(true)}
           disabled={selectedProducts.length <= 0}
+        />
+        <Button
+          style={{ height: "30px" }}
+          className="mb-1"
+          label="Bulk Update"
+          severity="warning"
+          disabled={selectedProducts.length <= 0}
+          onClick={() => setShowBulkUpdateDialog(true)}
         />
         <div className="flex align-items-center my-3">
           <Checkbox
@@ -326,6 +351,7 @@ const Ccpto = () => {
         rowClassName={rowClassName}
         selection={selectedProducts}
         onSelectionChange={(e: any) => setSelectedProducts(e.value)}
+        selectionMode={"checkbox"}
       >
         <Column selectionMode="multiple"></Column>
         <Column field="ats.sno" header="S.No"></Column>
@@ -343,22 +369,48 @@ const Ccpto = () => {
         {/* <Column field="vmatcrossing" header="VMAT Crossing"></Column>
         <Column field="crossing" header="Crossing"></Column> */}
         <Column header="Total Crossing" field="totalcrossing"></Column>
-        <Column field="ack.expense" header="Expense"></Column>
+        <Column
+          field="expense"
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
+          header="Expense"
+        ></Column>
+        <Column
+          field="ack.diffto"
+          header="Difference Amount to Transporter"
+          style={{ minWidth: "200px" }}
+        ></Column>
+        <Column
+          field="ack.difffrom"
+          header="Difference Amount from Transporter"
+          style={{ minWidth: "200px" }}
+        ></Column>
         <Column field="pending" header="Pending"></Column>
         <Column
           field="paymentReceivedDate"
           header="Payment Received Date"
-          body={renderDatePicker}
+          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderDatePicker(rowData, field) : <span>{formatDate(rowData[field.field]) || ''}</span>}
         ></Column>
         <Column
           field="modeofpayment"
           header="Mode Of Payment"
-          body={renderDropdown}
+          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderDropdown(rowData, field) : <span>{rowData[field.field] || ''}</span>}
         ></Column>
         <Column
           field="rtgsnumber"
           header="RTGS Number"
-          body={renderInput}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
         <Column
           header="Actions"
@@ -372,6 +424,31 @@ const Ccpto = () => {
         totalRecords={totalPage}
         onPageChange={onPageChange}
         rowsPerPageOptions={paginationRows}
+      />
+      <BulkUpdate
+        visible={showBulkUpdateDialog}
+        onHide={() => setShowBulkUpdateDialog(false)}
+        data={selectedProducts}
+        type={4}
+        onSuccess={async (updated) => {
+          await fetchData();
+          setSelectedProducts([]);
+          setShowBulkUpdateDialog(false);
+          toast.current?.show({
+            severity: "success",
+            summary: messages.success,
+            detail: messages.updateoraddsuccess,
+            life: 3000,
+          });
+        }}
+      />
+      <CommonDialog
+        visible={visible}
+        onHide={() => setVisible(false)}
+        getDetails={getCCPTODetails()}
+        data={selectedProducts}
+        type={2}
+        searchQuery={searchQuery}
       />
     </div>
   );

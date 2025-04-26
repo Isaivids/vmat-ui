@@ -25,6 +25,8 @@ import { RadioButton } from "primereact/radiobutton";
 import { Button } from "primereact/button";
 import { downloadPDF } from "../tcp/document";
 import { InputTextarea } from "primereact/inputtextarea";
+import BulkUpdate from "../../components/dialogamt/BulkUpdate";
+import CommonDialog from "../../components/common/CommonDialog";
 
 const TransportAdvance = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -37,6 +39,8 @@ const TransportAdvance = () => {
   const userDetails = useSelector((state: any) => state.user);
   const [rowColor, setRowColor]: any = useState([]);
   const [selectedProducts, setSelectedProducts] = useState([]);
+  const [showBulkUpdateDialog, setShowBulkUpdateDialog] = useState(false);
+  const [visible, setVisible] = useState(false);
   // chekcbox
   const [showPending, setShowPending] = useState(true);
   const [showCompleted, setShowCompleted] = useState(true);
@@ -125,14 +129,16 @@ const TransportAdvance = () => {
         {rowData._id === selectedRowId ? (
           <InputTextarea
             disabled={rowData._id !== selectedRowId}
-            value={rowData[field.field] || ''}
+            value={rowData[field.field] || ""}
             onChange={(e) => onTextAreaChange(e, rowData._id, field.field)}
             rows={1}
             cols={30}
             autoResize
           />
         ) : (
-          <span style={{ whiteSpace: 'pre-wrap' }}>{rowData[field.field] || ''}</span>
+          <span style={{ whiteSpace: "pre-wrap" }}>
+            {rowData[field.field] || ""}
+          </span>
         )}
       </div>
     );
@@ -197,7 +203,10 @@ const TransportAdvance = () => {
           setBackupData(updatedBackupData);
           const updatedRowColor = rowColor.map((item: any) => {
             if (item._id === rowData._id) {
-              return { ...item, modeofpayment: response.payload.data.modeofpayment };
+              return {
+                ...item,
+                modeofpayment: response.payload.data.modeofpayment,
+              };
             }
             return item;
           });
@@ -213,7 +222,7 @@ const TransportAdvance = () => {
         });
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
       toast.current?.show({
         severity: "error",
         summary: messages.error,
@@ -309,7 +318,7 @@ const TransportAdvance = () => {
           offset: page * rows,
           search: searchQuery,
           ftype: getType(),
-          screen : type
+          screen: type,
         })
       );
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
@@ -335,9 +344,9 @@ const TransportAdvance = () => {
   }, [fetchData]);
 
   const rowClassName = (rowData: any) => {
-    const color:any = rowColor.filter((x:any) => x._id === rowData._id);
-    if(color.length){
-      if ([null, "", undefined,'PENDING'].includes(color[0].modeofpayment)) {
+    const color: any = rowColor.filter((x: any) => x._id === rowData._id);
+    if (color.length) {
+      if ([null, "", undefined, "PENDING"].includes(color[0].modeofpayment)) {
         return "red";
       }
       return "green";
@@ -357,24 +366,48 @@ const TransportAdvance = () => {
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
       <div className="flex justify-content-between align-items-center">
-      <Button
-        style={{height : '30px'}}
-        label="Download"
-        severity="secondary"
-        onClick={() => downloadPDF(selectedProducts,getTruckAdvanceDetails(),searchQuery,9)}
-        disabled={selectedProducts.length <= 0}
-      />
-      <div className="card flex justify-content-center">
-            <div className="flex flex-wrap gap-3">
-                <div className="flex align-items-center">
-                    <RadioButton inputId="type1" name="type1" value={1} onChange={(e) => setType(e.value)} checked={type === 1} />
-                    <label htmlFor="type1" className="ml-2">Transport Advance to VMAT</label>
-                </div>
-                <div className="flex align-items-center">
-                    <RadioButton inputId="type2" name="type2" value={2} onChange={(e) => setType(e.value)} checked={type === 2} />
-                    <label htmlFor="type2" className="ml-2">Transport Advance to Truck</label>
-                </div>
+        <Button
+          style={{ height: "30px" }}
+          label="Download"
+          severity="secondary"
+          onClick={() => setVisible(true)}
+          disabled={selectedProducts.length <= 0}
+        />
+        <Button
+          style={{ height: "30px" }}
+          className="mb-1"
+          label="Bulk Update"
+          severity="warning"
+          disabled={selectedProducts.length <= 0}
+          onClick={() => setShowBulkUpdateDialog(true)}
+        />
+        <div className="card flex justify-content-center">
+          <div className="flex flex-wrap gap-3">
+            <div className="flex align-items-center">
+              <RadioButton
+                inputId="type1"
+                name="type1"
+                value={1}
+                onChange={(e) => setType(e.value)}
+                checked={type === 1}
+              />
+              <label htmlFor="type1" className="ml-2">
+                Transport Advance to VMAT
+              </label>
             </div>
+            <div className="flex align-items-center">
+              <RadioButton
+                inputId="type2"
+                name="type2"
+                value={2}
+                onChange={(e) => setType(e.value)}
+                checked={type === 2}
+              />
+              <label htmlFor="type2" className="ml-2">
+                Transport Advance to Truck
+              </label>
+            </div>
+          </div>
         </div>
         <div className="flex align-items-center my-3">
           <Checkbox
@@ -405,9 +438,11 @@ const TransportAdvance = () => {
         scrollable
         scrollHeight="80vh"
         rowClassName={rowClassName}
-        selection={selectedProducts} onSelectionChange={(e:any) => setSelectedProducts(e.value)}
+        selection={selectedProducts}
+        onSelectionChange={(e: any) => setSelectedProducts(e.value)}
+        selectionMode={"checkbox"}
       >
-       <Column selectionMode="multiple"></Column>
+        <Column selectionMode="multiple"></Column>
         <Column
           field="ats.sno"
           header="S.No"
@@ -428,37 +463,83 @@ const TransportAdvance = () => {
         <Column
           field="tdstta"
           header="TDS deduction 1%"
-          body={renderInput}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
         <Column
           field="loadingwages"
-          body={renderInput}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
           header="Loading Wages"
         ></Column>
         <Column
           field="extraloadingwagespaidbydriver"
           header="Extra loading wages paid by driver"
-          body={renderInput}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
         <Column
           field="transporterpaidadvanceamount"
           header="Transporter Paid Advance Amount"
         ></Column>
-        <Column field="remarks" header="Remarks" body={renderTextArea}></Column>
+        <Column
+          field="remarks"
+          header="Remarks"
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderTextArea(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
+        ></Column>
         <Column
           field="dateofadvancepayment"
           header="Date of Advance Payment"
-          body={renderDatePicker}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderDatePicker(rowData, field)
+            ) : (
+              <span>{formatDate(rowData[field.field]) || ""}</span>
+            )
+          }
         ></Column>
         <Column
           field="modeofpayment"
           header="Mode Of Payment"
-          body={renderDropdown}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderDropdown(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
         <Column
           field="rtgsnumber"
           header="RTGS Number"
-          body={renderInput}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
         <Column
           header="Actions"
@@ -472,6 +553,31 @@ const TransportAdvance = () => {
         totalRecords={totalPage}
         onPageChange={onPageChange}
         rowsPerPageOptions={paginationRows}
+      />
+      <BulkUpdate
+        visible={showBulkUpdateDialog}
+        onHide={() => setShowBulkUpdateDialog(false)}
+        data={selectedProducts}
+        type={3}
+        onSuccess={async (updated) => {
+          await fetchData();
+          setSelectedProducts([]);
+          setShowBulkUpdateDialog(false);
+          toast.current?.show({
+            severity: "success",
+            summary: messages.success,
+            detail: messages.updateoraddsuccess,
+            life: 3000,
+          });
+        }}
+      />
+      <CommonDialog
+        visible={visible}
+        onHide={() => setVisible(false)}
+        getDetails={getTruckAdvanceDetails()}
+        data={selectedProducts}
+        type={9}
+        searchQuery={searchQuery}
       />
     </div>
   );

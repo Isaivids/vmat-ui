@@ -20,16 +20,11 @@ import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import CommonDropdown from "../../components/dropdown/CommonDropdown";
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
 import { Button } from "primereact/button";
-import { downloadPDF } from "../tcp/document";
 import { RadioButton } from "primereact/radiobutton";
-import { Dialog } from "primereact/dialog";
 import { InputTextarea } from "primereact/inputtextarea";
+import BulkUpdate from "../../components/dialogamt/BulkUpdate";
+import CommonDialog from "../../components/common/CommonDialog";
 const Ack = () => {
-  const initialForm = [
-    { remark: "", amount: "" },
-    { remark: "", amount: "" },
-    { remark: "", amount: "" },
-  ];
   const dispatch = useDispatch<AppDispatch>();
   const [data, setData]: any = useState([]);
   const [selectedRowId, setSelectedRowId]: any = useState(null);
@@ -42,9 +37,10 @@ const Ack = () => {
   const [type, setType] = useState(1);
   const [visible, setVisible] = useState(false);
   // chekcbox
-  const [showPending, setShowPending] = useState(true);
-  const [showCompleted, setShowCompleted] = useState(true);
+  const [showPending, setShowPending] = useState(false);
+  const [showCompleted, setShowCompleted] = useState(false);
   const [newData, setNewData] = useState(true);
+  const [showBulkUpdateDialog, setShowBulkUpdateDialog] = useState(false);
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(initialrows);
@@ -55,41 +51,6 @@ const Ack = () => {
     setFirst(event.first);
     setRows(event.rows);
   };
-  // ----------end of pagination
-  // Checkbox state
-  // const handleCheckboxChange = (rowData: any, field: string) => {
-  //   const updatedData = data.map((row: any) => {
-  //     if (row._id === rowData._id) {
-  //       const updatedRow = { ...row, [field]: !row[field] };
-  //       return calculateUpdatedRow(updatedRow);
-  //     }
-  //     return row;
-  //   });
-  //   setData(updatedData);
-  // };
-  const [formData, setFormData] = useState(initialForm);
-
-  const handleChange = (e: any, index: any, field: any) => {
-    const updatedRows: any = [...formData];
-    updatedRows[index][field] = e.target.value;
-    setFormData(updatedRows);
-  };
-
-  // const renderCheckbox = (rowData: any, field: string, parent: any) => {
-  //   return (
-  //     <div className="flex gap-3 align-items-center">
-  //       <Checkbox
-  //         checked={rowData[field]}
-  //         disabled={
-  //           rowData._id !== selectedRowId ||
-  //           ![3, 4].includes(rowData.ats.modeofadvance)
-  //         }
-  //         onChange={() => handleCheckboxChange(rowData, field)}
-  //       />
-  //       <span>{rowData[parent]}</span>
-  //     </div>
-  //   );
-  // };
 
   const calculateUpdatedRow = (updatedRow: any) => {
     let addThree = 0;
@@ -117,12 +78,12 @@ const Ack = () => {
         addThree += 0;
       }
     }
-    console.log(addThree)
+    console.log(addThree);
     if ([3, 4, 5].includes(updatedRow.ats.modeofadvance)) {
       updatedRow.pendingamountfromtruckowner =
         addThree + Number(updatedRow.expense);
       updatedRow.finaltotaltotruckowner =
-        Number(updatedRow.ats.truckbln) -  
+        Number(updatedRow.ats.truckbln) -
         Number(addThree) -
         Number(updatedRow.tdsack) +
         Number(updatedRow.expense) -
@@ -428,36 +389,6 @@ const Ack = () => {
     );
   };
 
-  const footerContent = (
-    <div>
-      <Button
-        label="No"
-        icon="pi pi-times"
-        onClick={() => {
-          setVisible(false);
-          setFormData(initialForm);
-        }}
-        className="p-button-text"
-      />
-      <Button
-        label="Yes"
-        icon="pi pi-check"
-        onClick={() => {
-          setVisible(false);
-          downloadPDF(
-            selectedProducts,
-            type === 1 ? getACK() : getACK2(),
-            searchQuery,
-            type === 1 ? 4 : 11,
-            formData
-          );
-          setFormData(initialForm);
-        }}
-        autoFocus
-      />
-    </div>
-  );
-
   const getType = useCallback(() => {
     if (showPending && showCompleted && newData) {
       return 0;
@@ -556,12 +487,17 @@ const Ack = () => {
           style={{ height: "30px" }}
           label="Download"
           severity="secondary"
-          // onClick={() =>
-          //   downloadPDF(selectedProducts,type === 1 ? getACK() : getACK2(), searchQuery, type===1 ? 4 : 11)
-          // }
           onClick={() => setVisible(true)}
           disabled={selectedProducts.length <= 0}
           className="mb-2"
+        />
+        <Button
+          style={{ height: "30px" }}
+          className="mb-1"
+          label="Bulk Update"
+          severity="warning"
+          disabled={selectedProducts.length <= 0}
+          onClick={() => setShowBulkUpdateDialog(true)}
         />
         <div className="card flex justify-content-center">
           <div className="flex flex-wrap gap-3">
@@ -632,6 +568,7 @@ const Ack = () => {
         rowClassName={rowClassName}
         selection={selectedProducts}
         onSelectionChange={(e: any) => setSelectedProducts(e.value)}
+        selectionMode={"checkbox"}
       >
         <Column selectionMode="multiple"></Column>
         <Column
@@ -648,7 +585,13 @@ const Ack = () => {
         <Column
           field="acknowledgementReceivedDate"
           header="Ack.Rec Date"
-          body={renderDatePicker}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderDatePicker(rowData, field)
+            ) : (
+              <span>{formatDate(rowData[field.field]) || ""}</span>
+            )
+          }
         ></Column>
         <Column
           field="ats.truckname"
@@ -663,17 +606,49 @@ const Ack = () => {
         <Column
           field="expense"
           header="Unloading Wages"
-          body={renderInput}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
         <Column
           field="loadingcharges"
           header="Loading Charges"
-          body={renderInput}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
         {type === 2 && (
-          <Column field="tdsack" header="TDS" body={renderInput}></Column>
+          <Column
+            field="tdsack"
+            header="TDS"
+            body={(rowData: any, field: any) =>
+              selectedRowId === rowData._id ? (
+                renderInput(rowData, field)
+              ) : (
+                <span>{rowData[field.field] || ""}</span>
+              )
+            }
+          ></Column>
         )}
-        <Column field="others" header="Others" body={renderInput}></Column>
+        <Column
+          field="others"
+          header="Others"
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
+        ></Column>
         <Column field="ats.lateday" header="Late Delivery"></Column>
         <Column field="ats.halting" header="Halting"></Column>
         <Column field="remark" header="Remark" body={renderTextArea}></Column>
@@ -683,46 +658,17 @@ const Ack = () => {
           body={renderDropdown}
         ></Column>
         {type === 2 && (
-          <Column
-            field="vmatcommision"
-            // body={(rowData) =>
-            //   renderCheckbox(rowData, "hidevcm", "vmatcommision")
-            // }
-            header="VMAT Commission"
-          ></Column>
+          <Column field="vmatcommision" header="VMAT Commission"></Column>
         )}
         {type === 2 && (
-          <Column
-            field="vmatcrossing"
-            // body={(rowData) =>
-            //   renderCheckbox(rowData, "hidevc", "vmatcrossing")
-            // }
-            header="VMAT Crossing"
-          ></Column>
+          <Column field="vmatcrossing" header="VMAT Crossing"></Column>
         )}
         {type === 2 && (
-          <Column
-            field="transcrossing"
-            // body={(rowData) =>
-            //   renderCheckbox(rowData, "hidetc", "transcrossing")
-            // }
-            header="Transport Crossing"
-          ></Column>
+          <Column field="transcrossing" header="Transport Crossing"></Column>
         )}
-        {/* <Column
-          field="ats.twopay"
-          header="By To Pay Transport Balance."
-          style={{ minWidth: "200px" }}
-        ></Column> */}
-        {/* {type ===2 && <Column
-          field="pendingamountfromtruckowner"
-          header="Pending Amount From Truck Owner"
-          style={{ minWidth: "200px" }}
-        ></Column>} */}
-        {type === 1 && <Column
-          field="vmatcommision"
-          header="Commission"
-        ></Column>}
+        {type === 1 && (
+          <Column field="vmatcommision" header="Commission"></Column>
+        )}
         <Column
           field="finaltotaltotruckowner"
           header="Final Payment to Truck Owner"
@@ -733,7 +679,13 @@ const Ack = () => {
           <Column
             field="trpaidtotruck"
             header="Transporter Paid To Truck"
-            body={renderInput}
+            body={(rowData: any, field: any) =>
+              selectedRowId === rowData._id ? (
+                renderInput(rowData, field)
+              ) : (
+                <span>{rowData[field.field] || ""}</span>
+              )
+            }
           ></Column>
         )}
         {type === 2 && (
@@ -753,17 +705,29 @@ const Ack = () => {
         <Column
           field="paymentReceivedDate"
           header="Payment transfer to truck owner"
-          body={renderDatePicker}
+          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderDatePicker(rowData, field) : <span>{formatDate(rowData[field.field]) || ''}</span>}
         ></Column>
         <Column
           field="modeofpayment"
           header="Mode Of Payment"
-          body={renderDropdown}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderDropdown(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
         <Column
           field="rtgsnumber"
           header="RTGS Number"
-          body={renderInput}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
         <Column
           header="Actions"
@@ -778,43 +742,31 @@ const Ack = () => {
         onPageChange={onPageChange}
         rowsPerPageOptions={paginationRows}
       />
-      <Dialog
-        header="Notes"
+      <CommonDialog
         visible={visible}
-        onHide={() => {
-          if (!visible) return;
-          setVisible(false);
-          setFormData(initialForm);
+        onHide={() => setVisible(false)}
+        getDetails={type === 1 ? getACK() : getACK2()}
+        data={selectedProducts}
+        type={type}
+        searchQuery={searchQuery}
+      />
+      <BulkUpdate
+        visible={showBulkUpdateDialog}
+        onHide={() => setShowBulkUpdateDialog(false)}
+        data={selectedProducts}
+        type={2}
+        onSuccess={async (updated) => {
+          await fetchData();
+          setSelectedProducts([]);
+          setShowBulkUpdateDialog(false);
+          toast.current?.show({
+            severity: "success",
+            summary: messages.success,
+            detail: messages.updateoraddsuccess,
+            life: 3000,
+          });
         }}
-        style={{ width: "50vw" }}
-        breakpoints={{ "960px": "75vw", "641px": "100vw" }}
-        footer={footerContent}
-      >
-        <div className="flex flex-column gap-3">
-        <h4>Total : {selectedProducts.reduce((n, {finaltotaltotruckowner}) => n + finaltotaltotruckowner, 0)}</h4>
-          <div className="flex flex-column gap-3">
-            {formData.map((row, index) => (
-              <div className="flex gap-2 my-2" key={index}>
-                <InputTextarea
-                  autoResize
-                  rows={1}
-                  className="col-5"
-                  placeholder="Enter the Remark"
-                  value={row.remark}
-                  onChange={(e) => handleChange(e, index, "remark")}
-                />
-                <InputText
-                  keyfilter="num"
-                  className="col-5"
-                  placeholder="Enter the Amount"
-                  value={row.amount}
-                  onChange={(e) => handleChange(e, index, "amount")}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      </Dialog>
+      />
     </div>
   );
 };
