@@ -27,6 +27,7 @@ import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
 import ReceiptDialog from "../../pdf/ReceiptDialog";
 import { generatePDF } from "../../api/pdfUtil";
 import { updaterecentbill } from "../../store/slice/billSlice";
+import type { DataTable as DataTableType } from "primereact/datatable"; 
 // import { generatePDF } from "../../api/pdfUtil";
 
 const Amt = () => {
@@ -45,6 +46,13 @@ const Amt = () => {
   const [transportDetails, setTransportDetails]: any = useState([]);
   const [originalTrucks, setOriginalTrucks] = useState([]);
   const [selectedProducts, setSelectedProducts] = useState([]);
+  type Product = {
+    id: string;
+    name: string;
+    price: number;
+  };
+  
+  const dtRef = useRef<DataTableType<Product[]>>(null);
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(initialrows);
@@ -334,6 +342,7 @@ const Amt = () => {
       payload["_id"] = id;
       try {
         const response = await dispatch(updateats(payload));
+        scrollToLeft();
         if (response.payload.data && !response.payload.error) {
           const {
             sno,
@@ -433,6 +442,7 @@ const Amt = () => {
     } else {
       setData(originalData);
     }
+    scrollToLeft();
     setSelectedRowId(null);
     setOriginalData(null);
   };
@@ -479,6 +489,7 @@ const Amt = () => {
   };
 
   const addNewRow = () => {
+    scrollToLeft();
     const newRow = {
       _id: generateUniqueId(),
       sno: getNextSerialNumber(latestSerial),
@@ -631,6 +642,12 @@ const Amt = () => {
   //     : row?.accountnumber || "";
   // };
 
+  const scrollToLeft = () => {
+    if (dtRef.current) {
+      dtRef.current?.resetScroll()
+    }
+  };
+
   const getTransBln = (data: any) => {
     return Number(data.transf) - Number(data.transadv);
   };
@@ -730,6 +747,7 @@ const Amt = () => {
           selection={selectedProducts}
           onSelectionChange={(e: any) => setSelectedProducts(e.value)}
           selectionMode={"checkbox"}
+          ref={dtRef}
         >
           <Column selectionMode="multiple"></Column>
           <Column
