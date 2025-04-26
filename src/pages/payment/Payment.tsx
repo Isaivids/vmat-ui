@@ -22,7 +22,6 @@ import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import CommonDropdown from "../../components/dropdown/CommonDropdown";
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
 import { Button } from "primereact/button";
-import { downloadPDF } from "../tcp/document";
 import { Checkbox } from "primereact/checkbox";
 import { RadioButton } from "primereact/radiobutton";
 import { InputTextarea } from "primereact/inputtextarea";

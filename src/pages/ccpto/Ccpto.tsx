@@ -18,7 +18,6 @@ import CommonDropdown from "../../components/dropdown/CommonDropdown";
 import { InputText } from "primereact/inputtext";
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
 import { Button } from "primereact/button";
-import { downloadPDF } from "../tcp/document";
 import { Checkbox } from "primereact/checkbox";
 import BulkUpdate from "../../components/dialogamt/BulkUpdate";
 import CommonDialog from "../../components/common/CommonDialog";

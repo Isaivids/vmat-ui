@@ -13,7 +13,6 @@ import { Paginator } from "primereact/paginator";
 import { Toast } from "primereact/toast";
 import { initialrows, messages, paginationRows } from "../../api/constants";
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
-import CommonDropdown from "../../components/dropdown/CommonDropdown";
 import { Dropdown } from "primereact/dropdown";
 
 const TruckDetail = () => {

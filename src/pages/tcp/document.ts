@@ -123,7 +123,7 @@ export const downloadPDF = (data: any, columns: any, searchQuery: any, type: num
   
 
   const grandTotalContent = {
-    text: 'Total :' + ` ${totalValue} `,
+    text: `Total : ${totalValue} `,
     style: 'grandTotal',
     alignment: 'right',
     margin: [0, 10, 0, 0],

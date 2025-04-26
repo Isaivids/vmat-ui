@@ -15,7 +15,6 @@ import {
 } from "../../api/constants";
 import { InputText } from "primereact/inputtext";
 import { gettcp, updatetcp } from "../../store/slice/tcpSlice";
-import { downloadPDF } from "./document";
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import CommonDropdown from "../../components/dropdown/CommonDropdown";

@@ -23,7 +23,6 @@ import CustomButtonComponent from "../../components/button/CustomButtonComponent
 import { Checkbox } from "primereact/checkbox";
 import { RadioButton } from "primereact/radiobutton";
 import { Button } from "primereact/button";
-import { downloadPDF } from "../tcp/document";
 import { InputTextarea } from "primereact/inputtextarea";
 import BulkUpdate from "../../components/dialogamt/BulkUpdate";
 import CommonDialog from "../../components/common/CommonDialog";
