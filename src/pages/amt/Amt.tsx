@@ -622,14 +622,14 @@ const Amt = () => {
     );
   };
 
-  const renderPANorACC = (rowData: any, field: any) => {
-    const row: any = originalTrucks.find(
-      (x: any) => x.truckname === rowData.truckname
-    );
-    return field.field === "pannumber"
-      ? row?.pannumber || ""
-      : row?.accountnumber || "";
-  };
+  // const renderPANorACC = (rowData: any, field: any) => {
+  //   const row: any = originalTrucks.find(
+  //     (x: any) => x.truckname === rowData.truckname
+  //   );
+  //   return field.field === "pannumber"
+  //     ? row?.pannumber || ""
+  //     : row?.accountnumber || "";
+  // };
 
   const getTransBln = (data: any) => {
     return Number(data.transf) - Number(data.transadv);

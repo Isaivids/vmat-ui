@@ -18,7 +18,6 @@ import CommonDatePicker from "../calender/CommonDatePicker";
 import CommonDropdown from "../dropdown/CommonDropdown";
 import CustomButtonComponent from "../button/CustomButtonComponent";
 import { Button } from "primereact/button";
-import { downloadPDF } from "../../pages/tcp/document";
 import { Checkbox } from "primereact/checkbox";
 import { InputTextarea } from "primereact/inputtextarea";
 import BulkUpdate from "../dialogamt/BulkUpdate";
