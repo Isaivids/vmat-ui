@@ -46,6 +46,7 @@ const Amt = () => {
   const [transportDetails, setTransportDetails]: any = useState([]);
   const [originalTrucks, setOriginalTrucks] = useState([]);
   const [selectedProducts, setSelectedProducts] = useState([]);
+  const [truckNumberList, setTruckNumberList] = useState<string[]>([]);
   type Product = {
     id: string;
     name: string;
@@ -539,6 +540,13 @@ const Amt = () => {
     );
   };
 
+  const getSplittedTruckNumber = (trucknumber: any) => {
+    if (!trucknumber || typeof trucknumber !== "string") {
+      return [];
+    }
+    return trucknumber.split("\n").filter((num: string) => num.trim() !== "");
+  };
+
   const onDropdownChange = (e: any, id: any, field: any) => {
     const { value } = e;
     const newData = data.map((row: any) => {
@@ -552,7 +560,8 @@ const Amt = () => {
             updatedRow.pannumber = matchedTruck.pannumber || '';
             updatedRow.accountnumber = matchedTruck.accountnumber || '';
             updatedRow.transname = matchedTruck.transname || '';
-            updatedRow.trucknumber = matchedTruck.trucknumber || '';
+            // updatedRow.trucknumber = matchedTruck.trucknumber || '';
+            setTruckNumberList(getSplittedTruckNumber(matchedTruck?.trucknumber));
           }
         }
         if ([1, 2].includes(updatedRow.modeofadvance)) {
@@ -583,6 +592,28 @@ const Amt = () => {
     });
     setData(newData);
   };
+
+  const getDropDownValues = (type: string, value:any) => {
+    let selectedValue: any;
+    if (type === "modeofadvance") {
+      selectedValue = messages.modeOfAdvance.find(
+        (option) => option.code === value
+      );
+    } else if (type === "transaddvtype") {
+      selectedValue = messages.transportAdvanceTypes.find(
+        (option) => option.code === value
+      );
+    } else if (type === "truckbalancetype") {
+      selectedValue = messages.modeofbalance.find(
+        (option) => option.code === value
+      );
+    } else if (type === "transbalancetype") {
+      selectedValue = messages.modeofbalance.find(
+        (option) => option.code === value
+      );
+    }
+    return selectedValue?.name;
+  }
 
   const renderDropdown = (rowData: any, field: any, type: string) => {
     let selectedValue: any;
@@ -617,6 +648,13 @@ const Amt = () => {
         (item: String, index: number) => combined.indexOf(item) === index
       );
       dropdownValue = uniqueArray;
+    } else if (type === "truckNumber") {
+      selectedValue = rowData.trucknumber;
+      const combined = truckNumberList.map((num: any) => ({
+        name: num,
+        value: num,
+      }));
+      dropdownValue = combined;
     }
 
     return (
@@ -778,11 +816,11 @@ const Amt = () => {
           <Column
             field="trucknumber"
             header="Truck Number"
-            // body={(rowData: any, field: any) =>
-            //   selectedRowId === rowData._id
-            //     ? renderInput(rowData, field)
-            //     : rowData.trucknumber
-            // }
+            body={(rowData: any, field: any) =>
+              selectedRowId === rowData._id
+                ? truckNumberList.length > 1 ?  renderDropdown(rowData, field,"truckNumber") : rowData.truckNumber
+                : rowData.trucknumber
+            }
           ></Column>
           <Column
             field="transname"
@@ -844,7 +882,7 @@ const Amt = () => {
             body={(rowData, field) =>
               selectedRowId === rowData?._id
                 ? renderDropdown(rowData, field, "transaddvtype")
-                : rowData.transaddvtype
+                : getDropDownValues("transaddvtype",rowData.transaddvtype)
             }
           ></Column>
           <Column
@@ -862,7 +900,7 @@ const Amt = () => {
             body={(rowData, field) =>
               selectedRowId === rowData?._id
                 ? renderDropdown(rowData, field, "modeofadvance")
-                : rowData.modeofadvance
+                : getDropDownValues("modeofadvance",rowData.modeofadvance)
             }
           ></Column>
           <Column
@@ -880,7 +918,7 @@ const Amt = () => {
             body={(rowData, field) =>
               selectedRowId === rowData?._id
                 ? renderDropdown(rowData, field, "truckbalancetype")
-                : rowData.truckbalancetype
+                : getDropDownValues("truckbalancetype",rowData.truckbalancetype)
             }
           ></Column>
           <Column field="truckbln" header="Truck Balance"></Column>
@@ -890,7 +928,7 @@ const Amt = () => {
             body={(rowData, field) =>
               selectedRowId === rowData?._id
                 ? renderDropdown(rowData, field, "transbalancetype")
-                : rowData.transbalancetype
+                : getDropDownValues("transbalancetype", rowData.transbalancetype)
             }
           ></Column>
           <Column field="transbln" header="Transport Balance"></Column>

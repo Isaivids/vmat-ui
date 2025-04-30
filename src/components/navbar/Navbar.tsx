@@ -60,7 +60,6 @@ const Navbar = () => {
       const response = await dispatch(getSuggestions(query))
       if(!response.payload.error){
         setSearchSuggestions(response.payload.data);
-        console.log(searchSuggestions)
       }
     } catch (error) {
       console.error("Error fetching search suggestions:", error);
