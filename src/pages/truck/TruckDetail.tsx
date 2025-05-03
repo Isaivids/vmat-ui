@@ -129,38 +129,38 @@ const TruckDetail = () => {
     }
   };
 
-  const onDropdownChange = (e: any, id: any, field: any) => {
-    const { value } = e;
-    const newData: any = data.map((row: any) => {
-      if (row._id === id) {
-        return {
-          ...row,
-          [field]: value?.transportname,
-          pannumber: value?.pannumber,
-          accountnumber: value?.accountnumber,
-        };
-      }
-      return row;
-    });
-    setData(newData);
-  };
+  // const onDropdownChange = (e: any, id: any, field: any) => {
+  //   const { value } = e;
+  //   const newData: any = data.map((row: any) => {
+  //     if (row._id === id) {
+  //       return {
+  //         ...row,
+  //         [field]: value?.transportname,
+  //         pannumber: value?.pannumber,
+  //         accountnumber: value?.accountnumber,
+  //       };
+  //     }
+  //     return row;
+  //   });
+  //   setData(newData);
+  // };
 
-  const renderDropdown = (rowData: any, field: any) => {
-    const selectedValue = transportDetails.find(
-      (option: any) => option.transportname === rowData?.transname
-    );
-    return (
-      <Dropdown
-        filter
-        value={selectedValue}
-        onChange={(e) => onDropdownChange(e, rowData._id, field.field)}
-        options={transportDetails}
-        optionLabel="transportname"
-        placeholder="Select"
-        style={{ width: "150px" }}
-      />
-    );
-  };
+  // const renderDropdown = (rowData: any, field: any) => {
+  //   const selectedValue = transportDetails.find(
+  //     (option: any) => option.transportname === rowData?.transname
+  //   );
+  //   return (
+  //     <Dropdown
+  //       filter
+  //       value={selectedValue}
+  //       onChange={(e) => onDropdownChange(e, rowData._id, field.field)}
+  //       options={transportDetails}
+  //       optionLabel="transportname"
+  //       placeholder="Select"
+  //       style={{ width: "150px" }}
+  //     />
+  //   );
+  // };
 
   const handleCancel = () => {
     if (backupData) {
@@ -284,7 +284,7 @@ const TruckDetail = () => {
             )
           }
         ></Column>
-        <Column
+        {/* <Column
           field="transname"
           header="Transport Name"
           body={(rowData: any, field: any) =>
@@ -294,7 +294,7 @@ const TruckDetail = () => {
               <span>{rowData[field.field] || ""}</span>
             )
           }
-        ></Column>
+        ></Column> */}
         <Column
           field="address"
           header="Address"
@@ -320,26 +320,26 @@ const TruckDetail = () => {
         <Column
           field="accountnumber"
           header="Account Number"
-          // body={(rowData: any, field: any) =>
-          //   selectedRowId === rowData._id ? (
-          //     renderInput(rowData, field)
-          //   ) : (
-          //     <span>{rowData[field.field] || ""}</span>
-          //   )
-          // }
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
         <Column
           field="pannumber"
           header="PAN Number"
-          // body={(rowData: any, field: any) =>
-          //   selectedRowId === rowData._id ? (
-          //     renderInput(rowData, field)
-          //   ) : (
-          //     <span>{rowData[field.field] || ""}</span>
-          //   )
-          // }
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
-        <Column
+        {/* <Column
           field="loadingaddress"
           header="Loading Address"
           body={(rowData: any, field: any) =>
@@ -360,7 +360,7 @@ const TruckDetail = () => {
               <span>{rowData[field.field] || ""}</span>
             )
           }
-        ></Column>
+        ></Column> */}
         <Column
           field="location"
           header="Location"

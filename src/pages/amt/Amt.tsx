@@ -46,6 +46,7 @@ const Amt = () => {
   const [transportDetails, setTransportDetails]: any = useState([]);
   const [originalTrucks, setOriginalTrucks] = useState([]);
   const [selectedProducts, setSelectedProducts] = useState([]);
+  const [selectedTruckName, setSelectedTruckName] = useState<string[]>([]);
   const [truckNumberList, setTruckNumberList] = useState<string[]>([]);
   type Product = {
     id: string;
@@ -559,8 +560,6 @@ const Amt = () => {
           if (matchedTruck) {
             updatedRow.pannumber = matchedTruck.pannumber || '';
             updatedRow.accountnumber = matchedTruck.accountnumber || '';
-            updatedRow.transname = matchedTruck.transname || '';
-            // updatedRow.trucknumber = matchedTruck.trucknumber || '';
             setTruckNumberList(getSplittedTruckNumber(matchedTruck?.trucknumber));
           }
         }
@@ -611,6 +610,8 @@ const Amt = () => {
       selectedValue = messages.modeofbalance.find(
         (option) => option.code === value
       );
+    } else if (type === "truckname") {
+      selectedValue = selectedTruckName.find((name: any) => name === value);
     }
     return selectedValue?.name;
   }
@@ -655,6 +656,13 @@ const Amt = () => {
         value: num,
       }));
       dropdownValue = combined;
+    } else if (type === "transportName") {
+      selectedValue = rowData.transname;
+      const combined = selectedTruckName.map((name: any) => ({
+        name,
+        value: name,
+      }));
+      dropdownValue = combined;
     }
 
     return (
@@ -670,15 +678,6 @@ const Amt = () => {
       />
     );
   };
-
-  // const renderPANorACC = (rowData: any, field: any) => {
-  //   const row: any = originalTrucks.find(
-  //     (x: any) => x.truckname === rowData.truckname
-  //   );
-  //   return field.field === "pannumber"
-  //     ? row?.pannumber || ""
-  //     : row?.accountnumber || "";
-  // };
 
   const scrollToLeft = () => {
     if (dtRef.current) {
@@ -720,6 +719,14 @@ const Amt = () => {
         const transport = atsData?.payload?.transportDetail?.map(
           (doc: any) => doc.truckname
         );
+        const transportName = formattedData.map((doc: any) => doc.transname);
+        const transportDetaiol = atsData?.payload?.transNames?.map(
+          (doc: any) => doc.transportname
+        );
+        const uniqueTransportDetails = [...transportName, ...transportDetaiol].filter((value, index, self) => {
+          return self.indexOf(value) === index;
+        });    
+        setSelectedTruckName(uniqueTransportDetails);
         setOriginalTrucks(atsData?.payload?.transportDetail);
         setTransportDetails([[...transport, ...transname]]);
         setLatestSerial(atsData.payload.latestSerial.sno);
@@ -825,11 +832,11 @@ const Amt = () => {
           <Column
             field="transname"
             header="Transport Name"
-            // body={(rowData: any, field: any) =>
-            //   selectedRowId === rowData._id
-            //     ? renderInput(rowData, field)
-            //     : rowData.transname
-            // }
+            body={(rowData: any, field: any) =>
+              selectedRowId === rowData._id
+                ? renderDropdown(rowData, field, 'transportName')
+                : rowData.transname
+            }
           ></Column>
           <Column
             field="from"
