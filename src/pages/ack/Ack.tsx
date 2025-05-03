@@ -602,7 +602,7 @@ const Ack = () => {
         <Column field="ats.transname" header="Transport Name"></Column>
         <Column field="ats.from" header="From"></Column>
         <Column field="ats.to" header="To"></Column>
-        <Column field="ats.truckbln" header="Truck Balance"></Column>
+        <Column field="ats.twopay" header="By To Pay"></Column>
         <Column
           field="expense"
           header="Unloading Wages"
@@ -655,7 +655,13 @@ const Ack = () => {
         <Column
           field="podcharge"
           header="POD Charge"
-          body={renderDropdown}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderDropdown(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
         {type === 2 && (
           <Column field="vmatcommision" header="VMAT Commission"></Column>
