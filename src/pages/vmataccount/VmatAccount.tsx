@@ -13,7 +13,6 @@ import {
 } from "../../api/constants";
 import { Toast } from "primereact/toast";
 import {
-  getCreditAndDebit,
   getvmataccount,
   getVmatAccountTotals,
   updatevmataccount,
@@ -29,10 +28,10 @@ const VmatAccount = () => {
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
   const [totals, setTotals]: any = useState();
-  const [paymentData, setPaymentData]: any = useState({
-    pending: 0,
-    paid: 0,
-  });
+  // const [paymentData, setPaymentData]: any = useState({
+  //   pending: 0,
+  //   paid: 0,
+  // });
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(initialrows);
@@ -250,53 +249,53 @@ const VmatAccount = () => {
     }
   }, [dispatch, searchQuery]);
 
-  const fetchCreditAndDebit = useCallback(async () => {
-    try {
-      const trcukData = await dispatch(getCreditAndDebit());
-      if (trcukData.payload.data && !trcukData.payload.error) {
-        const { truckTotal, ackTotal, transportTotal, transAdvanceTotal } =
-          trcukData.payload.data;
-        setPaymentData({
-          pending: truckTotal + ackTotal,
-          paid: transportTotal + transAdvanceTotal,
-        });
-      }
-      if (trcukData.payload.error) {
-        toast.current?.show({
-          severity: "error",
-          summary: messages.error,
-          detail: trcukData.payload.message || messages.loadfailure,
-          life: 3000,
-        });
-      }
-    } catch (error) {
-      toast.current?.show({
-        severity: "error",
-        summary: messages.error,
-        detail: messages.loadfailure,
-        life: 3000,
-      });
-    }
-  }, [dispatch]);
+  // const fetchCreditAndDebit = useCallback(async () => {
+  //   try {
+  //     const trcukData = await dispatch(getCreditAndDebit());
+  //     if (trcukData.payload.data && !trcukData.payload.error) {
+  //       const { truckTotal, ackTotal, transportTotal, transAdvanceTotal } =
+  //         trcukData.payload.data;
+  //       setPaymentData({
+  //         pending: truckTotal + ackTotal,
+  //         paid: transportTotal + transAdvanceTotal,
+  //       });
+  //     }
+  //     if (trcukData.payload.error) {
+  //       toast.current?.show({
+  //         severity: "error",
+  //         summary: messages.error,
+  //         detail: trcukData.payload.message || messages.loadfailure,
+  //         life: 3000,
+  //       });
+  //     }
+  //   } catch (error) {
+  //     toast.current?.show({
+  //       severity: "error",
+  //       summary: messages.error,
+  //       detail: messages.loadfailure,
+  //       life: 3000,
+  //     });
+  //   }
+  // }, [dispatch]);
 
   useEffect(() => {
     const fetchDataAndLog = async () => {
       await fetchTotals();
       await fetchData();
-      await fetchCreditAndDebit();
+      // await fetchCreditAndDebit();
     };
     fetchDataAndLog();
-  }, [fetchData, fetchTotals, fetchCreditAndDebit]);
+  }, [fetchData, fetchTotals]);
 
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
-      <div className="flex my-3 ">
+      {/* <div className="flex my-3 ">
         <div className="flex justify-between items-center gap-3 w-full">
           <span className="text-sm font-bold text-red-500">{`Pending : ₹ ${paymentData.pending}`}</span>
           <span className="text-sm font-bold text-green-500">{`Paid : ₹ ${paymentData.paid}`}</span>
         </div>
-      </div>
+      </div> */}
       <DataTable value={data} showGridlines scrollable scrollHeight="80vh">
         <Column
           field="ats.sno"

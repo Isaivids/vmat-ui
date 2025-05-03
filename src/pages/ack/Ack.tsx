@@ -602,7 +602,8 @@ const Ack = () => {
         <Column field="ats.transname" header="Transport Name"></Column>
         <Column field="ats.from" header="From"></Column>
         <Column field="ats.to" header="To"></Column>
-        <Column field="ats.twopay" header="By To Pay"></Column>
+        {type === 1 && <Column field="ats.truckbln" header="Truck Balance"></Column>}
+        {type === 2 && <Column field="ats.twopay" header="By To Pay"></Column>}
         <Column
           field="expense"
           header="Unloading Wages"
@@ -674,6 +675,9 @@ const Ack = () => {
         )}
         {type === 1 && (
           <Column field="vmatcommision" header="Commission"></Column>
+        )}
+        {type === 1 && (
+          <Column field="ats.accountnumber" header="Account Number"></Column>
         )}
         <Column
           field="finaltotaltotruckowner"

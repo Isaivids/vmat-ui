@@ -458,6 +458,7 @@ const AdvVmat = () => {
             )
           }
         ></Column>
+        <Column field="ats.accountnumber" header="Account Number"></Column>
         <Column field="total" header="Advance Payment Paid to truck"></Column>
         <Column
           field="paymentreceiveddate"
