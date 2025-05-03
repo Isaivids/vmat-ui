@@ -5,9 +5,15 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Paginator } from "primereact/paginator";
-import { formatDate, initialrows, messages, paginationRows } from "../../api/constants";
+import {
+  formatDate,
+  initialrows,
+  messages,
+  paginationRows,
+} from "../../api/constants";
 import { Toast } from "primereact/toast";
 import {
+  getCreditAndDebit,
   getvmataccount,
   getVmatAccountTotals,
   updatevmataccount,
@@ -22,7 +28,11 @@ const VmatAccount = () => {
   const [data, setData]: any = useState([]);
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
-  const [totals, setTotals]:any = useState()
+  const [totals, setTotals]: any = useState();
+  const [paymentData, setPaymentData]: any = useState({
+    pending: 0,
+    paid: 0,
+  });
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(initialrows);
@@ -48,16 +58,18 @@ const VmatAccount = () => {
   const renderInput2 = (rowData: any, field: any) => {
     return (
       <>
-        {rowData._id !== selectedRowId ? <span>{rowData[field.field] || ''}</span> : 
+        {rowData._id !== selectedRowId ? (
+          <span>{rowData[field.field] || ""}</span>
+        ) : (
           <InputTextarea
             disabled={rowData._id !== selectedRowId}
-            value={rowData[field.field] || ''}
+            value={rowData[field.field] || ""}
             onChange={(e) => onInputChange2(e, rowData._id, field.field)}
-            rows={1} 
+            rows={1}
             cols={27}
             autoResize
           />
-        }
+        )}
       </>
     );
   };
@@ -84,7 +96,7 @@ const VmatAccount = () => {
     return (
       <InputText
         disabled={rowData._id !== selectedRowId}
-        value={rowData[field.field] || ''}
+        value={rowData[field.field] || ""}
         onChange={(e) => onInputChange(e, rowData._id, field.field)}
         keyfilter={isStringField ? undefined : "num"}
         autoComplete="off"
@@ -116,7 +128,9 @@ const VmatAccount = () => {
     try {
       const response = await dispatch(updatevmataccount(payload));
       if (response.payload.data && !response.payload.error) {
-        const index = backupData.findIndex((item: any) => item._id === rowData._id);
+        const index = backupData.findIndex(
+          (item: any) => item._id === rowData._id
+        );
         if (index !== -1) {
           // data[index]._id = response.payload.data._id;
           const updatedBackupData = backupData.map((item: any) =>
@@ -172,7 +186,9 @@ const VmatAccount = () => {
   };
   // Compute totals for each column
   const computeTotal = () => {
-    return Number(totals?.totalIncome || 0) - Number(totals?.totalVmatExpense || 0)
+    return (
+      Number(totals?.totalIncome || 0) - Number(totals?.totalVmatExpense || 0)
+    );
   };
 
   const fetchData = useCallback(async () => {
@@ -234,18 +250,53 @@ const VmatAccount = () => {
     }
   }, [dispatch, searchQuery]);
 
+  const fetchCreditAndDebit = useCallback(async () => {
+    try {
+      const trcukData = await dispatch(getCreditAndDebit());
+      if (trcukData.payload.data && !trcukData.payload.error) {
+        const { truckTotal, ackTotal, transportTotal, transAdvanceTotal } =
+          trcukData.payload.data;
+        setPaymentData({
+          pending: truckTotal + ackTotal,
+          paid: transportTotal + transAdvanceTotal,
+        });
+      }
+      if (trcukData.payload.error) {
+        toast.current?.show({
+          severity: "error",
+          summary: messages.error,
+          detail: trcukData.payload.message || messages.loadfailure,
+          life: 3000,
+        });
+      }
+    } catch (error) {
+      toast.current?.show({
+        severity: "error",
+        summary: messages.error,
+        detail: messages.loadfailure,
+        life: 3000,
+      });
+    }
+  }, [dispatch]);
+
   useEffect(() => {
     const fetchDataAndLog = async () => {
-      await fetchTotals()
+      await fetchTotals();
       await fetchData();
+      await fetchCreditAndDebit();
     };
     fetchDataAndLog();
-  }, [fetchData, fetchTotals]);
-
+  }, [fetchData, fetchTotals, fetchCreditAndDebit]);
 
   return (
     <div className="p-2" style={{ overflowX: "auto" }}>
       <Toast ref={toast} />
+      <div className="flex my-3 ">
+        <div className="flex justify-between items-center gap-3 w-full">
+          <span className="text-sm font-bold text-red-500">{`Pending : ₹ ${paymentData.pending}`}</span>
+          <span className="text-sm font-bold text-green-500">{`Paid : ₹ ${paymentData.paid}`}</span>
+        </div>
+      </div>
       <DataTable value={data} showGridlines scrollable scrollHeight="80vh">
         <Column
           field="ats.sno"
@@ -279,7 +330,11 @@ const VmatAccount = () => {
         <Column
           field="vmatexpense"
           header="Vmat Expense"
-          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderInput(rowData, field) : rowData.vmatexpense}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id
+              ? renderInput(rowData, field)
+              : rowData.vmatexpense
+          }
           footer={totals?.totalVmatExpense || 0}
         ></Column>
         <Column field="reason" header="Reason" body={renderInput2}></Column>

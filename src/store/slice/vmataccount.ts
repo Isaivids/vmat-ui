@@ -38,6 +38,14 @@ export const getVmatAccountTotals = createAsyncThunk('getVmatAccountTotals', asy
     return response.data;
 })
 
+export const getCreditAndDebit = createAsyncThunk('getCreditAndDebit', async () => {
+    const response:any = await apiCall.get(`/getCreditAndDebit`);
+    if (response.error) {
+        throw new Error("Error message");
+    }
+    return response.data;
+})
+
 const vmatAccountSLice = createSlice({
     initialState,
     name: 'VMAT_ACCOUNT',
@@ -69,6 +77,15 @@ const vmatAccountSLice = createSlice({
         })
         builder.addCase(getVmatAccountTotals.rejected, (state) => {
             return { ...state, tLoading: false, error: true }
+        })
+        builder.addCase(getCreditAndDebit.pending, (state, _payload) => {
+            return { ...state }
+        })
+        builder.addCase(getCreditAndDebit.fulfilled, (state, { payload }) => {
+            return { ...state, error: false}
+        })
+        builder.addCase(getCreditAndDebit.rejected, (state) => {
+            return { ...state, error: true }
         })
     }
 })

@@ -818,7 +818,7 @@ const Amt = () => {
             header="Truck Number"
             body={(rowData: any, field: any) =>
               selectedRowId === rowData._id
-                ? truckNumberList.length > 1 ?  renderDropdown(rowData, field,"truckNumber") : rowData.truckNumber
+                ? truckNumberList.length > 0 ?  renderDropdown(rowData, field,"truckNumber") : rowData.truckNumber
                 : rowData.trucknumber
             }
           ></Column>
