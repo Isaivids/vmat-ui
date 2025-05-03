@@ -726,9 +726,13 @@ const Amt = () => {
         const uniqueTransportDetails = [...transportName, ...transportDetaiol].filter((value, index, self) => {
           return self.indexOf(value) === index;
         });    
+        const uniqueTruckNumbers = [...transport, ...transname].filter((value, index, self) => {
+          return self.indexOf(value) === index;
+        });
+
         setSelectedTruckName(uniqueTransportDetails);
         setOriginalTrucks(atsData?.payload?.transportDetail);
-        setTransportDetails([[...transport, ...transname]]);
+        setTransportDetails([uniqueTruckNumbers]);
         setLatestSerial(atsData.payload.latestSerial.sno);
         setTotalPage(atsData.payload.pagination.totalDocuments);
       }
