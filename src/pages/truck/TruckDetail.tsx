@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -13,7 +14,6 @@ import { Paginator } from "primereact/paginator";
 import { Toast } from "primereact/toast";
 import { initialrows, messages, paginationRows } from "../../api/constants";
 import CustomButtonComponent from "../../components/button/CustomButtonComponent";
-import { Dropdown } from "primereact/dropdown";
 
 const TruckDetail = () => {
   const searchQuery = useSelector((state: any) => state.search.query);
