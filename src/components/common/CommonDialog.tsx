@@ -79,11 +79,15 @@ const CommonDialog: React.FC<CommonDialogProps> = ({
       case 4:
         return "finaltotaltotruckowner";
       case 5:
-        return "pending";
+        return "totalcrossing";
       case 7:
         return "tyrasporterpaidamt";
       case 9:
         return "transporterpaidadvanceamount";
+      case 11 : 
+        return "finaltotaltotruckowner";
+      case 10:
+        return "tyrasporterpaidamt";
       default:
         return "total"; // fallback
     }
@@ -109,7 +113,7 @@ const CommonDialog: React.FC<CommonDialogProps> = ({
       footer={footerContent}
     >
       <div className="flex flex-column gap-3">
-        <h4>Total: {totalValue}</h4>
+        <h4>Total Amount: {totalValue}</h4>
         <div className="flex flex-column gap-3">
           {formData.map((row, index) => (
             <div className="flex gap-2 my-2" key={index}>

@@ -385,6 +385,9 @@ export const pageName = [
   { type: 6, name: 'Transport Crossing Payment' },
   { type: 7, name: 'Transport Balance Payment' },
   { type: 8, name: 'Truck Details' },
+  { type: 9, name: 'Transport Advance' },
+  { type: 10, name: 'Transport Balance Payment' },
+  { type: 11, name: 'Acknowledgement POD' },
 ]
 
 export const initialrows = 50;

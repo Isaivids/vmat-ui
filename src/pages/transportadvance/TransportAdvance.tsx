@@ -387,7 +387,7 @@ const TransportAdvance = () => {
                 inputId="type1"
                 name="type1"
                 value={1}
-                onChange={(e) => setType(e.value)}
+                onChange={(e) => {setType(e.value); setSelectedProducts([])}}
                 checked={type === 1}
               />
               <label htmlFor="type1" className="ml-2">
@@ -399,7 +399,7 @@ const TransportAdvance = () => {
                 inputId="type2"
                 name="type2"
                 value={2}
-                onChange={(e) => setType(e.value)}
+                onChange={(e) => {setType(e.value); setSelectedProducts([])}}
                 checked={type === 2}
               />
               <label htmlFor="type2" className="ml-2">

@@ -446,7 +446,7 @@ const Ccpto = () => {
         onHide={() => setVisible(false)}
         getDetails={getCCPTODetails()}
         data={selectedProducts}
-        type={2}
+        type={5}
         searchQuery={searchQuery}
       />
     </div>

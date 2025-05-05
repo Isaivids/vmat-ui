@@ -506,7 +506,7 @@ const Ack = () => {
                 inputId="type1"
                 name="type1"
                 value={1}
-                onChange={(e) => setType(e.value)}
+                onChange={(e) => {setType(e.value); setSelectedProducts([])}}
                 checked={type === 1}
               />
               <label htmlFor="type1" className="ml-2">
@@ -518,7 +518,7 @@ const Ack = () => {
                 inputId="type2"
                 name="type2"
                 value={2}
-                onChange={(e) => setType(e.value)}
+                onChange={(e) => {setType(e.value); setSelectedProducts([])}}
                 checked={type === 2}
               />
               <label htmlFor="type2" className="ml-2">
@@ -757,7 +757,7 @@ const Ack = () => {
         onHide={() => setVisible(false)}
         getDetails={type === 1 ? getACK() : getACK2()}
         data={selectedProducts}
-        type={type}
+        type={type === 1 ? 4 : 11}
         searchQuery={searchQuery}
       />
       <BulkUpdate
