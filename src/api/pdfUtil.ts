@@ -58,16 +58,16 @@ export const generatePDF = (dataArray: any[], billArray: any[]) => {
             {
               width: 'auto',
               stack: [
-                { text: 'TRUCK NO', bold: true, margin: [0, 0, 30, 20] },
-                { text: 'FROM', bold: true, margin: [0, 0, 30, 20] },
-                { text: 'TO', bold: true, margin: [0, 0, 30, 20] },
-                { text: 'TRANSPORT NAME', bold: true, margin: [0, 0, 30, 20] },
-                { text: 'NO. OF TONS', bold: true, margin: [0, 0, 30, 20] },
-                { text: 'TRANSPORT FREIGHT', bold: true, margin: [0, 0, 30, 20] },
-                { text: 'TRANSPORT ADVANCE', bold: true, margin: [0, 0, 30, 20] },
-                { text: 'TRANSPORT BALANCE', bold: true, margin: [0, 0, 30, 20] },
-                { text: 'TRANSPORT TOPAY', bold: true, margin: [0, 0, 30, 20] },
-                { text: 'ACCOUNT NUMBER', bold: true, margin: [0, 0, 30, 20] }
+                { text: 'TRUCK NO', bold: true, margin: [0, 0, 100, 20] },
+                { text: 'FROM', bold: true, margin: [0, 0, 100, 20] },
+                { text: 'TO', bold: true, margin: [0, 0, 100, 20] },
+                { text: 'TRANSPORT NAME', bold: true, margin: [0, 0, 100, 20] },
+                { text: 'NO. OF TONS', bold: true, margin: [0, 0, 100, 20] },
+                { text: 'TRANSPORT FREIGHT', bold: true, margin: [0, 0, 100, 20] },
+                { text: 'TRANSPORT ADVANCE', bold: true, margin: [0, 0, 100, 20] },
+                { text: 'TRANSPORT BALANCE', bold: true, margin: [0, 0, 100, 20] },
+                { text: 'TRANSPORT TOPAY', bold: true, margin: [0, 0, 100, 20] },
+                { text: 'ACCOUNT NUMBER', bold: true, margin: [0, 0, 100, 20] }
               ]
             },
             {
