@@ -214,7 +214,7 @@ export const getCCPTODetails = () => {
   ];
 };
 
-export const ccptoWidths = [70,'*',100,100,100,100,100,100]
+export const ccptoWidths = [70,'*',100,100,100,100,50,80]
 
 export const getTwoPayDetails = () => {
   return [
