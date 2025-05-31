@@ -278,8 +278,8 @@ export const transWidths = [70,'*',70,70,70,70,70,70,70,50,50,50,50]
 export const getTBP = () => {
   return [
     { field: "ats.date", header: "Date" },
-    // { field: "ats.truckname", header: "Truck Name" },
     { field: "ats.trucknumber", header: "Truck Number" },
+    { field: "ats.transname", header: "Transport Name" },
     { field: "ats.transbln", header: "Transport balance" },
     { field: "loadingwagespending", header: "Loading Wages Pending" },
     { field: "extraloadingwagespaidbydriver", header: "Extra loading wages paid by driver" },
@@ -296,12 +296,13 @@ export const getTBP = () => {
     { field: "rtgsnumber", header: "RTGS Number" },
   ];
 }
-export const tbpWidths = [70,'*',50,50,50,50,50,50,70,70,70,50,50,50,70,50]
+export const tbpWidths = [70,'*','*',50,50,50,50,50,50,70,70,70,50,50,50,70,50]
 
 export const getTBP2 = () => {
   return [
     { field: "ats.date", header: "Date" },
     { field: "ats.trucknumber", header: "Truck Number" },
+    { field: "ats.transname", header: "Transport Name" },
     { field: "ats.transbln", header: "Transport balance" },
     { field : "tdstbp" , header : "TDS Deduction 1%"},
     { field : "others" , header : "Others"},
@@ -319,7 +320,7 @@ export const getTBP2 = () => {
     { field: "rtgsnumber", header: "RTGS Number" },
   ];
 }
-export const tbpWidths2 = [70,'*',50,50,50,50,40,40,50,60,70,50,50,40,60,40]
+export const tbpWidths2 = [70,'*','*',50,50,50,50,50,40,40,50,60,70,50,50,40,60,40]
 
 export const getACK = () => {
   return [
