@@ -53,39 +53,64 @@ export const generatePDF = (dataArray: any[], billArray: any[]) => {
           ],
           margin: [0, 20, 0, 30]
         },
-        {
-          columns: [
-            {
-              width: 'auto',
-              stack: [
-                { text: 'TRUCK NO', bold: true, margin: [0, 0, 100, 20] },
-                { text: 'FROM', bold: true, margin: [0, 0, 100, 20] },
-                { text: 'TO', bold: true, margin: [0, 0, 100, 20] },
-                { text: 'TRANSPORT NAME', bold: true, margin: [0, 0, 100, 20] },
-                { text: 'NO. OF TONS', bold: true, margin: [0, 0, 100, 20] },
-                { text: 'TRANSPORT FREIGHT', bold: true, margin: [0, 0, 100, 20] },
-                { text: 'TRANSPORT ADVANCE', bold: true, margin: [0, 0, 100, 20] },
-                { text: 'TRANSPORT BALANCE', bold: true, margin: [0, 0, 100, 20] },
-                { text: 'TRANSPORT TOPAY', bold: true, margin: [0, 0, 100, 20] },
-                { text: 'ACCOUNT NUMBER', bold: true, margin: [0, 0, 100, 20] }
-              ]
-            },
-            {
-              stack: [
-                { text: `:  ${data?.trucknumber}`, bold: true, margin: [0, 0, 0, 20] },
-                { text: `:  ${data?.from}`, bold: true, margin: [0, 0, 0, 20] },
-                { text: `:  ${data?.to}`, bold: true, margin: [0, 0, 0, 20] },
-                { text: `:  ${data?.transname}`, bold: true, margin: [0, 0, 0, 20] },
-                { text: `:  ${data?.truckloadwt}`, bold: true, margin: [0, 0, 0, 20] },
-                { text: `:  ${data?.transf}`, bold: true, margin: [0, 0, 0, 20] },
-                { text: `:  ${data?.transadv}`, bold: true, margin: [0, 0, 0, 20] },
-                { text: `:  ${data?.transbln}`, bold: true, margin: [0, 0, 0, 20] },
-                { text: `:  ${data?.twopay}`, bold: true, margin: [0, 0, 0, 20] },
-                { text: `:  ${data?.accountnumber || ''}`, bold: true, margin: [0, 0, 0, 20] },
-              ],
-            }
-          ]
-        },
+{
+  table: {
+    widths: [160, 10, '*'],
+    body: [
+      [
+        { text: 'TRUCK NO', alignment: 'left', bold: true, margin: [0, 0, 0, 8] },
+        { text: ':', alignment: 'center', margin: [0, 0, 0, 8] },
+        { text: data?.trucknumber || '', bold: true, margin: [0, 0, 0, 8] }
+      ],
+      [
+        { text: 'FROM', alignment: 'left', bold: true, margin: [0, 0, 0, 8] },
+        { text: ':', alignment: 'center', margin: [0, 0, 0, 8] },
+        { text: data?.from || '', bold: true, margin: [0, 0, 0, 8] }
+      ],
+      [
+        { text: 'TO', alignment: 'left', bold: true, margin: [0, 0, 0, 8] },
+        { text: ':', alignment: 'center', margin: [0, 0, 0, 8] },
+        { text: data?.to || '', bold: true, margin: [0, 0, 0, 8] }
+      ],
+      [
+        { text: 'TRANSPORT NAME', alignment: 'left', bold: true, margin: [0, 0, 0, 8] },
+        { text: ':', alignment: 'center', margin: [0, 0, 0, 8] },
+        { text: data?.transname || '', bold: true, margin: [0, 0, 0, 8] }
+      ],
+      [
+        { text: 'NO. OF TONS', alignment: 'left', bold: true, margin: [0, 0, 0, 8] },
+        { text: ':', alignment: 'center', margin: [0, 0, 0, 8] },
+        { text: data?.truckloadwt || '', bold: true, margin: [0, 0, 0, 8] }
+      ],
+      [
+        { text: 'TRANSPORT FREIGHT', alignment: 'left', bold: true, margin: [0, 0, 0, 8] },
+        { text: ':', alignment: 'center', margin: [0, 0, 0, 8] },
+        { text: data?.transf || '', bold: true, margin: [0, 0, 0, 8] }
+      ],
+      [
+        { text: 'TRANSPORT ADVANCE', alignment: 'left', bold: true, margin: [0, 0, 0, 8] },
+        { text: ':', alignment: 'center', margin: [0, 0, 0, 8] },
+        { text: data?.transadv || '', bold: true, margin: [0, 0, 0, 8] }
+      ],
+      [
+        { text: 'TRANSPORT BALANCE', alignment: 'left', bold: true, margin: [0, 0, 0, 8] },
+        { text: ':', alignment: 'center', margin: [0, 0, 0, 8] },
+        { text: data?.transbln || '', bold: true, margin: [0, 0, 0, 8] }
+      ],
+      [
+        { text: 'TRANSPORT TOPAY', alignment: 'left', bold: true, margin: [0, 0, 0, 8] },
+        { text: ':', alignment: 'center', margin: [0, 0, 0, 8] },
+        { text: data?.twopay || '', bold: true, margin: [0, 0, 0, 8] }
+      ],
+      [
+        { text: 'ACCOUNT NUMBER', alignment: 'left', bold: true, margin: [0, 0, 0, 8] },
+        { text: ':', alignment: 'center', margin: [0, 0, 0, 8] },
+        { text: data?.accountnumber || '', bold: true, margin: [0, 0, 0, 8] }
+      ]
+    ]
+  },
+  layout: 'noBorders'
+},
         {
           image: messages.signature,
           alignment: 'right',
