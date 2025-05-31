@@ -491,6 +491,12 @@ const Payment = () => {
           body={(rowData: any) => formatDate(rowData.ats.date)}
           style={{ minWidth: "100px" }}
         ></Column>
+        <Column
+          field="ack.acknowledgementReceivedDate"
+          header="Ack Rec Date"
+          body={(rowData: any) => formatDate(rowData.ack.acknowledgementReceivedDate)}
+          style={{ minWidth: "100px" }}
+        ></Column>
         <Column field="ats.truckname" header="Truck Name"></Column>
         <Column field="ats.trucknumber" header="Truck Number"></Column>
         <Column field="ats.transname" header="Transport Name"></Column>
