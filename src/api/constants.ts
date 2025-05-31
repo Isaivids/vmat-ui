@@ -253,7 +253,7 @@ export const getVMAT = () => {
     { field: "rtgsnumber", header: "RTGS Number" },
   ];
 }
-export const vmatWidths = [70,'*',50,50,50,50,50,50,50,50,50,50,50,50]
+export const vmatWidths = [70,'*',100,50,50,50,50,50,50,50,50,50,90,50]
 
 
 export const getTransADV = () => {
@@ -319,7 +319,7 @@ export const getTBP2 = () => {
     { field: "rtgsnumber", header: "RTGS Number" },
   ];
 }
-export const tbpWidths2 = [70,'*',50,50,50,50,50,40,40,50,60,70,50,50,40,60,40]
+export const tbpWidths2 = [70,'*',50,50,50,50,40,40,50,60,70,50,50,40,60,40]
 
 export const getACK = () => {
   return [
@@ -328,7 +328,7 @@ export const getACK = () => {
     { field: "ats.truckname", header: "Truck Name" },
     { field: "ats.trucknumber", header: "Truck Number" },
     { field: "ats.transname", header: "Transport Name" },
-    { field: "ats.truckbln", header: "Truck Balance" },
+    // { field: "ats.truckbln", header: "Truck Balance" },
     { field: "ats.lateday", header: "Late Delivery" },
     { field: "ats.halting", header: "Halting" },
     { field: "expense", header: "Unloading Wages" },
@@ -355,13 +355,14 @@ export const getACK2 = () => {
     { field: "ats.truckname", header: "Truck Name" },
     { field: "ats.trucknumber", header: "Truck Number" },
     { field: "ats.transname", header: "Transport Name" },
-    { field: "ats.truckbln", header: "Truck Balance" },
+    // { field: "ats.truckbln", header: "Truck Balance" },
     { field: "ats.lateday", header: "Late Delivery" },
     { field: "ats.halting", header: "Halting" },
     { field: "expense", header: "Unloading Wages" },
     { field: "podcharge", header: "POD Charge" },
     { field: "vmatcommision", header: "VMAT Commission" },
-    { field: "ats.twopay", header: "By To Pay Transport Balance." },
+    { field: "vmatcrossing", header: "VMAT Crossing" },
+    { field: "transcrossing", header: "Transport Crossing" },
     { field: "tdsack", header: "Others" },
     { field: "finaltotaltotruckowner", header: "Final Payment to Truck Owner" },
     { field: "trpaidtotruck", header: "Transporter Paid To Truck" },
