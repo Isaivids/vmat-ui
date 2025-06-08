@@ -241,6 +241,8 @@ export const getVMAT = () => {
     { field: "ats.truckname", header: "Truck Name" },
     { field: "ats.trucknumber", header: "Truck Number" },
     { field: "ats.transname", header: "Transport Name" },
+    { field: "ats.truckf", header: "Truck Freight" },
+    { field: "ats.truckbln", header: "Truck Balance" },
     { field: "advanceamount", header: "Advance(+)" },
     { field: "vmatcommision", header: "VMAT Commision(-)" },
     { field: "pendinglabourwages", header: "Loading Wages Pending(+)" },
@@ -253,7 +255,7 @@ export const getVMAT = () => {
     { field: "rtgsnumber", header: "RTGS Number" },
   ];
 }
-export const vmatWidths = [70,'*',100,50,50,50,50,50,50,50,50,50,90,50]
+export const vmatWidths = [70,'*',100,50,50,50,50,50,50,50,50,50,50,50,70,50]
 
 
 export const getTransADV = () => {

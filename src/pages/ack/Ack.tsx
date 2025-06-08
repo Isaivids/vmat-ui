@@ -78,7 +78,6 @@ const Ack = () => {
         addThree += 0;
       }
     }
-    console.log(addThree);
     if ([3, 4, 5].includes(updatedRow.ats.modeofadvance)) {
       updatedRow.pendingamountfromtruckowner =
         addThree + Number(updatedRow.expense);
@@ -766,7 +765,7 @@ const Ack = () => {
         data={selectedProducts}
         type={2}
         onSuccess={async (updated) => {
-          await fetchData();
+          // await fetchData();
           setSelectedProducts([]);
           setShowBulkUpdateDialog(false);
           toast.current?.show({

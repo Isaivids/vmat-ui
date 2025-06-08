@@ -105,7 +105,7 @@ export const generatePDF = (dataArray: any[], billArray: any[]) => {
       [
         { text: 'ACCOUNT NUMBER', alignment: 'left', bold: true, margin: [0, 0, 0, 8] },
         { text: ':', alignment: 'center', margin: [0, 0, 0, 8] },
-        { text: data?.accountnumber || '', bold: true, margin: [0, 0, 0, 8] }
+        { text: data?.accountnumber.replace(/ {2,}/g, ', ') || '', bold: true, margin: [0, 0, 0, 8] }
       ]
     ]
   },
