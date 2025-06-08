@@ -297,6 +297,7 @@ const Amt = () => {
       truckloadwt: Number(inputObject.truckloadwt),
       pannumber: inputObject.pannumber,
       accountnumber: inputObject.accountnumber,
+      phonenumber: inputObject.phonenumber,
     };
     return outputObject;
   };
@@ -375,7 +376,8 @@ const Amt = () => {
             truckloadwt,
             _id,
             pannumber,
-            accountnumber
+            accountnumber,
+            phonenumber
           } = response.payload.data;
           setSelectedRowId(null);
           const updatedBackupData = originalData.map((item: any) =>
@@ -410,6 +412,7 @@ const Amt = () => {
                   truckloadwt: Number(truckloadwt),
                   pannumber: pannumber,
                   accountnumber: accountnumber,
+                  phonenumber: phonenumber,
                 }
               : item
           );
@@ -522,6 +525,7 @@ const Amt = () => {
       reportingdate: "",
       pannumber: "",
       accountnumber: "",
+      phonenumber : ''
     };
     setOriginalData(data);
     setData([newRow]);
@@ -560,6 +564,7 @@ const Amt = () => {
           if (matchedTruck) {
             updatedRow.pannumber = matchedTruck.pannumber || '';
             updatedRow.accountnumber = matchedTruck.accountnumber || '';
+            updatedRow.phonenumber = matchedTruck.phonenumber || '';
             setTruckNumberList(getSplittedTruckNumber(matchedTruck?.trucknumber));
           }
         }
@@ -992,12 +997,14 @@ const Amt = () => {
           <Column
             field="pannumber"
             header="PAN Number"
-            // body={renderPANorACC}
           ></Column>
           <Column
             field="accountnumber"
             header="Acc Number"
-            // body={renderPANorACC}
+          ></Column>
+          <Column
+            field="phonenumber"
+            header="Phone Number"
           ></Column>
           <Column
             header="Actions"

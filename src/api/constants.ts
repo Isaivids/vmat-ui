@@ -336,7 +336,7 @@ export const getACK = () => {
     { field: "ats.halting", header: "Halting" },
     { field: "expense", header: "Unloading Wages" },
     { field: "podcharge", header: "POD Charge" },
-    // { field: "vmatcrossing", header: "VMAT Crossing" },
+    { field: "others", header: "Others" },
     { field: "vmatcommision", header: "VMAT Commission" },
     // { field: "transcrossing", header: "Transport Crossing" },
     { field: "ats.twopay", header: "By To Pay Transport Balance." },
@@ -348,7 +348,7 @@ export const getACK = () => {
   ];
 }
 
-export const ackWidths = [80,'*',80,80,80,50,50,50,50,50,50,50,80,80,80,80]
+export const ackWidths = [80,'*',80,80,80,50,50,50,40,50,50,50,50,80,80,80,80]
 
 
 export const getACK2 = () => {
@@ -363,6 +363,7 @@ export const getACK2 = () => {
     { field: "ats.halting", header: "Halting" },
     { field: "expense", header: "Unloading Wages" },
     { field: "podcharge", header: "POD Charge" },
+    { field: "others", header: "Others" },
     { field: "vmatcommision", header: "VMAT Commission" },
     { field: "vmatcrossing", header: "VMAT Crossing" },
     { field: "transcrossing", header: "Transport Crossing" },
@@ -377,7 +378,7 @@ export const getACK2 = () => {
   ];
 }
 
-export const ackWidths2 = [70,'*',70,70,50,40,40,50,50,50,50,50,50,50,50,70,70,70,70]
+export const ackWidths2 = [50,'*',50,50,50,40,40,50,50,40,50,50,50,50,50,50,50,50,50,50]
 
 
 export const pageName = [

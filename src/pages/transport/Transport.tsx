@@ -9,6 +9,7 @@ import { Paginator } from "primereact/paginator";
 import { Toast } from "primereact/toast";
 import { initialrows, messages, paginationRows } from "../../api/constants";
 import {
+  deleteTransportDetail,
   getTransportDetail,
   updateTransportDetail,
 } from "../../store/slice/truckSlice";
@@ -169,15 +170,46 @@ const Transport = () => {
     setSelectedRowId(newRow._id);
   };
 
+  const deleteRow = async (rowData: any) => {
+    const payload = {
+      id: rowData._id,
+    };
+    try {
+      await dispatch(deleteTransportDetail(payload));
+      setData(data.filter((item: any) => item._id !== rowData._id));
+      toast.current?.show({
+        severity: "success",
+        summary: messages.success,
+        detail: "Row deleted successfully",
+        life: 3000,
+      });
+    } catch (error) {
+      toast.current?.show({
+        severity: "error",
+        summary: messages.error,
+        detail: "Row deletion failed",
+        life: 3000,
+      });
+    }
+  };
+
   const renderButton = (rowData: any) => {
     return (
-      <CustomButtonComponent
-        rowData={rowData}
-        selectedRowId={selectedRowId}
-        handleEdit={handleEdit}
-        handleSave={handleSave}
-        handleCancel={handleCancel}
-      />
+      <div className="flex justify-content-center">
+        <CustomButtonComponent
+          rowData={rowData}
+          selectedRowId={selectedRowId}
+          handleEdit={handleEdit}
+          handleSave={handleSave}
+          handleCancel={handleCancel}
+        />
+        <Button
+          label="Delete"
+          severity="danger"
+          onClick={() => deleteRow(rowData)}
+          className="ml-2"
+        />
+      </div>
     );
   };
 

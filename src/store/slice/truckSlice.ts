@@ -29,6 +29,14 @@ export const updateTransportDetail = createAsyncThunk('updateTransportDetail', a
     return response.data;
 });
 
+export const deleteTransportDetail = createAsyncThunk('deletetransportdetail', async (payload: any) => {
+    const response:any = await apiCall.post(`/deletetransportdetail`, payload);
+    if (response.error) {
+        throw new Error("Error message");
+    }
+    return response.data;
+});
+
 const transportSlice = createSlice({
     initialState,
     name: 'TRANSPORTDETAIL',
@@ -56,6 +64,18 @@ const transportSlice = createSlice({
                 state.error = false;
             })
             .addCase(updateTransportDetail.rejected, (state) => {
+                state.loading = false;
+                state.error = true;
+            })
+            .addCase(deleteTransportDetail.pending, (state) => {
+                state.loading = true;
+                state.error = false;
+            })
+            .addCase(deleteTransportDetail.fulfilled, (state) => {
+                state.loading = false;
+                state.error = false;
+            })
+            .addCase(deleteTransportDetail.rejected, (state) => {
                 state.loading = false;
                 state.error = true;
             });

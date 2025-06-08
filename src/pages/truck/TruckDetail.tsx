@@ -4,6 +4,7 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import {
+  deleteTruckDetail,
   gettruckdetail,
   updateTruckDetail,
 } from "../../store/slice/transportSlice";
@@ -59,6 +60,29 @@ const TruckDetail = () => {
         autoResize
       />
     );
+  };
+
+  const deleteRow = async (rowData: any) => {
+    const payload = {
+      id: rowData._id,
+    };
+    try {
+      await dispatch(deleteTruckDetail(payload));
+      setData(data.filter((item: any) => item._id !== rowData._id));
+      toast.current?.show({
+        severity: "success",
+        summary: messages.success,
+        detail: 'Row deleted successfully',
+        life: 3000,
+      });
+    } catch (error) {
+      toast.current?.show({
+        severity: "error",
+        summary: messages.error,
+        detail: 'Row deletion failed',
+        life: 3000,
+      });
+    }
   };
 
   const handleSave = async (rowData: any) => {
@@ -199,13 +223,21 @@ const TruckDetail = () => {
 
   const renderButton = (rowData: any) => {
     return (
-      <CustomButtonComponent
-        rowData={rowData}
-        selectedRowId={selectedRowId}
-        handleEdit={handleEdit}
-        handleSave={handleSave}
-        handleCancel={handleCancel}
-      />
+      <div className="flex justify-content-center">
+        <CustomButtonComponent
+          rowData={rowData}
+          selectedRowId={selectedRowId}
+          handleEdit={handleEdit}
+          handleSave={handleSave}
+          handleCancel={handleCancel}
+        />
+        <Button
+          label="Delete"
+          severity="danger"
+          onClick={() => deleteRow(rowData)}
+          className="ml-2"
+        />
+      </div>
     );
   };
 
