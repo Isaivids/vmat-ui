@@ -75,9 +75,7 @@ const BulkUpdate: React.FC<BulkUpdateProps> = ({ visible, onHide, data, type, on
           });
         }
       }
-      console.log("Bulk update response:", response);
     } catch (error) {}
-    console.log("Submitting bulk update:", updatedData);
   };
 
   return (

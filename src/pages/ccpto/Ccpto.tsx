@@ -430,7 +430,7 @@ const Ccpto = () => {
         data={selectedProducts}
         type={4}
         onSuccess={async (updated) => {
-          await fetchData();
+          // await fetchData();
           setSelectedProducts([]);
           setShowBulkUpdateDialog(false);
           toast.current?.show({

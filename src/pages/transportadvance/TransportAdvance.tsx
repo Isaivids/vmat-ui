@@ -559,7 +559,7 @@ const TransportAdvance = () => {
         data={selectedProducts}
         type={3}
         onSuccess={async (updated) => {
-          await fetchData();
+          // await fetchData();
           setSelectedProducts([]);
           setShowBulkUpdateDialog(false);
           toast.current?.show({

@@ -514,7 +514,7 @@ const AdvVmat = () => {
         data={selectedProducts}
         type={1}
         onSuccess={async (updated) => {
-          await fetchData();
+          // await fetchData();
           setSelectedProducts([]);
           setShowBulkUpdateDialog(false);
           toast.current?.show({

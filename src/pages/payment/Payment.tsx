@@ -624,7 +624,7 @@ const Payment = () => {
         data={selectedProducts}
         type={6}
         onSuccess={async (updated) => {
-          await fetchData();
+          // await fetchData();
           setSelectedProducts([]);
           setShowBulkUpdateDialog(false);
           toast.current?.show({
