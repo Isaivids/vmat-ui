@@ -1005,6 +1005,11 @@ const Amt = () => {
           <Column
             field="phonenumber"
             header="Phone Number"
+            body={(rowData: any, field: any) =>
+              selectedRowId === rowData._id
+                ? renderInput(rowData, field)
+                : rowData.phonenumber
+            }
           ></Column>
           <Column
             header="Actions"
