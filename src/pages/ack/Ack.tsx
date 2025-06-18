@@ -82,7 +82,7 @@ const Ack = () => {
       updatedRow.pendingamountfromtruckowner =
         addThree + Number(updatedRow.expense);
       updatedRow.finaltotaltotruckowner =
-        Number(updatedRow.ats.truckbln) -
+        Number(updatedRow.ats.twopay) -
         Number(addThree) -
         Number(updatedRow.tdsack) +
         Number(updatedRow.expense) -
@@ -91,11 +91,12 @@ const Ack = () => {
         Number(updatedRow.ats.halting) +
         Number(updatedRow.loadingcharges || 0) +
         Number(updatedRow.others || 0);
+        console.log("updatedRow.finaltotaltotruckowner", updatedRow.finaltotaltotruckowner);
     } else {
       updatedRow.pendingamountfromtruckowner = 0;
       // updatedRow.pendingamountfromtruckowner = Number(updatedRow.ats.truckbln) + (Number(addThree) + Number(expense) + Number(halting));
       updatedRow.finaltotaltotruckowner =
-        updatedRow.ats.truckbln -
+        Number(updatedRow.ats.truckbln)-
         // Number(updatedRow.tdsack) -
         Number(addThree) -
         Number(updatedRow.podcharge) -
