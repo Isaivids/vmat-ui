@@ -62,18 +62,9 @@ const Payment = () => {
         const updatedRow = { ...row, [field]: value };
         const currentPlusOrMinus = Number(row.plusorminus) || 0;
         const newPlusOrMinusValue = Number(value) || 0;
-        if (field === "trpaidtotruck" && updatedRow.trpaidtotruck) {
-          const diffto =
-            updatedRow.trpaidtotruck - updatedRow.tyrasporterpaidamt;
-          if (Math.sign(diffto) === 1) {
-            updatedRow.diffto = diffto;
-            updatedRow.difffrom = 0;
-          } else {
-            updatedRow.difffrom = Math.abs(diffto);
-            updatedRow.diffto = 0;
-          }
-          return updatedRow;
-        }
+        // if (field === "trpaidtotruck" && updatedRow.trpaidtotruck) {
+        //   return updatedRow;
+        // }
         if (field === "plusorminus") {
           updatedRow.loadunloadchar =
             Number(row.loadunloadchar) -
@@ -84,9 +75,17 @@ const Payment = () => {
           Number(updatedRow.ats.transbln) +
           Number(updatedRow.loadunloadchar) +
           Number(updatedRow.loadingwagespending) +
-          Number(updatedRow.extraloadingwagespaidbydriver) -
+          Number(updatedRow.extlabourwagesfromvmat) -
           Math.abs(Number(updatedRow.tdstbp)) +
           Number(updatedRow.others || 0);
+        const diffto = updatedRow.trpaidtotruck - updatedRow.tyrasporterpaidamt;
+        if (Math.sign(diffto) === 1) {
+          updatedRow.diffto = diffto;
+          updatedRow.difffrom = 0;
+        } else {
+          updatedRow.difffrom = Math.abs(diffto);
+          updatedRow.diffto = 0;
+        }
         return updatedRow;
       }
       return row;
@@ -188,7 +187,7 @@ const Payment = () => {
       remarks: rowData.remarks,
       tdstbp: Number(rowData.tdstbp),
       extraloadingwagespaidbydriver: Number(
-        rowData.extraloadingwagespaidbydriver
+        rowData.extlabourwagesfromvmat || 0
       ),
       loadingwagespending: Number(rowData.loadingwagespending),
       rtgsnumber: rowData.rtgsnumber,
@@ -222,7 +221,7 @@ const Payment = () => {
                   remarks: response.payload.data.remarks,
                   tdstbp: Number(response.payload.data.tdstbp),
                   extraloadingwagespaidbydriver: Number(
-                    response.payload.data.extraloadingwagespaidbydriver
+                    response.payload.data.extlabourwagesfromvmat
                   ),
                   trpaidtotruck: Number(response.payload.data.trpaidtotruck),
                   diffto: Number(response.payload.data.diffto),
@@ -425,7 +424,10 @@ const Payment = () => {
                 inputId="type1"
                 name="type1"
                 value={1}
-                onChange={(e) => {setType(e.value); setSelectedProducts([])}}
+                onChange={(e) => {
+                  setType(e.value);
+                  setSelectedProducts([]);
+                }}
                 checked={type === 1}
               />
               <label htmlFor="type1" className="ml-2">
@@ -437,7 +439,10 @@ const Payment = () => {
                 inputId="type2"
                 name="type2"
                 value={2}
-                onChange={(e) => {setType(e.value); setSelectedProducts([])}}
+                onChange={(e) => {
+                  setType(e.value);
+                  setSelectedProducts([]);
+                }}
                 checked={type === 2}
               />
               <label htmlFor="type2" className="ml-2">
@@ -494,7 +499,9 @@ const Payment = () => {
         <Column
           field="ack.acknowledgementReceivedDate"
           header="Ack Rec Date"
-          body={(rowData: any) => formatDate(rowData.ack.acknowledgementReceivedDate)}
+          body={(rowData: any) =>
+            formatDate(rowData.ack.acknowledgementReceivedDate)
+          }
           style={{ minWidth: "100px" }}
         ></Column>
         <Column field="ats.truckname" header="Truck Name"></Column>
@@ -538,7 +545,7 @@ const Payment = () => {
             )
           }
         ></Column>
-        <Column
+        {/* <Column
           field="extraloadingwagespaidbydriver"
           header="Extra loading wages paid by driver"
           body={(rowData: any, field: any) =>
@@ -548,6 +555,10 @@ const Payment = () => {
               <span>{rowData[field.field] || ""}</span>
             )
           }
+        ></Column> */}
+        <Column
+          field="extlabourwagesfromvmat"
+          header="Extra loading wages paid by driver"
         ></Column>
         <Column
           field="loadunloadchar"
@@ -570,7 +581,17 @@ const Payment = () => {
           header="Transporter to be Paid"
           style={{ minWidth: "200px" }}
         ></Column>
-        <Column field="remarks" header="Remarks" body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderTextArea(rowData, field) : <span>{rowData[field.field] || ''}</span>}></Column>
+        <Column
+          field="remarks"
+          header="Remarks"
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderTextArea(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
+        ></Column>
         <Column
           field="trpaidtotruck"
           header={
@@ -578,7 +599,13 @@ const Payment = () => {
               ? "Transporter Paid To VMAT"
               : "Transporter Paid To Truck"
           }
-          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderInput(rowData, field) : <span>{rowData[field.field] || ''}</span>}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
         <Column
           field="diffto"
@@ -593,17 +620,35 @@ const Payment = () => {
         <Column
           field="paymentreceiveddate"
           header="Payment Received Date"
-          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderDatePicker(rowData, field) : <span>{formatDate(rowData[field.field]) || ''}</span>}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderDatePicker(rowData, field)
+            ) : (
+              <span>{formatDate(rowData[field.field]) || ""}</span>
+            )
+          }
         ></Column>
         <Column
           field="modeofpayment"
           header="Mode Of Payment"
-          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderDropdown(rowData, field) : <span>{rowData[field.field] || ''}</span>}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderDropdown(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
         <Column
           field="rtgsnumber"
           header="RTGS Number"
-          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderInput(rowData, field) : <span>{rowData[field.field] || ''}</span>}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
         <Column
           header="Actions"
