@@ -106,6 +106,16 @@ const Ack = () => {
         Number(updatedRow.loadingcharges || 0) +
         Number(updatedRow.others || 0);
     }
+    const diffto =
+      Number(updatedRow.trpaidtotruck) -
+      Number(updatedRow.finaltotaltotruckowner);
+    if (Math.sign(diffto) === 1) {
+      updatedRow.diffto = diffto;
+      updatedRow.difffrom = 0;
+    } else {
+      updatedRow.difffrom = Math.abs(diffto);
+      updatedRow.diffto = 0;
+    }
     return updatedRow;
   };
 
@@ -115,19 +125,6 @@ const Ack = () => {
       if (row._id === id) {
         const updatedRow: any = { ...row, [field]: value };
         if (["rtgsnumber", "remark"].includes(field)) {
-          return updatedRow;
-        }
-        if (field === "trpaidtotruck" && Number(updatedRow.trpaidtotruck)) {
-          const diffto =
-            Number(updatedRow.trpaidtotruck) -
-            Number(updatedRow.finaltotaltotruckowner);
-          if (Math.sign(diffto) === 1) {
-            updatedRow.diffto = diffto;
-            updatedRow.difffrom = 0;
-          } else {
-            updatedRow.difffrom = Math.abs(diffto);
-            updatedRow.diffto = 0;
-          }
           return updatedRow;
         }
         return calculateUpdatedRow(updatedRow);
