@@ -564,7 +564,7 @@ const Amt = () => {
           if (matchedTruck) {
             updatedRow.pannumber = matchedTruck.pannumber || '';
             updatedRow.accountnumber = matchedTruck.accountnumber || '';
-            updatedRow.phonenumber = matchedTruck.phonenumber || '';
+            // updatedRow.phonenumber = matchedTruck.phonenumber || '';
             setTruckNumberList(getSplittedTruckNumber(matchedTruck?.trucknumber));
           }
         }

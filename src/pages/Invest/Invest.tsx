@@ -73,7 +73,7 @@ const Invest = () => {
   const fetchData = useCallback(async () => {
     try {
       const trcukData = await dispatch(fetchCompletedBills());
-      if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
+      if (Array.isArray(trcukData.payload.data) && trcukData.payload.data.length > 0 && !trcukData.payload.error) {
         const formatted = getFormattedData(trcukData.payload.data);
         setData(formatted);
       }
