@@ -20,6 +20,7 @@ import TransportAdvance from "./pages/transportadvance/TransportAdvance";
 import VmatAccount from "./pages/vmataccount/VmatAccount";
 import BankDetails from "./pages/bank/BankDetails";
 import Courier from "./pages/courier/Courier";
+import Invest from "./pages/Invest/Invest";
 
 const App = () => {
   const atsState = useSelector((state: any) => state.ats);
@@ -39,6 +40,7 @@ const App = () => {
   const courier = useSelector((state: any) => state.courier);
   const bill = useSelector((state: any) => state.bill);
   const bulk = useSelector((state: any) => state.bulk);
+  const invest = useSelector((state: any) => state.invest);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -65,7 +67,7 @@ const App = () => {
             tcp.loading ||
             transportState.loading ||
             transportadvance.loading || bank.loading ||
-            vmat.loading || vmat.tLoading || courier.loading || bill.loading || bulk.loading) && <SpinnerWithLogo />}
+            vmat.loading || vmat.tLoading || courier.loading || bill.loading || bulk.loading || invest.loading) && <SpinnerWithLogo />}
           <Routes>
             <Route element={<WithOutNavBar />}>
               <Route path="/" element={<Login />} />
@@ -122,6 +124,10 @@ const App = () => {
               <Route
                 path="/bankdetails"
                 element={<ProtectedRoute element={<BankDetails />} />}
+              />
+              <Route
+                path="/bankbalance"
+                element={<ProtectedRoute element={<Invest />} />}
               />
               <Route
                 path="/courierdetails"

@@ -120,6 +120,12 @@ export const messages = {
       image: require("../assets/ico3.svg").default,
       color: "whitemenu"
     },
+    {
+      name: "Bank Balance",
+      to: "/bankbalance",
+      image: require("../assets/ico3.svg").default,
+      color: "whitemenu"
+    },
   ],
   menuListVmat: {
     name: "VMAT Account",
