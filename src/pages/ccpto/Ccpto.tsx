@@ -56,14 +56,14 @@ const Ccpto = () => {
     const newData: any = data.map((row: any) => {
       if (row._id === id) {
         const updatedRow = { ...row, [field]: value };
-        const diffto = Number(updatedRow.ack.diffto) || 0;
-        const difffrom = Number(updatedRow.ack.difffrom) || 0;
+        // const diffto = Number(updatedRow.ack.diffto) || 0;
+        // const difffrom = Number(updatedRow.ack.difffrom) || 0;
         const expense = Number(updatedRow.expense) || 0;
         updatedRow.pending =
           Number(updatedRow.vmatcommision) +
           Number(updatedRow.totalcrossing) +
-          diffto -
-          difffrom -
+          // diffto -
+          // difffrom -
           expense;
         return updatedRow;
       }
@@ -380,12 +380,14 @@ const Ccpto = () => {
           header="Expense"
         ></Column>
         <Column
-          field="ack.diffto"
+          // field="ack.diffto"
+          body={(rowData) => 0}
           header="Difference Amount to Transporter"
           style={{ minWidth: "200px" }}
         ></Column>
         <Column
-          field="ack.difffrom"
+          // field="ack.difffrom"
+          body={(rowData) => 0}
           header="Difference Amount from Transporter"
           style={{ minWidth: "200px" }}
         ></Column>

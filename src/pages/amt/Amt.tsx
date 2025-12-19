@@ -27,7 +27,7 @@ import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
 import ReceiptDialog from "../../pdf/ReceiptDialog";
 import { generatePDF } from "../../api/pdfUtil";
 import { updaterecentbill } from "../../store/slice/billSlice";
-import type { DataTable as DataTableType } from "primereact/datatable"; 
+import type { DataTable as DataTableType } from "primereact/datatable";
 // import { generatePDF } from "../../api/pdfUtil";
 
 const Amt = () => {
@@ -53,7 +53,7 @@ const Amt = () => {
     name: string;
     price: number;
   };
-  
+
   const dtRef = useRef<DataTableType<Product[]>>(null);
   //pagination
   const [first, setFirst] = useState(0);
@@ -189,7 +189,7 @@ const Amt = () => {
 
   const getMemoOpen = async (rowDataArray: any[]) => {
     try {
-      const body = rowDataArray.map(row => ({ serialnumber: row.sno }));
+      const body = rowDataArray.map((row) => ({ serialnumber: row.sno }));
       const response = await dispatch(updaterecentbill(body));
       if (!response.payload.error) {
         generatePDF(rowDataArray, response.payload.savedBills);
@@ -203,7 +203,6 @@ const Amt = () => {
       });
     }
   };
-  
 
   const renderButton = (rowData: any) => {
     return (
@@ -377,7 +376,7 @@ const Amt = () => {
             _id,
             pannumber,
             accountnumber,
-            phonenumber
+            phonenumber,
           } = response.payload.data;
           setSelectedRowId(null);
           const updatedBackupData = originalData.map((item: any) =>
@@ -525,7 +524,7 @@ const Amt = () => {
       reportingdate: "",
       pannumber: "",
       accountnumber: "",
-      phonenumber : ''
+      phonenumber: "",
     };
     setOriginalData(data);
     setData([newRow]);
@@ -557,15 +556,17 @@ const Amt = () => {
     const newData = data.map((row: any) => {
       if (row._id === id) {
         const updatedRow: any = { ...row, [field]: value.code || value };
-        if (field === 'truckname') {
-          const matchedTruck:any = originalTrucks.find(
+        if (field === "truckname") {
+          const matchedTruck: any = originalTrucks.find(
             (t: any) => t.truckname === (value.code || value)
           );
           if (matchedTruck) {
-            updatedRow.pannumber = matchedTruck.pannumber || '';
-            updatedRow.accountnumber = matchedTruck.accountnumber || '';
+            updatedRow.pannumber = matchedTruck.pannumber || "";
+            updatedRow.accountnumber = matchedTruck.accountnumber || "";
             // updatedRow.phonenumber = matchedTruck.phonenumber || '';
-            setTruckNumberList(getSplittedTruckNumber(matchedTruck?.trucknumber));
+            setTruckNumberList(
+              getSplittedTruckNumber(matchedTruck?.trucknumber)
+            );
           }
         }
         if ([1, 2].includes(updatedRow.modeofadvance)) {
@@ -597,7 +598,7 @@ const Amt = () => {
     setData(newData);
   };
 
-  const getDropDownValues = (type: string, value:any) => {
+  const getDropDownValues = (type: string, value: any) => {
     let selectedValue: any;
     if (type === "modeofadvance") {
       selectedValue = messages.modeOfAdvance.find(
@@ -619,7 +620,7 @@ const Amt = () => {
       selectedValue = selectedTruckName.find((name: any) => name === value);
     }
     return selectedValue?.name;
-  }
+  };
 
   const renderDropdown = (rowData: any, field: any, type: string) => {
     let selectedValue: any;
@@ -686,7 +687,7 @@ const Amt = () => {
 
   const scrollToLeft = () => {
     if (dtRef.current) {
-      dtRef.current?.resetScroll()
+      dtRef.current?.resetScroll();
     }
   };
 
@@ -728,13 +729,27 @@ const Amt = () => {
         const transportDetaiol = atsData?.payload?.transNames?.map(
           (doc: any) => doc.transportname
         );
-        const uniqueTransportDetails = [...transportName, ...transportDetaiol].filter((value, index, self) => {
-          return self.indexOf(value) === index;
-        });    
-        const uniqueTruckNumbers = [...transport, ...transname].filter((value, index, self) => {
+        const uniqueTransportDetails = [
+          ...transportName,
+          ...transportDetaiol,
+        ].filter((value, index, self) => {
           return self.indexOf(value) === index;
         });
+        const uniqueTruckNumbers = [...transport, ...transname].filter(
+          (value, index, self) => {
+            return self.indexOf(value) === index;
+          }
+        );
+        const numbersData = atsData.payload.transportDetail;
+        const truckNumbers = numbersData.flatMap(
+          (item:any) =>
+            item.trucknumber
+              .split("\n")
+              .map((num:any) => num.trim()) 
+              .filter((num:any) => num !== "")
+        );
 
+        console.log(truckNumbers);
         setSelectedTruckName(uniqueTransportDetails);
         setOriginalTrucks(atsData?.payload?.transportDetail);
         setTransportDetails([uniqueTruckNumbers]);
@@ -834,7 +849,9 @@ const Amt = () => {
             header="Truck Number"
             body={(rowData: any, field: any) =>
               selectedRowId === rowData._id
-                ? truckNumberList.length > 0 ?  renderDropdown(rowData, field,"truckNumber") : rowData.truckNumber
+                ? truckNumberList.length > 0
+                  ? renderDropdown(rowData, field, "truckNumber")
+                  : rowData.truckNumber
                 : rowData.trucknumber
             }
           ></Column>
@@ -843,7 +860,7 @@ const Amt = () => {
             header="Transport Name"
             body={(rowData: any, field: any) =>
               selectedRowId === rowData._id
-                ? renderDropdown(rowData, field, 'transportName')
+                ? renderDropdown(rowData, field, "transportName")
                 : rowData.transname
             }
           ></Column>
@@ -898,7 +915,7 @@ const Amt = () => {
             body={(rowData, field) =>
               selectedRowId === rowData?._id
                 ? renderDropdown(rowData, field, "transaddvtype")
-                : getDropDownValues("transaddvtype",rowData.transaddvtype)
+                : getDropDownValues("transaddvtype", rowData.transaddvtype)
             }
           ></Column>
           <Column
@@ -916,7 +933,7 @@ const Amt = () => {
             body={(rowData, field) =>
               selectedRowId === rowData?._id
                 ? renderDropdown(rowData, field, "modeofadvance")
-                : getDropDownValues("modeofadvance",rowData.modeofadvance)
+                : getDropDownValues("modeofadvance", rowData.modeofadvance)
             }
           ></Column>
           <Column
@@ -934,7 +951,10 @@ const Amt = () => {
             body={(rowData, field) =>
               selectedRowId === rowData?._id
                 ? renderDropdown(rowData, field, "truckbalancetype")
-                : getDropDownValues("truckbalancetype",rowData.truckbalancetype)
+                : getDropDownValues(
+                    "truckbalancetype",
+                    rowData.truckbalancetype
+                  )
             }
           ></Column>
           <Column field="truckbln" header="Truck Balance"></Column>
@@ -944,7 +964,10 @@ const Amt = () => {
             body={(rowData, field) =>
               selectedRowId === rowData?._id
                 ? renderDropdown(rowData, field, "transbalancetype")
-                : getDropDownValues("transbalancetype", rowData.transbalancetype)
+                : getDropDownValues(
+                    "transbalancetype",
+                    rowData.transbalancetype
+                  )
             }
           ></Column>
           <Column field="transbln" header="Transport Balance"></Column>
@@ -956,6 +979,15 @@ const Amt = () => {
               selectedRowId === rowData._id
                 ? renderInput(rowData, field)
                 : rowData.truckloadwt
+            }
+          ></Column>
+          <Column
+            field="phonenumber"
+            header="Driver Phone Number"
+            body={(rowData: any, field: any) =>
+              selectedRowId === rowData._id
+                ? renderInput(rowData, field)
+                : rowData.phonenumber
             }
           ></Column>
           <Column
@@ -994,23 +1026,8 @@ const Amt = () => {
                 : rowData.halting
             }
           ></Column>
-          <Column
-            field="pannumber"
-            header="PAN Number"
-          ></Column>
-          <Column
-            field="accountnumber"
-            header="Acc Number"
-          ></Column>
-          <Column
-            field="phonenumber"
-            header="Phone Number"
-            body={(rowData: any, field: any) =>
-              selectedRowId === rowData._id
-                ? renderInput(rowData, field)
-                : rowData.phonenumber
-            }
-          ></Column>
+          <Column field="pannumber" header="PAN Number"></Column>
+          <Column field="accountnumber" header="Acc Number"></Column>
           <Column
             header="Actions"
             body={renderButton}

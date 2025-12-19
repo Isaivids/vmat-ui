@@ -91,12 +91,11 @@ const Ack = () => {
         Number(updatedRow.ats.halting) +
         Number(updatedRow.loadingcharges || 0) +
         Number(updatedRow.others || 0);
-        console.log("updatedRow.finaltotaltotruckowner", updatedRow.finaltotaltotruckowner);
     } else {
       updatedRow.pendingamountfromtruckowner = 0;
       // updatedRow.pendingamountfromtruckowner = Number(updatedRow.ats.truckbln) + (Number(addThree) + Number(expense) + Number(halting));
       updatedRow.finaltotaltotruckowner =
-        Number(updatedRow.ats.truckbln)-
+        Number(updatedRow.ats.truckbln) -
         // Number(updatedRow.tdsack) -
         Number(addThree) -
         Number(updatedRow.podcharge) -
@@ -106,16 +105,18 @@ const Ack = () => {
         Number(updatedRow.loadingcharges || 0) +
         Number(updatedRow.others || 0);
     }
-    const diffto =
-      Number(updatedRow.trpaidtotruck) -
-      Number(updatedRow.finaltotaltotruckowner);
-    if (Math.sign(diffto) === 1) {
-      updatedRow.diffto = diffto;
-      updatedRow.difffrom = 0;
+    const paid = Number(updatedRow.trpaidtotruck);
+    const total = Number(updatedRow.finaltotaltotruckowner);
+
+    if (paid) {
+      const diff = paid - total;
+      updatedRow.diffto = Math.max(diff, 0);
+      updatedRow.difffrom = Math.max(-diff, 0);
     } else {
-      updatedRow.difffrom = Math.abs(diffto);
       updatedRow.diffto = 0;
+      updatedRow.difffrom = 0;
     }
+
     return updatedRow;
   };
 
@@ -503,7 +504,10 @@ const Ack = () => {
                 inputId="type1"
                 name="type1"
                 value={1}
-                onChange={(e) => {setType(e.value); setSelectedProducts([])}}
+                onChange={(e) => {
+                  setType(e.value);
+                  setSelectedProducts([]);
+                }}
                 checked={type === 1}
               />
               <label htmlFor="type1" className="ml-2">
@@ -515,7 +519,10 @@ const Ack = () => {
                 inputId="type2"
                 name="type2"
                 value={2}
-                onChange={(e) => {setType(e.value); setSelectedProducts([])}}
+                onChange={(e) => {
+                  setType(e.value);
+                  setSelectedProducts([]);
+                }}
                 checked={type === 2}
               />
               <label htmlFor="type2" className="ml-2">
@@ -599,7 +606,9 @@ const Ack = () => {
         <Column field="ats.transname" header="Transport Name"></Column>
         <Column field="ats.from" header="From"></Column>
         <Column field="ats.to" header="To"></Column>
-        {type === 1 && <Column field="ats.truckbln" header="Truck Balance"></Column>}
+        {type === 1 && (
+          <Column field="ats.truckbln" header="Truck Balance"></Column>
+        )}
         {type === 2 && <Column field="ats.twopay" header="By To Pay"></Column>}
         <Column
           field="expense"
@@ -712,7 +721,13 @@ const Ack = () => {
         <Column
           field="paymentReceivedDate"
           header="Payment transfer to truck owner"
-          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderDatePicker(rowData, field) : <span>{formatDate(rowData[field.field]) || ''}</span>}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderDatePicker(rowData, field)
+            ) : (
+              <span>{formatDate(rowData[field.field]) || ""}</span>
+            )
+          }
         ></Column>
         <Column
           field="modeofpayment"
