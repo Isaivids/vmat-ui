@@ -79,7 +79,7 @@ const CommonDialog: React.FC<CommonDialogProps> = ({
       case 4:
         return "finaltotaltotruckowner";
       case 5:
-        return "totalcrossing";
+        return "pending";
       case 7:
         return "tyrasporterpaidamt";
       case 9:
