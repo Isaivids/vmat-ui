@@ -78,13 +78,16 @@ const Payment = () => {
           Number(updatedRow.extlabourwagesfromvmat) -
           Math.abs(Number(updatedRow.tdstbp)) +
           Number(updatedRow.others || 0);
-        const diffto = updatedRow.trpaidtotruck - updatedRow.tyrasporterpaidamt;
-        if (Math.sign(diffto) === 1) {
-          updatedRow.diffto = diffto;
-          updatedRow.difffrom = 0;
+        const paid = Number(updatedRow.trpaidtotruck);
+        const total = Number(updatedRow.tyrasporterpaidamt);
+
+        if (paid) {
+          const diff = paid - total;
+          updatedRow.diffto = Math.max(diff, 0);
+          updatedRow.difffrom = Math.max(-diff, 0);
         } else {
-          updatedRow.difffrom = Math.abs(diffto);
           updatedRow.diffto = 0;
+          updatedRow.difffrom = 0;
         }
         return updatedRow;
       }

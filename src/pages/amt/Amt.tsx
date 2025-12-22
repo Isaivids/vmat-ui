@@ -740,16 +740,6 @@ const Amt = () => {
             return self.indexOf(value) === index;
           }
         );
-        const numbersData = atsData.payload.transportDetail;
-        const truckNumbers = numbersData.flatMap(
-          (item:any) =>
-            item.trucknumber
-              .split("\n")
-              .map((num:any) => num.trim()) 
-              .filter((num:any) => num !== "")
-        );
-
-        console.log(truckNumbers);
         setSelectedTruckName(uniqueTransportDetails);
         setOriginalTrucks(atsData?.payload?.transportDetail);
         setTransportDetails([uniqueTruckNumbers]);
