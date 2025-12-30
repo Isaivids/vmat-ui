@@ -152,8 +152,8 @@ const Ccpto = () => {
       modeofpayment: rowData.modeofpayment,
       rtgsnumber: rowData.rtgsnumber,
       _id: rowData._id,
-      expense : Number(rowData.expense) || 0,
-      pending : Number(rowData.pending) || 0,
+      expense: Number(rowData.expense) || 0,
+      pending: Number(rowData.pending) || 0,
     };
     try {
       const response = await dispatch(updateccpto(payload));
@@ -171,6 +171,7 @@ const Ccpto = () => {
                   expense: response.payload.data.expense,
                   paymentReceivedDate:
                     response.payload.data.paymentReceivedDate,
+                  pending: Number(response.payload.data.pending) || 0,
                 }
               : item
           );
