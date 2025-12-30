@@ -153,6 +153,7 @@ const Ccpto = () => {
       rtgsnumber: rowData.rtgsnumber,
       _id: rowData._id,
       expense : Number(rowData.expense) || 0,
+      pending : Number(rowData.pending) || 0,
     };
     try {
       const response = await dispatch(updateccpto(payload));
