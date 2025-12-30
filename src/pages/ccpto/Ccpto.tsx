@@ -56,15 +56,11 @@ const Ccpto = () => {
     const newData: any = data.map((row: any) => {
       if (row._id === id) {
         const updatedRow = { ...row, [field]: value };
-        // const diffto = Number(updatedRow.ack.diffto) || 0;
-        // const difffrom = Number(updatedRow.ack.difffrom) || 0;
         const expense = Number(updatedRow.expense) || 0;
         updatedRow.pending =
           Number(updatedRow.vmatcommision) +
           Number(updatedRow.totalcrossing) +
-          // diffto -
-          // difffrom -
-          expense;
+          Number(expense);
         return updatedRow;
       }
       return row;
@@ -156,6 +152,7 @@ const Ccpto = () => {
       modeofpayment: rowData.modeofpayment,
       rtgsnumber: rowData.rtgsnumber,
       _id: rowData._id,
+      expense : Number(rowData.expense) || 0,
     };
     try {
       const response = await dispatch(updateccpto(payload));
@@ -170,6 +167,7 @@ const Ccpto = () => {
                   ...item,
                   modeofpayment: response.payload.data.modeofpayment,
                   rtgsnumber: response.payload.data.rtgsnumber,
+                  expense: response.payload.data.expense,
                   paymentReceivedDate:
                     response.payload.data.paymentReceivedDate,
                 }
@@ -379,28 +377,28 @@ const Ccpto = () => {
           }
           header="Expense"
         ></Column>
-        <Column
-          // field="ack.diffto"
-          body={(rowData) => 0}
-          header="Difference Amount to Transporter"
-          style={{ minWidth: "200px" }}
-        ></Column>
-        <Column
-          // field="ack.difffrom"
-          body={(rowData) => 0}
-          header="Difference Amount from Transporter"
-          style={{ minWidth: "200px" }}
-        ></Column>
         <Column field="pending" header="Pending"></Column>
         <Column
           field="paymentReceivedDate"
           header="Payment Received Date"
-          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderDatePicker(rowData, field) : <span>{formatDate(rowData[field.field]) || ''}</span>}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderDatePicker(rowData, field)
+            ) : (
+              <span>{formatDate(rowData[field.field]) || ""}</span>
+            )
+          }
         ></Column>
         <Column
           field="modeofpayment"
           header="Mode Of Payment"
-          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderDropdown(rowData, field) : <span>{rowData[field.field] || ''}</span>}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderDropdown(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
         <Column
           field="rtgsnumber"
