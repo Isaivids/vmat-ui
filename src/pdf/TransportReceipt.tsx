@@ -82,8 +82,6 @@ const TransportReceipt = ({ data }: any) => {
             <p><i className="pi pi-phone text-xs mx-2"></i>Phone</p>
             <p className="bold">
               Owner: 94421-20580
-              <br />
-              9087905456
             </p>
             <p className="bold">Staff: 8089056888</p>
           </div>

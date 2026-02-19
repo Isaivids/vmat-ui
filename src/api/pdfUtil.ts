@@ -19,7 +19,7 @@ export const generatePDF = (dataArray: any[], billArray: any[]) => {
               alignment: 'left'
             },
             {
-              text: 'Phone\nOwner: 94421-20580\n9087905456\nStaff: 8089056888',
+              text: 'Phone\nOwner: 94421-20580\nStaff: 8089056888',
               alignment: 'right'
             }
           ]
