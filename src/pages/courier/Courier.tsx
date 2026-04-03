@@ -266,20 +266,6 @@ const Courier = () => {
     setSelectedRowId(newRow._id);
   };
 
-  // Compute totals for each column
-  const computeTotal = (field: any) => {
-    return data
-      .reduce((acc: any, item: any) => acc + (Number(item[field]) || 0), 0)
-      .toFixed(2);
-  };
-
-  const calculateNetTotal = () => {
-    const totalCredit = parseFloat(computeTotal("creditamount"));
-    const totalDebit = parseFloat(computeTotal("debitamount"));
-    const netTotal = totalCredit - totalDebit;
-    return netTotal.toFixed(2);
-  };
-
   const fetchData = useCallback(async () => {
     try {
       const trcukData = await dispatch(
