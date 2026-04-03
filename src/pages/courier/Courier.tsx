@@ -4,7 +4,12 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { Paginator } from "primereact/paginator";
-import { formatDate, initialrows, messages, paginationRows } from "../../api/constants";
+import {
+  formatDate,
+  initialrows,
+  messages,
+  paginationRows,
+} from "../../api/constants";
 import { Toast } from "primereact/toast";
 import CommonDatePicker from "../../components/calender/CommonDatePicker";
 import { InputText } from "primereact/inputtext";
@@ -12,7 +17,11 @@ import CustomButtonComponent from "../../components/button/CustomButtonComponent
 import { Button } from "primereact/button";
 import { InputTextarea } from "primereact/inputtextarea";
 import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
-import { deletecourierdetails, getcourierdetail, updatecourierdetails } from "../../store/slice/courierSlice";
+import {
+  deletecourierdetails,
+  getcourierdetail,
+  updatecourierdetails,
+} from "../../store/slice/courierSlice";
 
 const Courier = () => {
   const searchQuery = useSelector((state: any) => state.search);
@@ -22,7 +31,7 @@ const Courier = () => {
   const [selectedRowId, setSelectedRowId]: any = useState(null);
   const [backupData, setBackupData]: any = useState(null);
   const userDetails = useSelector((state: any) => state.user);
-
+  const [totals, setTotals]: any = useState();
   //pagination
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(initialrows);
@@ -49,16 +58,18 @@ const Courier = () => {
   const renderTextarea = (rowData: any, field: any) => {
     return (
       <>
-      {rowData._id !== selectedRowId ? <span>{rowData[field.field] || ''}</span> : 
-        <InputTextarea
-          disabled={rowData._id !== selectedRowId}
-          value={rowData[field.field] || ''}
-          onChange={(e) => onInputChange2(e, rowData._id, field.field)}
-          rows={1} 
-          cols={27}
-          autoResize
-        />
-      }
+        {rowData._id !== selectedRowId ? (
+          <span>{rowData[field.field] || ""}</span>
+        ) : (
+          <InputTextarea
+            disabled={rowData._id !== selectedRowId}
+            value={rowData[field.field] || ""}
+            onChange={(e) => onInputChange2(e, rowData._id, field.field)}
+            rows={1}
+            cols={27}
+            autoResize
+          />
+        )}
       </>
     );
   };
@@ -74,11 +85,15 @@ const Courier = () => {
   };
 
   const renderInput = (rowData: any, field: any) => {
-    const stringFields = ['remarks','couriersendingname','courierdetail'].includes(field.field)
+    const stringFields = [
+      "remarks",
+      "couriersendingname",
+      "courierdetail",
+    ].includes(field.field);
     return (
       <InputText
         disabled={rowData._id !== selectedRowId}
-        value={rowData[field.field] || ''}
+        value={rowData[field.field] || ""}
         onChange={(e: any) => onInputChange(e, rowData._id, field.field)}
         keyfilter={stringFields ? undefined : "num"}
         autoComplete="off"
@@ -87,12 +102,12 @@ const Courier = () => {
   };
 
   const getFormattedDate = (inputDate: any) => {
-    if(!inputDate){
+    if (!inputDate) {
       return;
     }
     const date = new Date(inputDate);
     const localDate = new Date(
-      date.getTime() - date.getTimezoneOffset() * 60000
+      date.getTime() - date.getTimezoneOffset() * 60000,
     )
       .toISOString()
       .split("T")[0];
@@ -129,43 +144,28 @@ const Courier = () => {
       debitamount: Number(rowData.debitamount),
       creditamount: Number(rowData.creditamount),
       remarks: rowData.remarks,
-      date : getFormattedDate(rowData.date),
+      date: getFormattedDate(rowData.date),
       _id: rowData._id,
     };
+
     try {
-        const response = await dispatch(updatecourierdetails(payload));
-        if (!response.payload.error) {
-          const index = backupData.findIndex((item: any) => item._id === rowData._id);
-          if (index !== -1) {
-            // data[index]._id = response.payload.data._id;
-            const updatedBackupData = backupData.map((item: any) =>
-              item._id === rowData._id
-                ? {
-                    ...item,
-                    couriersendingname: response.payload.data.couriersendingname,
-                    courierdetail: response.payload.data.courierdetail,
-                    debitamount: Number(response.payload.data.debitamount),
-                    creditamount: Number(response.payload.data.creditamount),
-                    remarks: response.payload.data.remarks,
-                    date : response.payload.data.date,
-                    _id: response.payload.data._id,
-                  }
-                : item
-            );
-            setBackupData(updatedBackupData);
-            setData([...updatedBackupData]);
-          }else{
-            setBackupData([response.payload.data,...backupData]);
-            setData([response.payload.data,...backupData]);
-          }
-          setSelectedRowId(null);
-          toast.current?.show({
-            severity: "success",
-            summary: messages.success,
-            detail: messages.updateoraddsuccess,
-            life: 3000,
-          });
-        }
+      const response = await dispatch(updatecourierdetails(payload));
+
+      if (!response.payload.error) {
+        // ✅ Reset edit state
+        setSelectedRowId(null);
+        setBackupData(null);
+
+        // ✅ IMPORTANT: refresh full data + totals
+        await fetchData();
+
+        toast.current?.show({
+          severity: "success",
+          summary: messages.success,
+          detail: messages.updateoraddsuccess,
+          life: 3000,
+        });
+      }
     } catch (error) {
       toast.current?.show({
         severity: "error",
@@ -195,10 +195,10 @@ const Courier = () => {
     setSelectedRowId(rowData._id);
   };
 
-  const accept = async(id:any) => {
+  const accept = async (id: any) => {
     try {
       const response = await dispatch(deletecourierdetails(id));
-      if(response.payload.error === false){
+      if (response.payload.error === false) {
         toast.current?.show({
           severity: "info",
           summary: "Confirmed",
@@ -211,20 +211,20 @@ const Courier = () => {
       toast.current?.show({
         severity: "error",
         summary: "Error",
-        detail: 'Unable to do this operation now',
+        detail: "Unable to do this operation now",
         life: 3000,
       });
     }
   };
 
-  const confirm2 = (event: any,id:any) => {
+  const confirm2 = (event: any, id: any) => {
     confirmPopup({
       target: event.currentTarget,
       message: "Do you want to delete this record?",
       icon: "pi pi-info-circle",
       defaultFocus: "reject",
       acceptClassName: "p-button-danger",
-      accept : () => accept(id),
+      accept: () => accept(id),
     });
   };
 
@@ -238,7 +238,15 @@ const Courier = () => {
           handleSave={handleSave}
           handleCancel={handleCancel}
         />
-        {!selectedRowId && <Button severity="danger" style={{height : '30px'}} onClick={(event:any) => confirm2(event,rowData._id)}><i className="pi pi-trash"></i></Button>}
+        {!selectedRowId && (
+          <Button
+            severity="danger"
+            style={{ height: "30px" }}
+            onClick={(event: any) => confirm2(event, rowData._id)}
+          >
+            <i className="pi pi-trash"></i>
+          </Button>
+        )}
       </div>
     );
   };
@@ -251,35 +259,40 @@ const Courier = () => {
       remarks: "",
       debitamount: 0,
       creditamount: 0,
-      date: '',
+      date: "",
     };
-    setBackupData(data)
+    setBackupData(data);
     setData([newRow]);
     setSelectedRowId(newRow._id);
   };
 
-    // Compute totals for each column
-    const computeTotal = (field:any) => {
-      return data
-        .reduce((acc:any, item:any) => acc + (Number(item[field]) || 0), 0)
-        .toFixed(2);
-    };
-    
-    const calculateNetTotal = () => {
-      const totalCredit = parseFloat(computeTotal('creditamount'));
-      const totalDebit = parseFloat(computeTotal('debitamount'));
-      const netTotal = totalCredit - totalDebit;
-      return netTotal.toFixed(2);
-    };
+  // Compute totals for each column
+  const computeTotal = (field: any) => {
+    return data
+      .reduce((acc: any, item: any) => acc + (Number(item[field]) || 0), 0)
+      .toFixed(2);
+  };
+
+  const calculateNetTotal = () => {
+    const totalCredit = parseFloat(computeTotal("creditamount"));
+    const totalDebit = parseFloat(computeTotal("debitamount"));
+    const netTotal = totalCredit - totalDebit;
+    return netTotal.toFixed(2);
+  };
 
   const fetchData = useCallback(async () => {
     try {
       const trcukData = await dispatch(
-        getcourierdetail({ limit: rows, offset: page * rows, search: searchQuery })
+        getcourierdetail({
+          limit: rows,
+          offset: page * rows,
+          search: searchQuery,
+        }),
       );
       if (Array.isArray(trcukData.payload.data) && !trcukData.payload.error) {
         setData(trcukData.payload.data);
         setTotalPage(trcukData.payload.pagination.totalDocuments);
+        setTotals(trcukData.payload.totals);
       }
     } catch (error) {
       toast.current?.show({
@@ -312,34 +325,68 @@ const Courier = () => {
         <Column
           field="date"
           header="Date"
-          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderDatePicker(rowData, field) : formatDate(rowData.date)}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id
+              ? renderDatePicker(rowData, field)
+              : formatDate(rowData.date)
+          }
         ></Column>
         <Column
           field="couriersendingname"
           header="Courier Address"
-          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderTextarea(rowData, field) : <span>{rowData[field.field] || ''}</span>}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderTextarea(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
         <Column
           field="courierdetail"
           header="Courier Name & Number"
-          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderTextarea(rowData, field) : <span>{rowData[field.field] || ''}</span>}
-          style={{minWidth : '200px'}}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderTextarea(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
+          style={{ minWidth: "200px" }}
         ></Column>
         <Column
           field="remarks"
           header="Remarks"
-          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderTextarea(rowData, field) : <span>{rowData[field.field] || ''}</span>}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderTextarea(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
         <Column
           field="debitamount"
           header="Debit Amount"
-          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderInput(rowData, field) : <span>{rowData[field.field] || ''}</span>}
-          footer={`Balance : ${calculateNetTotal()}`}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
+          footer={`Balance : ${totals?.netBalance || 0}`}
         ></Column>
         <Column
           field="creditamount"
           header="Credit Amount"
-          body={(rowData:any, field:any) => selectedRowId === rowData._id ? renderInput(rowData, field) : <span>{rowData[field.field] || ''}</span>}
+          body={(rowData: any, field: any) =>
+            selectedRowId === rowData._id ? (
+              renderInput(rowData, field)
+            ) : (
+              <span>{rowData[field.field] || ""}</span>
+            )
+          }
         ></Column>
         <Column
           header="Actions"
