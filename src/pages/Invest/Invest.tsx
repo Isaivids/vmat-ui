@@ -111,7 +111,7 @@ const Invest = () => {
           value={data}
           showGridlines
           scrollable
-          scrollHeight="70vh"
+          scrollHeight="85vh"
           style={{ width: "100%" }}
         >
           <Column
