@@ -19,14 +19,14 @@ const Invest = () => {
   const [data, setData]: any = useState([]);
   const [editingRowIndex, setEditingRowIndex] = useState<number | null>(null);
   const [editedValue, setEditedValue] = useState<number | null>(null);
-
+  const [totalToBePaid, setTotalToBePaid] = useState<number>(0);
+  const [totalOutStanding, setTotalOutStanding] = useState<number>(0);
   const getFormattedDate = (inputDate: any) => {
     if (!inputDate) return "-";
     const date = new Date(inputDate);
     if (isNaN(date.getTime())) return "-";
     return date.toLocaleDateString("en-US");
   };
-
 
   const fetchData = useCallback(async () => {
     try {
@@ -37,6 +37,8 @@ const Invest = () => {
         !trcukData.payload.error
       ) {
         setData(trcukData.payload.data);
+        setTotalToBePaid(trcukData.payload.overallToBePaid || 0);
+        setTotalOutStanding(trcukData.payload.overallOutstanding);
       }
     } catch (error) {
       toast.current?.show({
@@ -93,18 +95,18 @@ const Invest = () => {
           <label className="mr-2">Outgoing Amount</label>
           <h3 className="mr-2">₹ {sum.outgoing}</h3>
         </div>
-      </div>
+      </div> */}
 
       <div className="flex justify-content-between mx-4 mb-3">
         <div className="flex align-items-center">
-          <label className="mr-2">Bank Balance</label>
-          <h3 className="mr-2">₹ {sum.bankBalance}</h3>
+          <label className="mr-2">Total To Be Paid</label>
+          <h3 className="mr-2 text-red-500">₹ {totalToBePaid}</h3>
         </div>
         <div className="flex align-items-center">
-          <label className="mr-2">Incoming Amount</label>
-          <h3 className="mr-2">₹ {sum.incoming}</h3>
+          <label className="mr-2">Total Outstanding</label>
+          <h3 className="mr-2 text-red-500">₹ {totalOutStanding}</h3>
         </div>
-      </div> */}
+      </div>
 
       <div style={{ width: "100%", overflowX: "auto" }}>
         <DataTable
@@ -181,11 +183,16 @@ const Invest = () => {
             field="outstanding"
             header="Outstanding Amount"
             style={{ width: "10%" }}
+            bodyStyle={{ backgroundColor: "#d32f2f", color: "#d32f2f" }}
+            headerStyle={{ backgroundColor: "#d32f2f" }}
           />
+
           <Column
             field="tobepaid"
             header="To be Paid"
             style={{ width: "10%" }}
+            bodyStyle={{ backgroundColor: "#d32f2f", color: "#0277bd" }}
+            headerStyle={{ backgroundColor: "#d32f2f" }}
           />
         </DataTable>
       </div>
