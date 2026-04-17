@@ -56,7 +56,8 @@ const Invest = () => {
 
   const onEdit = (rowIndex: number) => {
     setEditingRowIndex(rowIndex);
-    setEditedValue(data[rowIndex]?.invested || 0);
+    // setEditedValue(data[rowIndex]?.invested || 0);
+    setEditedValue(data[rowIndex]?.invest || 0);
   };
 
   const onCancel = () => {
@@ -164,10 +165,19 @@ const Invest = () => {
               );
             }}
           />
-          <Column
+          {/* <Column
             field="bankbalance"
             header="Bank Balance"
             style={{ width: "15%" }}
+          /> */}
+          <Column
+            field="openingBalance"
+            header="Opening Balance"
+            style={{ width: "13%" }}
+            body={(rowData) =>
+              `₹ ${rowData.openingBalance?.toLocaleString() || 0}`
+            }
+            bodyStyle={{ fontStyle: "italic", color: "#666" }}
           />
           <Column
             field="outgoing"
@@ -180,19 +190,25 @@ const Invest = () => {
             style={{ width: "15%" }}
           />
           <Column
+            field="bankbalance"
+            header="Closing (Bank) Balance"
+            style={{ width: "15%" }}
+            body={(rowData) => (
+              <b style={{ color: rowData.bankbalance >= 0 ? "green" : "red" }}>
+                ₹ {rowData.bankbalance?.toLocaleString()}
+              </b>
+            )}
+          />
+          <Column
             field="outstanding"
-            header="Outstanding Amount"
-            style={{ width: "10%" }}
-            bodyStyle={{ backgroundColor: "#d32f2f", color: "#d32f2f" }}
-            headerStyle={{ backgroundColor: "#d32f2f" }}
+            header="Outstanding"
+            bodyStyle={{ color: "#d32f2f", fontWeight: 600 }}
           />
 
           <Column
             field="tobepaid"
             header="To be Paid"
-            style={{ width: "10%" }}
-            bodyStyle={{ backgroundColor: "#d32f2f", color: "#0277bd" }}
-            headerStyle={{ backgroundColor: "#d32f2f" }}
+            bodyStyle={{ color: "#f57c00", fontWeight: 600 }}
           />
         </DataTable>
       </div>
