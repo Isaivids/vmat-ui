@@ -72,3 +72,12 @@ export const getNewdataPayload = (inputObject: any) => {
     };
     return outputObject;
 };
+
+
+export const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0, // optional (removes decimals)
+  }).format(amount || 0);
+};

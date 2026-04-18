@@ -12,6 +12,7 @@ import {
   fetchCompletedBills,
   updateInvestAmount,
 } from "../../store/slice/investSlice";
+import { formatCurrency } from "../../api/utils";
 
 const Invest = () => {
   const toast = useRef<Toast>(null);
@@ -101,11 +102,11 @@ const Invest = () => {
       <div className="flex justify-content-between mx-4 mb-3">
         <div className="flex align-items-center">
           <label className="mr-2">Total To Be Paid</label>
-          <h3 className="mr-2 text-red-500">₹ {totalToBePaid}</h3>
+          <h3 className="mr-2 text-red-500">₹ {formatCurrency(totalToBePaid)}</h3>
         </div>
         <div className="flex align-items-center">
           <label className="mr-2">Total Outstanding</label>
-          <h3 className="mr-2 text-red-500">₹ {totalOutStanding}</h3>
+          <h3 className="mr-2 text-red-500">₹ {formatCurrency(totalOutStanding)}</h3>
         </div>
       </div>
 
